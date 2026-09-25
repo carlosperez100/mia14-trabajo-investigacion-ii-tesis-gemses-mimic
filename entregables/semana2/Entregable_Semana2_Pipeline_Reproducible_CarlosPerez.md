@@ -12,7 +12,7 @@ lang: es
 
 # 1. Diagrama del flujo principal
 
-![Pipeline reproducible en seis etapas, con las salidas de cada una, los controles contra fugas y el estado de reproducibilidad.](fig_pipeline_semana2.png){width=100%}
+![Pipeline reproducible en seis etapas, con las salidas de cada una, los controles contra fugas y el estado de reproducibilidad.](fig_pipeline_semana2.png){width=96%}
 
 # 2. Entradas, componentes y salida de cada etapa
 
@@ -76,7 +76,8 @@ Diagrama acorde al tipo de tesis, entradas y salidas por etapa, criterio de resu
 
 **Fuentes abiertas para este entregable** (todas en el repositorio de la tesis tesis-gemses-mimic-pipeline):
 
-- 11_proyecto_II: 01_INVENTARIO_MODELOS_Y_CHECKLIST_2026-09-18.md y 02_ESTADO_DE_AVANCE_COMPLETO_2026-09-18.md.
+- 11_proyecto_II: 01_INVENTARIO_MODELOS_Y_CHECKLIST_2026-09-18.md
+- 11_proyecto_II: 02_ESTADO_DE_AVANCE_COMPLETO_2026-09-18.md
 - 04_pipeline_codigo: fase9_modelo_final.py, fase10_metricas_corregidas.py y los JSON de datos_intermedios.
 - latex_tesis: Capitulo3.tex (hipótesis y umbral de kappa).
 - Directiva N.º 7-OGCyH-ESSALUD-2020 (RGG 402-GG-ESSALUD-2020), Anexos 02 y 03.
