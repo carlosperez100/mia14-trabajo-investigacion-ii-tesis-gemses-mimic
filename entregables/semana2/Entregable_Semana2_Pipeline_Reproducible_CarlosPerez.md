@@ -72,6 +72,6 @@ Toda comparación entre modelos se hace con la misma partición (semilla 42, por
 
 # 7. Verificación contra la guía (sección 11)
 
-El diagrama corresponde a una tesis supervisada y declara sus adaptaciones (sí). Entradas y salidas de cada etapa (sí, tabla 2). Resultado correcto, útil o mejor que el baseline (sí, sección 4). Qué se registra para reproducir (sí, sección 5). Desarrollo/ajuste separado de evaluación final (sí, sección 2). Al menos dos riesgos (sí, diez en la sección 6). Alcance ejecutable con los recursos del curso: **[juicio técnico]** sí, porque el modelo ya existe y el Sprint 1 es de reproducibilidad, no de modelado.
+Diagrama acorde al tipo de tesis, entradas y salidas por etapa, criterio de resultado correcto, registro para reproducir, separación desarrollo/evaluación y riesgos (diez): cubiertos en las secciones 1 a 6. Alcance ejecutable con los recursos del curso: **[juicio técnico]** sí, porque el modelo ya existe y el Sprint 1 es de reproducibilidad, no de modelado.
 
 **Fuentes abiertas para este entregable:** `11_proyecto_II/01_INVENTARIO_MODELOS_Y_CHECKLIST_2026-09-18.md` y `02_ESTADO_DE_AVANCE_COMPLETO_2026-09-18.md`; `04_pipeline_codigo/fase9_modelo_final.py` y `fase10_metricas_corregidas.py`; los JSON citados en `04_pipeline_codigo/datos_intermedios/`; `latex_tesis/3_1_CAPITULO_MARCO_TEORICO/Capitulo3.tex`; Directiva N.º 7-OGCyH-ESSALUD-2020 (RGG 402-GG-ESSALUD-2020), Anexos 02 y 03. Todo en el repositorio de la tesis `tesis-gemses-mimic-pipeline`.

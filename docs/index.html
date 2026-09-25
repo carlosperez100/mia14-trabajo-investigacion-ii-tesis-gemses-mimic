@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tesis GEMSES × MIMIC-IV — Detección y priorización de eventos adversos con NLP | Carlos Pérez Pérez · UNI MIA-14</title>
+<style>
+:root {
+  --navy: #1F3864;
+  --navy-dark: #0F2742;
+  --teal: #028090;
+  --teal-light: #00A896;
+  --mint: #02C39A;
+  --coral: #F96167;
+  --gold: #F9C846;
+  --off-white: #F8FAFB;
+  --gray: #64748B;
+  --gray-light: #94A3B8;
+  --white: #FFFFFF;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  color: var(--navy-dark);
+  line-height: 1.6;
+  background: var(--off-white);
+  overflow-x: hidden;
+}
+
+/* ===== NAV ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(15, 39, 66, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 0.8rem 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+nav .brand {
+  color: var(--mint); font-weight: 700; font-size: 0.9rem; letter-spacing: 2px;
+}
+nav .links { display: flex; gap: 1.5rem; }
+nav .links a {
+  color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem;
+  transition: color 0.2s;
+}
+nav .links a:hover { color: var(--mint); }
+
+/* ===== SECTIONS ===== */
+section {
+  padding: 6rem 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+section.dark {
+  background: var(--navy-dark);
+  color: var(--white);
+  max-width: none;
+  padding: 6rem 2rem;
+}
+section.dark .container { max-width: 1300px; margin: 0 auto; }
+
+.section-tag {
+  display: inline-block;
+  color: var(--teal);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.dark .section-tag { color: var(--mint); }
+
+h1, h2, h3 { line-height: 1.2; }
+h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  color: var(--navy);
+  margin-bottom: 1.5rem;
+  font-weight: 800;
+}
+.dark h2 { color: var(--white); }
+h3 {
+  font-size: 1.3rem;
+  color: var(--navy);
+  margin-bottom: 0.8rem;
+}
+.dark h3 { color: var(--white); }
+.lead {
+  font-size: 1.15rem; color: var(--gray); max-width: 800px;
+  margin-bottom: 3rem;
+}
+.dark .lead { color: var(--gray-light); }
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+  color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  padding: 8rem 2rem 4rem;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(2, 195, 154, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(2, 128, 144, 0.15) 0%, transparent 50%);
+}
+.hero-inner {
+  max-width: 1100px; width: 100%; position: relative; z-index: 2;
+}
+.hero-tag {
+  color: var(--mint); font-size: 0.8rem; letter-spacing: 5px;
+  font-weight: 700; margin-bottom: 1.5rem;
+}
+.hero h1 {
+  font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+  font-weight: 900; line-height: 1.05;
+  margin-bottom: 2rem;
+}
+.hero h1 .accent { color: var(--mint); }
+.hero-claim {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  color: rgba(255,255,255,0.85);
+  max-width: 850px; margin-bottom: 3rem;
+  font-style: italic; font-weight: 300;
+}
+.hero-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(255,255,255,0.2);
+}
+.hero-meta-item .label {
+  font-size: 0.75rem; letter-spacing: 2px; color: var(--gray-light);
+  text-transform: uppercase; margin-bottom: 0.3rem;
+}
+.hero-meta-item .value {
+  font-size: 1rem; color: var(--white); font-weight: 600;
+}
+.hero-meta-item .value strong { color: var(--mint); }
+
+/* ===== STATS GRID ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+.stat-card {
+  background: var(--white); border-radius: 12px;
+  padding: 2rem 1.5rem;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative; overflow: hidden;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(31, 56, 100, 0.15);
+}
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 4px; background: var(--teal);
+}
+.stat-card.coral::before { background: var(--coral); }
+.stat-card.gold::before { background: var(--gold); }
+.stat-card.mint::before { background: var(--mint); }
+.stat-card .number {
+  font-size: 3rem; font-weight: 800; color: var(--navy);
+  line-height: 1; margin-bottom: 0.4rem;
+}
+.stat-card .label {
+  font-size: 0.95rem; color: var(--gray); line-height: 1.4;
+}
+.dark .stat-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.dark .stat-card .number { color: var(--white); }
+.dark .stat-card .label { color: var(--gray-light); }
+
+/* ===== TIMELINE ===== */
+.timeline {
+  position: relative; padding-left: 3rem; margin-top: 2rem;
+}
+.timeline::before {
+  content: ''; position: absolute; left: 0.7rem; top: 0; bottom: 0;
+  width: 3px; background: linear-gradient(180deg, var(--teal), var(--mint));
+}
+.timeline-item {
+  position: relative; padding-bottom: 2.5rem;
+  cursor: pointer; transition: padding 0.3s;
+}
+.timeline-item::before {
+  content: ''; position: absolute; left: -2.7rem; top: 0.3rem;
+  width: 1.2rem; height: 1.2rem; border-radius: 50%;
+  background: var(--teal); border: 3px solid var(--off-white);
+  box-shadow: 0 0 0 3px var(--teal);
+  transition: all 0.3s;
+}
+.timeline-item.completed::before { background: var(--mint); box-shadow: 0 0 0 3px var(--mint); }
+.timeline-item.future::before { background: var(--gray-light); box-shadow: 0 0 0 3px var(--gray-light); }
+.timeline-item.completed.highlight::before { background: var(--gold); box-shadow: 0 0 0 4px var(--gold), 0 0 18px var(--gold); width: 18px; height: 18px; left: -33px; }
+.timeline-item.completed.highlight .timeline-title { color: var(--gold); font-weight: 800; }
+.timeline-item.completed.highlight .timeline-desc { background: rgba(249,200,70,0.08); border-left: 3px solid var(--gold); padding: 14px 18px; border-radius: 6px; }
+.timeline-item:hover::before { transform: scale(1.3); }
+.timeline-date {
+  font-size: 0.85rem; color: var(--teal); font-weight: 700;
+  letter-spacing: 1px; margin-bottom: 0.3rem;
+}
+.timeline-item.future .timeline-date { color: var(--gray-light); }
+.timeline-title {
+  font-size: 1.15rem; color: var(--navy); font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.timeline-desc {
+  color: var(--gray); font-size: 0.95rem;
+}
+
+/* ===== PIPELINE ===== */
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.8rem; margin: 2rem 0; position: relative;
+}
+.pipeline-stage {
+  background: var(--white); border-radius: 14px;
+  padding: 1.5rem 1.2rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  position: relative;
+  transition: all 0.3s;
+  border-top: 4px solid var(--teal);
+}
+.pipeline-stage:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(31, 56, 100, 0.18);
+}
+.pipeline-stage.stage-1 { border-top-color: var(--gray); }
+.pipeline-stage.stage-2 { border-top-color: var(--teal); }
+.pipeline-stage.stage-3 { border-top-color: #2E4F8A; }
+.pipeline-stage.stage-4 { border-top-color: var(--navy); color: var(--white); background: var(--navy); }
+.pipeline-stage.stage-5 { border-top-color: var(--mint); color: var(--white); background: var(--mint); }
+
+.pipeline-stage .step {
+  font-size: 0.7rem; letter-spacing: 3px; color: var(--gray);
+  font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;
+}
+.pipeline-stage.stage-4 .step, .pipeline-stage.stage-5 .step {
+  color: rgba(255,255,255,0.8);
+}
+.pipeline-stage .title {
+  font-size: 1.05rem; font-weight: 800; color: var(--navy);
+  margin-bottom: 0.5rem; line-height: 1.2;
+}
+.pipeline-stage.stage-4 .title, .pipeline-stage.stage-5 .title { color: var(--white); }
+.pipeline-stage .desc {
+  font-size: 0.8rem; color: var(--gray); line-height: 1.4;
+}
+.pipeline-stage.stage-4 .desc, .pipeline-stage.stage-5 .desc {
+  color: rgba(255,255,255,0.85);
+}
+
+/* ===== FORMULA ===== */
+.formula-box {
+  background: var(--navy); color: var(--white);
+  border-radius: 14px; padding: 2.5rem 2rem; text-align: center;
+  margin: 2rem 0;
+  border-left: 6px solid var(--mint);
+}
+.formula-box .label {
+  font-size: 0.75rem; letter-spacing: 4px; color: var(--mint);
+  font-weight: 700; margin-bottom: 1rem;
+}
+.formula {
+  font-family: 'Cambria', 'Georgia', serif;
+  font-size: clamp(1.2rem, 2.5vw, 2rem); font-weight: 700;
+  letter-spacing: 1px; margin-bottom: 1rem;
+}
+.formula em { color: var(--mint); font-style: italic; }
+.formula-caption {
+  font-size: 0.85rem; color: var(--gray-light); font-style: italic;
+}
+
+/* ===== IMPACT CARDS ===== */
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem; margin-top: 2rem;
+}
+.impact-card {
+  background: var(--white); border-radius: 14px;
+  padding: 2rem 1.8rem;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: all 0.3s;
+}
+.impact-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(31, 56, 100, 0.18);
+}
+.impact-card .icon {
+  width: 56px; height: 56px; border-radius: 12px;
+  background: var(--teal); display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; color: var(--white); margin-bottom: 1rem;
+  font-weight: 800;
+}
+.impact-card.essalud .icon { background: var(--teal); }
+.impact-card.minsa .icon { background: var(--navy); }
+.impact-card.global .icon { background: var(--mint); }
+.impact-card.academic .icon { background: var(--coral); }
+.impact-card h3 { margin-bottom: 0.8rem; }
+.impact-card p {
+  color: var(--gray); font-size: 0.95rem; line-height: 1.6;
+}
+
+/* ===== EFFORT METER ===== */
+.effort-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem; margin-top: 2rem;
+}
+.effort-item {
+  background: rgba(255,255,255,0.05);
+  border-left: 4px solid var(--mint);
+  padding: 1.5rem 1.5rem;
+  border-radius: 0 12px 12px 0;
+}
+.effort-item .value {
+  font-size: 2.4rem; font-weight: 800; color: var(--mint);
+  line-height: 1;
+}
+.effort-item .label {
+  color: rgba(255,255,255,0.85); font-size: 0.9rem; margin-top: 0.4rem;
+}
+.effort-item .sublabel {
+  color: var(--gray-light); font-size: 0.78rem; margin-top: 0.4rem;
+  font-style: italic;
+}
+
+/* ===== ROADMAP ===== */
+.roadmap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem; margin-top: 2rem;
+}
+.phase-card {
+  background: var(--white); border-radius: 12px;
+  padding: 1.5rem; border-left: 4px solid var(--teal);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: all 0.3s;
+}
+.phase-card:hover { transform: translateX(4px); }
+.phase-card .num {
+  font-size: 0.75rem; color: var(--teal); font-weight: 700;
+  letter-spacing: 3px; margin-bottom: 0.3rem;
+}
+.phase-card .period {
+  font-size: 0.82rem; color: var(--gray); font-style: italic; margin-bottom: 0.6rem;
+}
+.phase-card h4 {
+  color: var(--navy); font-size: 1.05rem; margin-bottom: 0.5rem;
+}
+.phase-card .desc {
+  font-size: 0.85rem; color: var(--gray); margin-bottom: 0.6rem;
+}
+.phase-card .refs {
+  font-size: 0.75rem; color: var(--teal); font-style: italic;
+}
+
+/* ===== APORTE QUADRANTS ===== */
+.aporte-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.2rem; margin-top: 2rem;
+}
+.aporte-card {
+  background: rgba(255,255,255,0.05); border-radius: 14px;
+  padding: 2rem 1.6rem;
+  border-left: 5px solid var(--mint);
+}
+.aporte-card.metodologico { border-left-color: #2E4F8A; }
+.aporte-card.aplicado { border-left-color: var(--mint); }
+.aporte-card.social { border-left-color: var(--gold); }
+.aporte-card .tag {
+  font-size: 0.7rem; letter-spacing: 4px; color: var(--mint);
+  font-weight: 700; margin-bottom: 0.5rem;
+}
+.aporte-card.metodologico .tag { color: #5B7BB8; }
+.aporte-card.aplicado .tag { color: var(--mint); }
+.aporte-card.social .tag { color: var(--gold); }
+.aporte-card h3 { color: var(--white); margin-bottom: 0.6rem; font-size: 1.15rem; }
+.aporte-card p {
+  color: rgba(255,255,255,0.8); font-size: 0.92rem; line-height: 1.5;
+}
+
+/* ===== TABLE ===== */
+.gemses-table {
+  width: 100%; border-collapse: collapse; margin-top: 2rem;
+  background: var(--white); border-radius: 12px; overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+.gemses-table th {
+  background: var(--navy); color: var(--white); padding: 1rem;
+  text-align: left; font-size: 0.85rem; letter-spacing: 1px;
+}
+.gemses-table th:nth-child(2) { text-align: center; }
+.gemses-table td {
+  padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.06);
+  font-size: 0.9rem;
+}
+.gemses-table tr:last-child td { border-bottom: none; }
+.gemses-table .dim {
+  font-weight: 700; color: var(--navy);
+  display: inline-block; padding: 0.3rem 0.8rem; border-radius: 6px;
+  background: var(--off-white);
+}
+.gemses-table .peso {
+  text-align: center; font-weight: 700; color: var(--teal);
+  font-size: 1.1rem;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--navy-dark); color: rgba(255,255,255,0.7);
+  padding: 4rem 2rem 2rem; text-align: center;
+}
+footer .author {
+  font-size: 1.2rem; color: var(--white); font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+footer .role {
+  font-size: 0.9rem; color: var(--mint); margin-bottom: 1.5rem;
+}
+footer .links {
+  display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+footer .links a {
+  color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.9rem;
+  border-bottom: 1px solid transparent; transition: border-color 0.2s;
+}
+footer .links a:hover { border-color: var(--mint); }
+footer .copyright {
+  font-size: 0.8rem; color: var(--gray-light);
+  padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ===== UTILITIES ===== */
+.fade-in {
+  animation: fadeInUp 0.8s ease-out backwards;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  nav { padding: 0.6rem 1rem; }
+  nav .links { display: none; }
+  section { padding: 4rem 1.2rem; }
+  .hero { padding: 6rem 1.2rem 3rem; }
+}
+
+/* ===== RECUENTO TECNICO ===== */
+.recuento-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.recuento-card {
+  background: var(--white); border-radius: 14px;
+  padding: 1.8rem 1.6rem;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+.dark .recuento-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.recuento-card-header {
+  display: flex; align-items: center; gap: 0.8rem;
+  margin-bottom: 1.2rem; padding-bottom: 0.8rem;
+  border-bottom: 2px solid var(--teal);
+}
+.recuento-card-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--teal); color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; font-weight: 800; flex-shrink: 0;
+}
+.recuento-card.cat-1 .recuento-card-icon { background: var(--coral); }
+.recuento-card.cat-2 .recuento-card-icon { background: var(--gold); }
+.recuento-card.cat-3 .recuento-card-icon { background: var(--teal); }
+.recuento-card.cat-4 .recuento-card-icon { background: var(--mint); color: var(--navy-dark); }
+.recuento-card.cat-1 .recuento-card-header { border-bottom-color: var(--coral); }
+.recuento-card.cat-2 .recuento-card-header { border-bottom-color: var(--gold); }
+.recuento-card.cat-3 .recuento-card-header { border-bottom-color: var(--teal); }
+.recuento-card.cat-4 .recuento-card-header { border-bottom-color: var(--mint); }
+.recuento-card-title {
+  font-size: 1.05rem; font-weight: 800; color: var(--navy);
+  line-height: 1.2;
+}
+.dark .recuento-card-title { color: var(--white); }
+.recuento-list {
+  list-style: none; padding: 0; margin: 0;
+}
+.recuento-list li {
+  position: relative; padding: 0.45rem 0 0.45rem 1.6rem;
+  font-size: 0.88rem; line-height: 1.5; color: var(--gray);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.dark .recuento-list li { color: var(--gray-light); border-bottom-color: rgba(255,255,255,0.05); }
+.recuento-list li:last-child { border-bottom: none; }
+.recuento-list li::before {
+  content: '✓'; position: absolute; left: 0; top: 0.45rem;
+  color: var(--mint); font-weight: 800; font-size: 0.95rem;
+}
+.recuento-list li strong { color: var(--navy); font-weight: 700; }
+.dark .recuento-list li strong { color: var(--white); }
+.recuento-list li .meta {
+  display: inline-block; margin-left: 0.3rem;
+  font-size: 0.75rem; color: var(--teal);
+  font-family: 'Courier New', monospace;
+}
+.dark .recuento-list li .meta { color: var(--mint); }
+
+/* ===== EVENTOS 231 ===== */
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+  margin: 2rem 0;
+}
+.tier-card {
+  background: var(--white); border-radius: 12px;
+  padding: 1.8rem 1.5rem;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  position: relative; overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.tier-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(31, 56, 100, 0.15);
+}
+.tier-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 4px;
+}
+.tier-card.tier-a::before { background: var(--mint); }
+.tier-card.tier-b::before { background: var(--teal); }
+.tier-card.tier-cd::before { background: var(--gold); }
+.tier-card.tier-e::before { background: var(--coral); }
+.tier-card .tier-label {
+  font-size: 0.7rem; letter-spacing: 4px; font-weight: 700;
+  text-transform: uppercase; margin-bottom: 0.4rem;
+}
+.tier-card.tier-a .tier-label { color: var(--mint); }
+.tier-card.tier-b .tier-label { color: var(--teal); }
+.tier-card.tier-cd .tier-label { color: #B8860B; }
+.tier-card.tier-e .tier-label { color: var(--coral); }
+.tier-card .tier-number {
+  font-size: 3rem; font-weight: 800; color: var(--navy);
+  line-height: 1; margin-bottom: 0.3rem;
+}
+.tier-card .tier-method {
+  font-size: 0.85rem; color: var(--teal); font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.tier-card .tier-nature {
+  font-size: 0.82rem; color: var(--gray); font-style: italic;
+}
+.tier-summary-bar {
+  background: var(--navy);
+  color: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  margin: 1.5rem 0 2rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.tier-summary-bar span { color: var(--mint); }
+.naturalezas-table {
+  width: 100%; border-collapse: collapse; margin-top: 1.5rem;
+  background: var(--white); border-radius: 12px; overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+.naturalezas-table th {
+  background: var(--navy); color: var(--white); padding: 0.8rem 1rem;
+  text-align: left; font-size: 0.82rem; letter-spacing: 1px;
+}
+.naturalezas-table th:not(:first-child) { text-align: center; }
+.naturalezas-table td {
+  padding: 0.75rem 1rem; border-bottom: 1px solid rgba(0,0,0,0.06);
+  font-size: 0.88rem;
+}
+.naturalezas-table tr:last-child td {
+  font-weight: 800; background: var(--off-white);
+  border-bottom: none;
+}
+.naturalezas-table td:not(:first-child) { text-align: center; }
+.naturalezas-table .n-total { font-weight: 700; color: var(--navy); }
+.naturalezas-table .n-a { color: var(--mint); font-weight: 600; }
+.naturalezas-table .n-b { color: var(--teal); font-weight: 600; }
+.naturalezas-table .n-cd { color: #B8860B; font-weight: 600; }
+
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+  <div class="brand">TESIS · GEMSES × MIMIC-IV</div>
+  <div class="links">
+    <a href="#problema">Problema</a>
+    <a href="#recorrido">Recorrido</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#eventos231">231 eventos</a>
+    <a href="#construido">Lo construido</a>
+    <a href="#impacto">Impacto</a>
+    <a href="#esfuerzo">Esfuerzo</a>
+    <a href="#recuento">Recuento</a>
+    <a href="#hallazgo-pesos">Hallazgo</a>
+    <a href="#falsos-positivos">Resultados</a>
+    <a href="#sprints">Sprints</a>
+    <a href="#gemses">GEMSES</a>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">MIA-14 · TRABAJO DE INVESTIGACIÓN II · UNIVERSIDAD NACIONAL DE INGENIERÍA · TESIS</div>
+    <h1>Detección automatizada<br>de eventos adversos en notas clínicas<br><span class="accent">con NLP y Matriz GEMSES.</span></h1>
+    <p class="hero-claim">
+      Un flujo de procesamiento (<em>pipeline</em>) que convierte texto libre de historias clínicas en clasificaciones de riesgo accionables, operacionalizando un modelo de excelencia sanitaria adoptado normativamente por EsSalud sobre el dataset clínico abierto más usado en el mundo. <strong>Estado a septiembre de 2026:</strong> modelo final en cascada (TF-IDF + LinearSVC) entrenado sobre 70 000 epicrisis, validado contra un panel experto y transferido a un corpus en español; borrador de tesis de 107 páginas (Cap. I–VI). Una sola tesis, en continuación: integra Tesis I, el curso de PLN y GEM·VigIA.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="label">AUTOR</div>
+        <div class="value">Carlos Pérez Pérez</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="label">CURSO</div>
+        <div class="value">MIA-14 · Trabajo de Investigación II<br><span style="font-weight:400;font-size:0.85em">Dr. Ing. Glen Rodríguez (antes MIA-303, Mg. María Tejada)</span></div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="label">PERIODO</div>
+        <div class="value"><strong>May 2026 — May 2027</strong><br><span style="font-weight:400;font-size:0.85em">borrador Cap. I–VI: 20-set-2026</span></div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="label">REPOSITORIO</div>
+        <div class="value"><a href="https://github.com/carlosperez100/tesis-gemses-mimic-pipeline" target="_blank" style="color: var(--mint); text-decoration: none;">github.com/carlosperez100/<br>tesis-gemses-mimic-pipeline</a><br><a href="https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic" target="_blank" style="color: var(--mint); text-decoration: none;">mia14-trabajo-investigacion-ii (curso)</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EL PROBLEMA ===== -->
+<section id="problema">
+  <div class="section-tag">El problema</div>
+  <h2>Por qué los eventos adversos no se pueden ignorar.</h2>
+  <p class="lead">Los eventos adversos en hospitalización figuran entre las diez principales causas de muerte y discapacidad en el mundo. Más del 50 % serían evitables si se detectaran a tiempo — pero el 80 % de la evidencia que necesitamos vive en texto libre que ningún sistema lee.</p>
+
+  <div class="stats-grid">
+    <div class="stat-card coral">
+      <div class="number">1 de 10</div>
+      <div class="label">pacientes hospitalizados sufre al menos un evento adverso (OMS)</div>
+    </div>
+    <div class="stat-card gold">
+      <div class="number">≥ 50 %</div>
+      <div class="label">de esos eventos son evitables con detección temprana</div>
+    </div>
+    <div class="stat-card mint">
+      <div class="number">~80 %</div>
+      <div class="label">de los datos en historia clínica son texto libre no estructurado</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">2020</div>
+      <div class="label">EsSalud normativiza la Matriz de Priorización GEMSES vía Directiva N.º 7-OGCyH-ESSALUD-2020 (RGG 402-GG-ESSALUD-2020)</div>
+    </div>
+    <div class="stat-card coral">
+      <div class="number">515 493</div>
+      <div class="label">egresos hospitalarios EsSalud 2025</div>
+    </div>
+    <div class="stat-card gold">
+      <div class="number">2.77 %</div>
+      <div class="label">tasa de notificación vs ~10 % esperado OMS — subregistro del 72 %</div>
+    </div>
+    <div class="stat-card mint">
+      <div class="number">S/ 8.48 M</div>
+      <div class="label">multas SUSALUD 2025 — 12 sanciones: Rebagliati, Sabogal y otras IPRESS</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">~37 000</div>
+      <div class="label">eventos adversos no reportados por año — exposición S/ 111–370 M en consecuencias</div>
+    </div>
+  </div>
+
+  <p style="font-size: 0.95rem; color: var(--gray); max-width: 900px; margin-top: 1.5rem; line-height: 1.7; padding: 1.5rem 2rem; background: var(--white); border-radius: 12px; border-left: 4px solid var(--teal); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+    En EsSalud, durante 2025 se registraron <strong>515 493 egresos hospitalarios</strong> pero solo se notificaron 14 275 eventos adversos (tasa 2.77 %), evidenciando un subregistro del 72 %. SUSALUD impuso 12 multas por <strong>S/ 8.48 M</strong> en 2025 (acumulado 2024-25: S/ 11.9 M). La OCDE (2017) estima que el <strong>15 % del gasto hospitalario</strong> se consume en consecuencias de eventos adversos.
+  </p>
+</section>
+
+<!-- ===== EL RECORRIDO ===== -->
+<section id="recorrido" class="dark">
+  <div class="container">
+    <div class="section-tag">El recorrido</div>
+    <h2>De una idea académica a un modelo final validado — abril a septiembre 2026.</h2>
+    <p class="lead">Cada hito documentado, con fecha exacta. Sin atajos, sin saltos de fe metodológicos.</p>
+
+    <div class="timeline">
+      <div class="timeline-item completed">
+        <div class="timeline-date">27 ABR · 2026</div>
+        <div class="timeline-title">Análisis del material del curso MIA 303</div>
+        <div class="timeline-desc">Lectura completa de 5 PDFs (3 clases + paper Kitchenham + proyecto modelo Tejada) + libro GEMSES propio. Identificación de patrón "9 estructuras" entre material académico y modelo institucional.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">28 ABR · 2026</div>
+        <div class="timeline-title">Acceso a MIMIC-IV v3.1 + CITI EsSalud</div>
+        <div class="timeline-desc">Credentialed user PhysioNet, Data Use Agreement firmado, certificación CITI Program (ID 1912 + ID 3641 EsSalud, Record 54788726).</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">4-8 MAY · 2026</div>
+        <div class="timeline-title">Refinamiento del tema con la realidad operativa</div>
+        <div class="timeline-desc">Sin acceso a HCE de EsSalud, MIMIC-IV pasa de plan B a plan A. Identificación del vacío crítico cuádruple en la literatura 2015-2025.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">10 MAY · 2026</div>
+        <div class="timeline-title">Entrega de 12 papers en formato Tejada</div>
+        <div class="timeline-desc">12 fichas analíticas completas (4 por tema), 72 subsecciones, 11 ecuaciones matemáticas formalizadas, tabla comparativa, desarrollo de la investigación ampliado. Versiones Word + LaTeX listas para Overleaf.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">11 MAY · 2026 (madrugada)</div>
+        <div class="timeline-title">Acceso a MIMIC-IV-Note + entorno técnico operativo</div>
+        <div class="timeline-desc">DUA específico de Note firmado. Python 3.13 + DuckDB 1.5.2 + JupyterLab instalados y verificados. Mini-notebook de prueba ejecutado exitosamente con DuckDB + pandas.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">11 MAY · 2026 (madrugada)</div>
+        <div class="timeline-title">Repositorio GitHub publicado</div>
+        <div class="timeline-desc">github.com/carlosperez100/tesis-gemses-mimic-pipeline con .gitignore protegiendo DUA, README, estructura organizada en docs/ y notebooks/, 7 entregables definitivos versionados.</div>
+      </div>
+
+      <div class="timeline-item completed">
+        <div class="timeline-date">11 MAY · 2026 (tarde)</div>
+        <div class="timeline-title">Mapeo ICD-10 ↔ Anexo 02 EsSalud construido</div>
+        <div class="timeline-desc">149 códigos ICD-10 organizados en 42 eventos oficiales del Anexo 02 de la Directiva N.º 7-OGCyH-ESSALUD-2020, con id_naturaleza e id_evento_anexo02 alineados a la nomenclatura institucional. Severidad base calibrada en escala 0-9 de la Matriz GEMSES. Módulo Python integrado con el pipeline.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">13 MAY · 2026</div>
+        <div class="timeline-title">Pipeline operativo + Pipeline.py único de replicación</div>
+        <div class="timeline-desc">Script Python autocontenido que reproduce la exploración inicial sobre cualquier corpus MIMIC-compatible. Verificado: lee 331 793 epicrisis vía DuckDB sin cargar a memoria, calcula estadísticas de longitud, genera muestra reproducible de 100 notas. Bitácora cronológica del proyecto documentada en HISTORIAL_PASOS_TESIS.md.</div>
+      </div>
+
+      <div class="timeline-item completed">
+        <div class="timeline-date">14 MAY · 2026</div>
+        <div class="timeline-title">Verificación MIMIC-IV + Anexo 2 oficial + puente bilingüe operativo</div>
+        <div class="timeline-desc">Descompresión y verificación SHA-256 de los 33 archivos de MIMIC-IV (33/33 íntegros, sin corrupción). Corrección del Anexo 2 desde la fuente Excel oficial de la directiva: 231 eventos en 12 naturalezas con codificación UTF-8 correcta. Construcción del diccionario mapeo_anexo2_ingles.json (51 eventos → 186 patrones clínicos en inglés). Primera corrida del pipeline sobre 2 000 epicrisis: 67.9 % con al menos un evento detectado, 2 500 detecciones, 35 tipos distintos. Matriz GEMSES completa (B → G → H → I → J → Verde/Amarillo/Rojo) ejecutándose sobre datos reales por primera vez.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">15 MAY · 2026</div>
+        <div class="timeline-title">Inicio del corpus de validación experta (Fase 1, n=20)</div>
+        <div class="timeline-desc">Diseño del protocolo P1/P2/P3 (Evento mencionado · Afirmado/no negado · Ocurrió en esta hospitalización) inspirado en el Adverse Event Trigger Tool del IHI. Validación de las primeras 20 detecciones del pipeline: precisión 45 % (9 VP / 11 FP). Diagnóstico inicial: el problema dominante NO es la negación, es el matching léxico laxo.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">17–20 MAY · 2026</div>
+        <div class="timeline-title">Refinamiento iterativo + Fase 2 (n=50)</div>
+        <div class="timeline-desc">Corrección de 6 patrones léxicos defectuosos en las categorías Procedimiento y Cuidado del Paciente. Validación experta de 50 detecciones adicionales: precisión 74 % (37 VP / 13 FP), un salto de +29 puntos porcentuales frente a Fase 1. Construcción del pipeline Fase 3 (estancia prolongada), Fase 4 (matriz GEMSES integrada) y Fase 5 (cruzamientos por evento, hadm y naturaleza).</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">21 MAY · 2026</div>
+        <div class="timeline-title">Prueba de concepto — validación experta preliminar (n=70)</div>
+        <div class="timeline-desc"><strong>Precisión preliminar 65.7 % (IC 95 % Wilson: 54.0–75.8 %)</strong> sobre 70 detecciones en 60 notas, como <em>prueba de viabilidad</em> del enfoque. Mejora Fase 1 → Fase 2 estadísticamente significativa (p = 0.021), que valida el refinamiento iterativo del diccionario. Estas cifras sustentan la factibilidad; la corrida formal es parte del <strong>piloto posterior a la entrega del proyecto</strong>, sobre la muestra estratificada de 350 notas.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">24 MAY · 2026</div>
+        <div class="timeline-title">Entrega de Resúmenes (cumplido 14/05)</div>
+        <div class="timeline-desc">Resúmenes de los 12 artículos seleccionados enviados al template Overleaf oficial (rzhnzrqkxkrf#989606) y al correo de la Mg. María Tejada (maria.tejada.b@uni.edu.pe).</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">31 MAY · 2026</div>
+        <div class="timeline-title">Trabajo Parcial — Capítulos 1 y 2</div>
+        <div class="timeline-desc"><strong>Entregado.</strong> LaTeX v4 compilado (12 págs), escudo UNI en portada. 19 referencias APA. Retroalimentación profesora: Formulación 4.5/5 · OG 4.0/4 · OE 2.8/3 · Justificación 3.7/4 · Coherencia 3.0/4. Cambios v4: cifras reales EsSalud 2025 + Apéndice A con los 231 eventos clasificados por tier.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">16 JUN · 2026</div>
+        <div class="timeline-title">Sustentación Parcial (25 min) — completada</div>
+        <div class="timeline-desc"><strong>Presentada.</strong> Exposición oral de 25 min (13 diapositivas): Problema → Pipeline → 231 eventos → Prueba de concepto → Roadmap. PPTX v3 + showcase HTML público.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">16 JUN · 2026</div>
+        <div class="timeline-title">Fase 3 completada — corpus etiquetado</div>
+        <div class="timeline-desc">Sobre 331,793 notas de MIMIC-IV: búsqueda Tier A (códigos ICD-10) + Tier B (patrones de texto) + NegEx. Resultado: <strong>14,863 notas candidatas</strong>, 10 de 12 naturalezas cubiertas, y una <strong>muestra estratificada de 350 notas</strong> lista para anotación experta.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">23 JUN · 2026</div>
+        <div class="timeline-title">Capítulos III, IV y V escritos</div>
+        <div class="timeline-desc">Marco Teórico (todos los modelos: TF-IDF, LogReg, SVM, Transformer, BERT/BioBERT/ClinicalBERT/BETO, NegEx, Snorkel), Metodológico (pipeline Tiers A–D + supervisión débil, mapeo ICD-10 → Anexo 02, matriz GEMSES) y Cronograma + presupuesto. Documento Cap I–V compila a PDF sin errores. Auditoría de citas: bylines fabricados por IA detectados y corregidos contra DOI/PubMed.</div>
+      </div>
+      <div class="timeline-item completed highlight">
+        <div class="timeline-date">24 JUN · 2026</div>
+        <div class="timeline-title">Reconversión a PROYECTO + Anexo 02 oficial (231 eventos)</div>
+        <div class="timeline-desc"><strong>Aclaración clave:</strong> lo que se entrega es el <em>proyecto de investigación</em> (propuesta); la ejecución empírica se entrega después como <strong>piloto</strong>. Metodología reescrita en futuro/condicional. Anexo A con los <strong>231 eventos del Anexo 02 N.º 7-OGCyH-ESSALUD-2020</strong> en sus 12 naturalezas oficiales. Segundo evaluador definido (experto externo en seguridad del paciente). Documento a 35 páginas, entrega vía Overleaf.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">09 y 22 JUL · 2026</div>
+        <div class="timeline-title">Proyecto de investigación entregado (Cap. I–V, 48 págs) y sustentado el 14-jul</div>
+        <div class="timeline-desc">Entrega vía Overleaf; el 22-jul se respondieron las 7 observaciones metodológicas de la evaluadora. Cierre de MIA-303 (Mg. Tejada).</div>
+      </div>
+      <div class="timeline-item completed highlight">
+        <div class="timeline-date">27 JUL · 2026</div>
+        <div class="timeline-title">Fase 3 v2 — corpus completo y etiqueta no circular</div>
+        <div class="timeline-desc">Corrección del alcance del regex sobre las <strong>331 793 epicrisis</strong> (detecciones 258 671 → 93 922, −63.7 %). Tier A corregido: 109 714 ingresos con código CIE-10. Nace la <strong>etiqueta A1</strong> (causal explícito, no circular): 18 989 notas en 6 naturalezas. Fase 4 v2 con split por paciente: F1-macro 0.5256 (IC95 0.498–0.555).</div>
+      </div>
+      <div class="timeline-item completed highlight">
+        <div class="timeline-date">29 JUL · 2026</div>
+        <div class="timeline-title">Fases 7, 8 y 9 — confusor de época, equivalencias CIE-10 y MODELO FINAL</div>
+        <div class="timeline-desc">Fase 7: los negativos eran 79 % CIE-9 y los positivos 100 % CIE-10; el AUC 0.973 del detector previo cae a <strong>0.840</strong> al emparejar la época (cifra retirada). Fase 8: 43 de 223 códigos no existían en MIMIC; con equivalencias OMS→CM la unión A1 pasa de 18 989 a 35 034. Fase 9: <strong>cascada TF-IDF + LinearSVC</strong> sobre 70 000 epicrisis con prevalencia real 0.2012 → E1 sens 0.762 · esp 0.770 · AUC 0.843; E2 F1-macro 0.536.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">30 JUL · 2026</div>
+        <div class="timeline-title">Fase 10 — métricas corregidas: la cifra honesta es la cascada</div>
+        <div class="timeline-desc">IC por paciente (se ensancha ×1.13) y evaluación extremo a extremo: <strong>F1-macro 0.363</strong> en cascada frente a 0.536 de la etapa aislada. Es el número que se defiende.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">31 JUL · 2026</div>
+        <div class="timeline-title">Fase 11 (GPU) — HE2 refutada · OE5 — corpus ERSP en español</div>
+        <div class="timeline-desc">Ajuste fino de BioBERT y Bio_ClinicalBERT: F1-macro 0.21–0.35 en 2.9–4.0 h frente a 0.459 del lineal en 48 s (ventana de 256 tokens cubre el 9 % de la epicrisis). OE5: 6 336 reportes ERSP de EsSalud con etiqueta humana; T1 evento/incidente F1-macro 0.860; T2 naturaleza 0.7675 (partición estratificada, solo cota superior: por centro se re-mide).</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">28 JUL — 9 AGO · 2026</div>
+        <div class="timeline-title">Fases 6 y 12 — panel de dos anotadores y sistema contra experto</div>
+        <div class="timeline-desc">Anotación ciega en revisor.metacalidad.cloud (A: 163 casos, B: 78, comunes 78). Kappa A–B 0.64 (IC95 0.41–0.82); sistema vs consenso (n=68, infección): sens 0.946 · esp 0.538 · <strong>kappa 0.531</strong>, por debajo del umbral 0.61 de la hipótesis general. 100 anotaciones de B anuladas por auditoría de velocidad.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">01 — 02 AGO · 2026</div>
+        <div class="timeline-title">Paper del curso de PLN (MIA-10) + prototipo de punta a punta</div>
+        <div class="timeline-desc">Paper IEEEtran de 12 páginas con 4 figuras (github.com/carlosperez100/PLN_SP). Prototipo Streamlit: ingesta → detección con modelo A1 → matriz GEMSES → tablero (demo_cadena_completa.py). Auditoría adversarial de 26 hallazgos que originó el split por paciente, el enmascaramiento y la multietiqueta.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">16 — 19 AGO · 2026</div>
+        <div class="timeline-title">Fase 13 — LLM local y ModernBERT-1024: HE2 refutada por segunda vez</div>
+        <div class="timeline-desc">Llama 3.2 3B zero-shot contra el consenso experto: sensibilidad 1.0, especificidad 0.0, kappa 0.0 (dice sí a todo). BioClinical ModernBERT con ventana de 1024 tokens: F1-macro 0.428 tras <strong>42.5 h de GPU</strong>. Los transformers se cierran como resultado negativo documentado.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">18 SET · 2026</div>
+        <div class="timeline-title">MIA-14 — inventario integrado de los tres frentes</div>
+        <div class="timeline-desc">17 experimentos de la tesis, el espejo del curso de PLN y 7 modelos de GEM·VigIA en un solo inventario con métricas honestas y cifras retiradas. Lección transversal: <strong>las etiquetas son el cuello de botella, no la arquitectura</strong> (cuatro fugas medidas).</div>
+      </div>
+      <div class="timeline-item completed highlight">
+        <div class="timeline-date">20 SET · 2026</div>
+        <div class="timeline-title">Borrador de tesis Cap. I–VI + conclusiones + anexos A–G (107 páginas)</div>
+        <div class="timeline-desc">Cap. IV reescrito en pasado con lo ejecutado; Cap. V Resultados y Cap. VI Discusión nuevos; 53 referencias; cada cifra con comentario <code>% fuente:</code> verificado por script. Decisión de alcance: sin más anotación; etiqueta A1 como estándar plata principal.</div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-date">25 SET · 2026</div>
+        <div class="timeline-title">Entregable semana 2 — diseño reproducible del flujo experimental</div>
+        <div class="timeline-desc">Diagrama del pipeline supervisado en seis etapas con artefacto por etapa, criterio de evaluación, controles contra fugas y estado honesto de reproducibilidad. Repositorio del curso creado (privado). Este showcase v8.</div>
+      </div>
+      <div class="timeline-item future">
+        <div class="timeline-date">OCT · 2026</div>
+        <div class="timeline-title">Sprint 1 — reproducibilidad</div>
+        <div class="timeline-desc">requirements.txt con versiones fijadas, .env.example, run_pipeline.py (fase3_v2 → fase8 → fase7 → fase9 → fase10), data/raw y data/processed, README ejecutable. Criterio: regenerar la Fase 9 con un comando, ± 0.005.</div>
+      </div>
+      <div class="timeline-item future">
+        <div class="timeline-date">NOV — DIC · 2026</div>
+        <div class="timeline-title">Sprint 2 — resultados robustos</div>
+        <div class="timeline-desc">Re-medir el OE5 por centro asistencial, punto de operación del modelo final, priorización GEMSES sobre detecciones reales, y cerrar los marcadores «por determinar» del borrador.</div>
+      </div>
+      <div class="timeline-item future">
+        <div class="timeline-date">MAY · 2027</div>
+        <div class="timeline-title">Defensa de tesis + paper sometido</div>
+        <div class="timeline-desc">Tesis defendida en UNI; manuscrito sometido a BMC Medical Informatics, JMIR o Health Informatics Journal.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PIPELINE ===== -->
+<section id="pipeline">
+  <div class="section-tag">El pipeline (modelo final, Fase 9)</div>
+  <h2>Una cascada de dos etapas que convierte la epicrisis en una detección priorizable.</h2>
+  <p class="lead">Ya no es un plan: es el flujo que se ejecutó, con la misma partición y semilla para todas las comparaciones. Un modelo lineal sobre TF-IDF ganó a todos los transformers biomédicos probados, y la razón está medida: ninguno lee la epicrisis entera.</p>
+
+  <div class="pipeline">
+    <div class="pipeline-stage stage-1">
+      <div class="step">Entrada</div>
+      <div class="title">Epicrisis (discharge summary)</div>
+      <div class="desc">70 000 epicrisis de MIMIC-IV-Note con época emparejada; prevalencia real 0.2012. Partición por paciente (test 20 %, semilla 42).</div>
+    </div>
+    <div class="pipeline-stage stage-2">
+      <div class="step">Etapa 1 · Detección</div>
+      <div class="title">¿Hay evento adverso?</div>
+      <div class="desc">TF-IDF palabra (1–2) + carácter (3–5) → LinearSVC balanceado. Sens 0.762 · esp 0.770 · AUC 0.843 · VPP 0.455. Se abstiene ante texto trivial.</div>
+    </div>
+    <div class="pipeline-stage stage-3">
+      <div class="step">Etapa 2 · Naturaleza</div>
+      <div class="title">¿De qué tipo?</div>
+      <div class="desc">6 naturalezas del Anexo 02, multietiqueta, OneVsRest(LinearSVC) solo sobre positivos. F1-macro 0.536 aislada · 0.363 en cascada completa.</div>
+    </div>
+    <div class="pipeline-stage stage-4">
+      <div class="step">Matriz</div>
+      <div class="title">Cálculo GEMSES</div>
+      <div class="desc">G = c·0.40 + d·0.20 + e·0.15 + f·0.25 (Anexo 03 de la Directiva) → H = B·G → I = H ÷ Σh → J = I × 100 → percentiles.</div>
+    </div>
+    <div class="pipeline-stage stage-5">
+      <div class="step">Salida</div>
+      <div class="title">Banda y responsable</div>
+      <div class="desc">Verde / Amarillo / Rojo → Servicio / Departamento / Dirección. Tablero prototipo en Streamlit (motor_v2.py).</div>
+    </div>
+  </div>
+
+  <div class="formula-box">
+    <div class="label">FÓRMULA DEL IMPACTO · MODELO GEMSES</div>
+    <div class="formula"><strong>G</strong> = <em>c</em> · 0.40 + <em>d</em> · 0.20 + <em>e</em> · 0.15 + <em>f</em> · 0.25</div>
+    <div class="formula-caption">c = Tiempo · d = Calidad · e = Costos · f = Satisfacción · Σ pesos = 1.00<br>Pérez Pérez (2021) · Anexo 03 de la Directiva N.º 7-OGCyH-ESSALUD-2020 (RGG 402-GG-ESSALUD-2020)</div>
+  </div>
+
+  <h3 style="margin-top:3rem;color:var(--navy);">Diagrama del flujo experimental reproducible (entregable semana 2, MIA-14)</h3>
+  <p style="color:var(--gray);max-width:900px;margin:0.5rem 0 1rem;">Seis etapas con la salida reproducible de cada una, el baseline, las alternativas refutadas, los controles contra fugas medidos en los tres frentes y el estado honesto de reproducibilidad.</p>
+  <a href="fig_pipeline_semana2.png" target="_blank"><img src="fig_pipeline_semana2.png" alt="Flujo experimental reproducible en seis etapas" style="width:100%;max-width:1400px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.08);"></a>
+</section>
+
+<!-- ===== 231 EVENTOS ===== -->
+<section id="eventos231">
+  <div class="section-tag">Alcance de detección</div>
+  <h2>Los 231 eventos del Anexo 02 GEMSES — detectabilidad en MIMIC-IV.</h2>
+  <p class="lead">La Directiva N.º 7-OGCyH-ESSALUD-2020 tipifica 231 eventos adversos en 12 naturalezas OMS. Este estudio clasifica su detectabilidad en MIMIC-IV en 4 tiers.</p>
+
+  <div class="tier-grid">
+    <div class="tier-card tier-a">
+      <div class="tier-label">Tier A</div>
+      <div class="tier-number">94</div>
+      <div class="tier-method">ICD-10 + NLP</div>
+      <div class="tier-nature">Infección · Medicación · Procedimiento</div>
+    </div>
+    <div class="tier-card tier-b">
+      <div class="tier-label">Tier B</div>
+      <div class="tier-number">75</div>
+      <div class="tier-method">Patrones texto libre</div>
+      <div class="tier-nature">Comportamiento · Sangre · Nutrición</div>
+    </div>
+    <div class="tier-card tier-cd">
+      <div class="tier-label">Tier C/D</div>
+      <div class="tier-number">62</div>
+      <div class="tier-method">Variables estructuradas + Auditoría HCE</div>
+      <div class="tier-nature">Historia Clínica · Gestión</div>
+    </div>
+    <div class="tier-card tier-e">
+      <div class="tier-label">Tier E</div>
+      <div class="tier-number">43</div>
+      <div class="tier-method">No detectable en MIMIC-IV</div>
+      <div class="tier-nature">Requieren revisión presencial</div>
+    </div>
+  </div>
+
+  <div class="tier-summary-bar">
+    Detectables: <span>188 de 231 (81.4 %)</span> — mediante combinación de estrategias Tier A + B + C/D · Tier A operativo (jul-2026): <span>223 códigos CIE-10 + 21 equivalencias OMS→CM</span>
+  </div>
+
+  <table class="naturalezas-table">
+    <thead>
+      <tr>
+        <th>Naturaleza</th>
+        <th>Total</th>
+        <th>Tier A</th>
+        <th>Tier B</th>
+        <th>Tier C/D</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Comportamiento</td>
+        <td class="n-total">14</td>
+        <td class="n-a">4</td>
+        <td class="n-b">7</td>
+        <td class="n-cd">3</td>
+      </tr>
+      <tr>
+        <td>Cuidado del Paciente</td>
+        <td class="n-total">19</td>
+        <td class="n-a">9</td>
+        <td class="n-b">6</td>
+        <td class="n-cd">4</td>
+      </tr>
+      <tr>
+        <td>Diagnóstico</td>
+        <td class="n-total">2</td>
+        <td class="n-a">2</td>
+        <td class="n-b">0</td>
+        <td class="n-cd">0</td>
+      </tr>
+      <tr>
+        <td>Dispositivo Médico</td>
+        <td class="n-total">9</td>
+        <td class="n-a">2</td>
+        <td class="n-b">5</td>
+        <td class="n-cd">2</td>
+      </tr>
+      <tr>
+        <td>Historia Clínica</td>
+        <td class="n-total">23</td>
+        <td class="n-a">0</td>
+        <td class="n-b">0</td>
+        <td class="n-cd">23</td>
+      </tr>
+      <tr>
+        <td>Infección</td>
+        <td class="n-total">49</td>
+        <td class="n-a">38</td>
+        <td class="n-b">8</td>
+        <td class="n-cd">3</td>
+      </tr>
+      <tr>
+        <td>Medicación</td>
+        <td class="n-total">33</td>
+        <td class="n-a">18</td>
+        <td class="n-b">11</td>
+        <td class="n-cd">4</td>
+      </tr>
+      <tr>
+        <td>Procedimiento</td>
+        <td class="n-total">34</td>
+        <td class="n-a">15</td>
+        <td class="n-b">14</td>
+        <td class="n-cd">5</td>
+      </tr>
+      <tr>
+        <td>Sangre/Hemoderivados</td>
+        <td class="n-total">19</td>
+        <td class="n-a">6</td>
+        <td class="n-b">9</td>
+        <td class="n-cd">4</td>
+      </tr>
+      <tr>
+        <td>Gestión Organización</td>
+        <td class="n-total">21</td>
+        <td class="n-a">0</td>
+        <td class="n-b">10</td>
+        <td class="n-cd">11</td>
+      </tr>
+      <tr>
+        <td>Nutrición</td>
+        <td class="n-total">6</td>
+        <td class="n-a">0</td>
+        <td class="n-b">5</td>
+        <td class="n-cd">1</td>
+      </tr>
+      <tr>
+        <td>Insumos</td>
+        <td class="n-total">2</td>
+        <td class="n-a">0</td>
+        <td class="n-b">0</td>
+        <td class="n-cd">2</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td class="n-total"><strong>231</strong></td>
+        <td class="n-a"><strong>94</strong></td>
+        <td class="n-b"><strong>75</strong></td>
+        <td class="n-cd"><strong>62</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size: 0.95rem; color: var(--gray); max-width: 900px; margin-top: 1.5rem; line-height: 1.7; padding: 1.5rem 2rem; background: var(--white); border-radius: 12px; border-left: 4px solid var(--teal); box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+    <strong>Actualización a septiembre de 2026.</strong> La clasificación en tiers del Anexo 02 se mantiene; lo que cambió es cómo se usa. El Tier A pasó de 149 a <strong>223 códigos CIE-10 causales</strong> y, en la Fase 8, se descubrió que <strong>43 de ellos no existían en MIMIC-IV</strong> (codificación CIE-10-CM, no OMS): con 21 equivalencias OMS→CM, Medicación pasó de 209 a 14 295 ingresos y la unión A1 de 18 989 a 35 034 notas. Las clases con n insuficiente (Sistema/Organización, Sangre/Hemoderivados, Nutrición) quedan declaradas <strong>no viables</strong> en el modelo final. La validación Tier C por microbiología (Fase 5) se cerró como resultado negativo: 17.6 % de cobertura, VPP 0.62 solo como cota superior.
+  </p>
+</section>
+
+<!-- ===== LO CONSTRUIDO ===== -->
+<section id="construido" class="dark">
+  <div class="container">
+    <div class="section-tag">Lo construido</div>
+    <h2>El esfuerzo ya invertido en números concretos.</h2>
+    <p class="lead">No son promesas: cada cifra está en un archivo de resultados del repositorio de la tesis (privado desde el 28-jul-2026 por protección de datos personales del corpus ERSP).</p>
+
+    <div class="stats-grid">
+      <div class="stat-card mint"><div class="number">55</div><div class="label">commits en el repositorio de la tesis (10-may a 19-ago-2026), 46 scripts de pipeline, uno por fase</div></div>
+      <div class="stat-card mint"><div class="number">17</div><div class="label">experimentos inventariados con métrica honesta y ruta a su JSON (T1–T17), más 7 modelos de GEM·VigIA</div></div>
+      <div class="stat-card mint"><div class="number">331 793</div><div class="label">epicrisis de MIMIC-IV-Note procesadas al 100 % en la Fase 3 v2 (145 914 pacientes)</div></div>
+      <div class="stat-card mint"><div class="number">70 000</div><div class="label">epicrisis del corpus de modelado del modelo final, con época emparejada y prevalencia real 0.2012</div></div>
+      <div class="stat-card mint"><div class="number">223 + 21</div><div class="label">códigos CIE-10 causales curados + equivalencias OMS→CM que recuperan 43 códigos inexistentes en MIMIC</div></div>
+      <div class="stat-card mint"><div class="number">241</div><div class="label">epicrisis anotadas a ciegas por dos revisores (163 + 78, 78 comunes) en revisor.metacalidad.cloud</div></div>
+      <div class="stat-card mint"><div class="number">6 336</div><div class="label">reportes ERSP de EsSalud en español con etiqueta humana: el único corpus con etiqueta de oro (OE5)</div></div>
+      <div class="stat-card mint"><div class="number">≈ 49 h</div><div class="label">de GPU invertidas en transformers biomédicos (2.9 + 4.0 + 42.5 h) para refutar HE2 con evidencia</div></div>
+      <div class="stat-card mint"><div class="number">107</div><div class="label">páginas del borrador de tesis Cap. I–VI + conclusiones + anexos A–G, 53 referencias verificadas (20-set-2026)</div></div>
+      <div class="stat-card mint"><div class="number">12 + 1</div><div class="label">papers del marco teórico con autorías auditadas contra DOI/PubMed + paper propio IEEEtran del curso de PLN</div></div>
+      <div class="stat-card mint"><div class="number">3</div><div class="label">frentes integrados en una sola tesis: Tesis I (MIA-303), curso de PLN (MIA-10) y GEM·VigIA (producción)</div></div>
+      <div class="stat-card mint"><div class="number">4</div><div class="label">fugas de información detectadas y medidas: circularidad, época CIE-9/10, estilo de redacción, mezcla de centros</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GEMSES × MIMIC ===== -->
+<section>
+  <div class="section-tag">El puente metodológico</div>
+  <h2>Operacionalización de la Matriz GEMSES sobre MIMIC-IV.</h2>
+  <p class="lead">Aporte original que <strong>no aparece en ninguno</strong> de los 12 papers revisados: el mapeo de las cuatro dimensiones del modelo a variables observables en el dataset abierto. Constituye un resultado publicable en sí mismo.</p>
+
+  <table class="gemses-table">
+    <thead>
+      <tr>
+        <th>Dimensión GEMSES</th>
+        <th>Peso</th>
+        <th>Variable proxy en MIMIC-IV</th>
+        <th>Justificación</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="dim">Tiempo (c)</span></td>
+        <td class="peso">0.40</td>
+        <td>Length of Stay prolongado vs mediana DRG</td>
+        <td>Outcome más estudiado en MIMIC-IV [5][6][7]; correlaciona con costos y complicaciones</td>
+      </tr>
+      <tr>
+        <td><span class="dim">Calidad (d)</span></td>
+        <td class="peso">0.20</td>
+        <td>Códigos ICD-9/10 de complicaciones intrahospitalarias + NER de eventos en notas</td>
+        <td>ICD codes son labels estándar; NER validado por [1][2][3]</td>
+      </tr>
+      <tr>
+        <td><span class="dim">Costos (e)</span></td>
+        <td class="peso">0.15</td>
+        <td>DRG weight asignado + número de procedimientos invasivos adicionales</td>
+        <td>Proxy estándar de costos en MIMIC; documentado en [7]</td>
+      </tr>
+      <tr>
+        <td><span class="dim">Satisfacción (f)</span></td>
+        <td class="peso">0.25</td>
+        <td>Readmisión no planificada 30 días + alta contra recomendación médica</td>
+        <td>Proxy aceptado [6]; AMA discharge correlaciona con experiencia adversa</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== IMPACTO ===== -->
+<section id="impacto" class="dark">
+  <div class="container">
+    <div class="section-tag">Impacto institucional esperado</div>
+    <h2>Quiénes ganan cuando este pipeline funciona.</h2>
+    <p class="lead">No es un trabajo aislado de laboratorio. Es una metodología transferible al sistema sanitario peruano y latinoamericano, alineada con normativa institucional vigente.</p>
+
+    <div class="impact-grid">
+      <div class="impact-card essalud">
+        <div class="icon">🏥</div>
+        <h3>EsSalud — Oficina de Gestión de la Calidad</h3>
+        <p>Alivia el cuello de botella manual en la codificación y priorización de Eventos Relacionados con la Seguridad del Paciente (ERSP) regulados por la Directiva N.º 7-OGCyH-ESSALUD-2020. Una sola IPRESS puede procesar miles de eventos al año — automatización significa intervenciones oportunas.</p>
+      </div>
+      <div class="impact-card minsa">
+        <div class="icon">🩺</div>
+        <h3>MINSA · DIRESA · IPRESS regionales</h3>
+        <p>Metodología transferible a cualquier IPRESS pública peruana que recolecte notas clínicas. La transferencia al castellano ya se ejecutó (OE5) sobre 6 336 reportes ERSP de EsSalud con TF-IDF + LinearSVC, sin licenciamiento; su cifra por centro asistencial está en re-medición.</p>
+      </div>
+      <div class="impact-card global">
+        <div class="icon">🌎</div>
+        <h3>Comunidad LATAM en informática biomédica</h3>
+        <p>Demuestra que un modelo de excelencia sanitaria publicado en Latinoamérica (GEMSES, Pérez Pérez 2021) puede operacionalizarse mediante IA moderna. Posiciona la región como productora de marcos, no solo consumidora.</p>
+      </div>
+      <div class="impact-card academic">
+        <div class="icon">📚</div>
+        <h3>Pacientes — el beneficiario final</h3>
+        <p>Reducción de daños evitables. Detección temprana de caídas, errores de medicación, infecciones nosocomiales, complicaciones quirúrgicas — los eventos que la directiva manda a registrar pero que hoy llegan tarde al nivel de gestión correcto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EL ESFUERZO ===== -->
+<section id="esfuerzo">
+  <div class="section-tag">El esfuerzo</div>
+  <h2>Lo que cuesta construir esto bien.</h2>
+  <p class="lead">Un proyecto académico-investigativo serio no es escribir un Word con bibliografía. Es ensamblar evidencia, infraestructura, gobernanza ética y narrativa científica simultáneamente.</p>
+</section>
+
+<section class="dark" style="padding-top:0;">
+  <div class="container">
+    <div class="effort-grid">
+      <div class="effort-item"><div class="value">5 meses</div><div class="label">de ejecución documentada</div><div class="sublabel">desde 27 abr hasta 25 set 2026</div></div>
+      <div class="effort-item"><div class="value">55 commits</div><div class="label">con bitácora fechada por sesión</div><div class="sublabel">9 auditorías y bitácoras en 07_bitacoras/</div></div>
+      <div class="effort-item"><div class="value">2 datasets</div><div class="label">de acceso credentialed</div><div class="sublabel">MIMIC-IV v3.1 + MIMIC-IV-Note v2.2 (PhysioNet)</div></div>
+      <div class="effort-item"><div class="value">2 cursos CITI</div><div class="label">de ética en investigación</div><div class="sublabel">UNI + EsSalud, vigente hasta 2029</div></div>
+      <div class="effort-item"><div class="value">17 experimentos</div><div class="label">con la misma partición y semilla</div><div class="sublabel">de reglas regex a ModernBERT y LLM local</div></div>
+      <div class="effort-item"><div class="value">≈ 49 h GPU</div><div class="label">para un resultado negativo honesto</div><div class="sublabel">los transformers no superan al modelo lineal</div></div>
+      <div class="effort-item"><div class="value">241 casos</div><div class="label">anotados a ciegas por dos revisores</div><div class="sublabel">app propia con autoguardado y cronómetro</div></div>
+      <div class="effort-item"><div class="value">3 frentes</div><div class="label">integrados en una sola tesis</div><div class="sublabel">Tesis I · curso de PLN · GEM·VigIA</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RESULTADOS DEL MODELO FINAL ===== -->
+<section id="falsos-positivos">
+  <div class="section-tag">Resultados · modelo final (Fases 9–13) y validación externa</div>
+  <h2>Cascada completa: F1-macro 0.363 — y por qué esa es la cifra que se defiende.</h2>
+  <p class="lead">La prueba de concepto de mayo (reglas + NegEx, precisión 65.7 % sobre 70 detecciones) fue superada por un modelo entrenado sobre 70 000 epicrisis con partición por paciente. Tres hallazgos cambiaron el rumbo: la etiqueta débil era circular, los negativos tenían otra época de codificación, y ningún transformer probado lee la epicrisis entera. Cada cifra viene de un JSON de resultados; las que el propio proceso invalidó (AUC 0.973, 88.2 %, 98.4 %) no se citan.</p>
+
+  <div class="impact-grid">
+    <div class="impact-card essalud">
+      <div class="icon">🎯</div>
+      <h3>Etapa 1 · detección (n = 70 000, prevalencia 0.2012)</h3>
+      <p>Sensibilidad <strong>0.762</strong> (IC95 0.752–0.772) · especificidad <strong>0.770</strong> (0.759–0.780) · AUC <strong>0.843</strong> · VPP a prevalencia real 0.455. Abstención 6/6 ante textos triviales. El detector previo (AUC 0.973) se retiró al descubrir que separaba épocas de codificación CIE-9/CIE-10, no eventos.</p>
+    </div>
+    <div class="impact-card minsa">
+      <div class="icon">🧩</div>
+      <h3>Etapa 2 · naturaleza y cascada completa</h3>
+      <p>Seis naturalezas, multietiqueta: F1-macro <strong>0.536</strong> · F1-micro 0.745 aislada. Evaluada extremo a extremo tras la etapa 1: <strong>F1-macro 0.363</strong>, F1-micro 0.493. El IC por paciente es 1.13 veces más ancho que el IC por nota. Infección y Procedimiento son las clases fuertes; Sistema/Organización (n = 66) rinde 0.0 y se declara no viable.</p>
+    </div>
+    <div class="impact-card global">
+      <div class="icon">👩‍⚕️</div>
+      <h3>Validación externa · panel de expertos</h3>
+      <p>Dos anotadores a ciegas (78 casos comunes): kappa <strong>0.64</strong> (IC95 0.41–0.82). Sistema contra consenso experto (n = 68, infección): sensibilidad <strong>0.946</strong> · especificidad 0.538 · VPP 0.897 · kappa <strong>0.531</strong>. El umbral de la hipótesis general (≥ 0.61) <strong>no se alcanza</strong>; el subregistro de códigos en los controles fue 0.25 (4/16). Decisión de alcance (20-set): la etiqueta A1 es el estándar plata principal y el panel, validación secundaria.</p>
+    </div>
+    <div class="impact-card academic">
+      <div class="icon">🔬</div>
+      <h3>HE2 refutada tres veces · LLM como control</h3>
+      <p>Misma partición y semilla: TF-IDF + LinearSVC F1-macro <strong>0.459 en 48 s</strong>; Bio_ClinicalBERT ponderado 0.354 (4.0 h); Bio_ClinicalBERT 0.249; BioBERT 0.210 (2.9 h c/u); BioClinical ModernBERT-1024 0.428 (42.5 h). Llama 3.2 3B zero-shot: kappa 0.0 (dice sí a todo). La epicrisis mediana tiene 3 148 tokens; la ventana de 256 cubre el 9 %. Resultado negativo publicable, no un fracaso.</p>
+    </div>
+    <div class="impact-card essalud">
+      <div class="icon">🇵🇪</div>
+      <h3>OE5 · transferencia al español (ERSP EsSalud)</h3>
+      <p>6 336 reportes únicos con codificación humana. T1 evento vs incidente F1-macro <strong>0.860</strong>; T2 naturaleza 0.7675; T3 severidad 0.606 (GRAVE 0.148, n = 23). Alerta cruzada con GEM·VigIA: el mismo corpus con partición <strong>por centro asistencial</strong> dio 0.42 en naturaleza; la cifra estratificada se reporta solo como cota superior hasta re-medirla.</p>
+    </div>
+    <div class="impact-card minsa">
+      <div class="icon">🧠</div>
+      <h3>Lección transversal de los tres frentes</h3>
+      <p><strong>Las etiquetas son el cuello de botella, no la arquitectura.</strong> Cuatro fugas medidas: circularidad regex→etiqueta (enmascarar baja 1.35 pts), época CIE-9/10 (AUC 0.973 → 0.840), estilo de redacción (triaje 98.4 % → descartado) y mezcla de centros (0.77 → 0.42). En cada una, un modelo más potente habría sido más engañoso. Y cuando la regla es auditable y rinde parecido, gana la regla (detector de muerte: regex F1 0.622 vs ML 0.578).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RECUENTO TECNICO-OPERATIVO ===== -->
+<section id="recuento" class="dark">
+  <div class="container">
+    <div class="section-tag">Recuento técnico-operativo</div>
+    <h2>Todo lo que se ejecutó técnicamente, no solo lo que se escribió.</h2>
+    <p class="lead">Una tesis seria se mide tanto por los entregables académicos como por la infraestructura que los soporta. Este es el inventario completo del trabajo invisible pero indispensable.</p>
+
+    <div class="recuento-grid">
+
+      <!-- ===== Categoría 1: Acceso y descarga de datos ===== -->
+      <div class="recuento-card cat-1">
+        <div class="recuento-card-header">
+          <div class="recuento-card-icon">①</div>
+          <div class="recuento-card-title">Acceso y descarga de datos clínicos credentialed</div>
+        </div>
+        <ul class="recuento-list">
+          <li>Registro en PhysioNet bajo nombre real y afiliación UNI <span class="meta">usuario: carlosperez</span></li>
+          <li>Completar curso CITI Program "Data or Specimens Only Research" <span class="meta">CITI ID 1912</span></li>
+          <li>Completar segundo curso CITI "Ética en Investigación" bajo afiliación EsSalud <span class="meta">CITI ID 3641 · Record 54788726</span></li>
+          <li>Firma del Data Use Agreement de MIMIC-IV v3.1 <span class="meta">PhysioNet DUA v1.5.0</span></li>
+          <li>Firma del Data Use Agreement adicional de MIMIC-IV-Note v2.2 <span class="meta">DUA específico</span></li>
+          <li><strong>Descarga del ZIP de MIMIC-IV-Note v2.2</strong> vía Chrome <span class="meta">1.8 GB</span></li>
+          <li>Extracción del ZIP en estructura local organizada <span class="meta">C:\MIMIC\note\note\</span></li>
+          <li>Verificación de integridad de los 4 archivos .csv.gz <span class="meta">SHA256 OK</span></li>
+        </ul>
+      </div>
+
+      <!-- ===== Categoría 2: Infraestructura técnica ===== -->
+      <div class="recuento-card cat-2">
+        <div class="recuento-card-header">
+          <div class="recuento-card-icon">②</div>
+          <div class="recuento-card-title">Stack técnico instalado y verificado</div>
+        </div>
+        <ul class="recuento-list">
+          <li>Python 3.13.5 instalado desde python.org y verificado <span class="meta">env nativo Windows</span></li>
+          <li>pip configurado y funcional vía <strong>python -m pip</strong> <span class="meta">v25.1.1</span></li>
+          <li>DuckDB 1.5.2 instalado y verificado con query de prueba <span class="meta">SELECT 42 → 42</span></li>
+          <li>Librerías auxiliares: pandas, pyarrow, tqdm, matplotlib</li>
+          <li>JupyterLab 4.5.7 instalado y arrancando en localhost:8891</li>
+          <li>Mini-notebook de prueba ejecutado con DuckDB + pandas <span class="meta">3 categorías de eventos detectadas</span></li>
+          <li>Git 2.53.0 configurado con identidad personal (nombre + correo)</li>
+          <li>Estructura local de carpetas creada <span class="meta">C:\MIMIC\{note, mimiciv, tesis}</span></li>
+        </ul>
+      </div>
+
+      <!-- ===== Categoría 3: Repositorio Git y publicación ===== -->
+      <div class="recuento-card cat-3">
+        <div class="recuento-card-header">
+          <div class="recuento-card-icon">③</div>
+          <div class="recuento-card-title">Repositorio Git y publicación pública</div>
+        </div>
+        <ul class="recuento-list">
+          <li>Repositorio Git inicializado en C:\MIMIC\tesis\</li>
+          <li>.gitignore con <strong>protección DUA</strong> bloqueando *.csv.gz, *.db, sample_*.csv</li>
+          <li>README.md inicial con marco ético, datasets y stack tecnológico</li>
+          <li>Branch renombrado de <strong>master a main</strong> para alineación con convenciones modernas</li>
+          <li>Repositorio creado en GitHub: <strong>carlosperez100/tesis-gemses-mimic-pipeline</strong></li>
+          <li>Conexión local ↔ remoto vía HTTPS con Git Credential Manager</li>
+          <li>Repositorio cambiado a público para permitir GitHub Pages</li>
+          <li>GitHub Pages activado <span class="meta">deploy desde main /(root)</span></li>
+          <li>Sitio web público sirviendo el showcase HTML</li>
+          <li>4 commits hasta la fecha con mensajes descriptivos en español</li>
+        </ul>
+      </div>
+
+      <!-- ===== Categoría 4: Artefactos académicos generados ===== -->
+      <div class="recuento-card cat-4">
+        <div class="recuento-card-header">
+          <div class="recuento-card-icon">④</div>
+          <div class="recuento-card-title">Artefactos académicos generados</div>
+        </div>
+        <ul class="recuento-list">
+          <li>Plan de tesis Capítulo I completo (planteamiento, hipótesis, objetivos)</li>
+          <li>Revisión bibliográfica de 12 papers con formato oficial Tejada <span class="meta">72 subsecciones</span></li>
+          <li>Versión LaTeX compilable del resumen de 12 papers <span class="meta">36 páginas PDF</span></li>
+          <li>Workflow crítico estilo Sant'Anna (lit-review + devil's advocate + preregistro)</li>
+          <li>Presentación PowerPoint para sustentación <span class="meta">12 slides con QA visual 2 rondas</span></li>
+          <li>Showcase HTML profesional con secciones interactivas</li>
+          <li>Notebook Jupyter de exploración con DuckDB sobre MIMIC-IV-Note</li>
+          <li><strong>Mapeo curado ICD-10 ↔ Anexo 02 EsSalud</strong> con 149 códigos en 42 eventos <span class="meta">CSV + módulo Python</span></li>
+          <li>Bitácora cronológica del proyecto <span class="meta">HISTORIAL_PASOS_TESIS.md</span></li>
+          <li>Guía del stack tecnológico para reproducibilidad</li>
+          <li>Pipeline.py único de replicación con 5 etapas <span class="meta">445 líneas</span></li>
+          <li>Documentación metodológica del mapeo ICD-10 <span class="meta">DOCUMENTACION_MAPEO_ICD10.md</span></li>
+        </ul>
+      </div>
+
+      <!-- ===== Categoría 5: Validación y control de calidad ===== -->
+      <div class="recuento-card cat-1">
+        <div class="recuento-card-header">
+          <div class="recuento-card-icon">⑤</div>
+          <div class="recuento-card-title">Validación y control de calidad</div>
+        </div>
+        <ul class="recuento-list">
+          <li>Verificación de la primera celda del notebook: imports y versiones OK</li>
+          <li>Configuración de rutas verificada: Note existe en C:\MIMIC\note\note\</li>
+          <li>Conexión DuckDB exitosa: vistas discharge + discharge_detail registradas</li>
+          <li><strong>331 793 epicrisis confirmadas</strong> mediante SELECT COUNT(*) <span class="meta">consistente con Johnson et al. 2023</span></li>
+          <li>Distribución por tipo de nota verificada: 100 % DS (Discharge Summary)</li>
+          <li>Muestra reproducible de 10 epicrisis ejecutada con USING SAMPLE</li>
+          <li>Compilación del LaTeX exitosa con pdflatex (34 páginas, sin errores)</li>
+          <li>Compilación del LaTeX FINAL exitosa con pdflatex (36 páginas, sin errores)</li>
+          <li>Demo del módulo Python de mapeo ejecutada exitosamente</li>
+          <li><strong>Análisis activo de falsos positivos</strong> en curso para calibración precision/recall</li>
+        </ul>
+      </div>
+
+      <!-- ===== Categoría 6: Documentación y memoria del proyecto ===== -->
+      <div class="recuento-card cat-2">
+        <div class="recuento-card-header">
+          <div class="recuento-card-icon">⑥</div>
+          <div class="recuento-card-title">Documentación y memoria persistente</div>
+        </div>
+        <ul class="recuento-list">
+          <li>Memoria externa <strong>PROYECTO_TESIS_ESTADO.md</strong> para retomar en sesiones futuras</li>
+          <li>Skill template <strong>SKILL_tesis-gemses-mimic.md</strong> para reactivación rápida del contexto</li>
+          <li>README enriquecido del repositorio con tabla de referencias</li>
+          <li>Declaración formal de conflicto de interés (autor GEMSES + asesor EsSalud + alumno UNI)</li>
+          <li>Documentación de las 11 ecuaciones del pipeline (F1, kappa, AUC, GEMSES G/H/I/J, RPN)</li>
+          <li>Strings de búsqueda bibliográfica documentados para 8 bases (Scopus, IEEE, PubMed, etc.)</li>
+          <li>Guía paso-a-paso de credentialing PhysioNet</li>
+          <li>Plantilla de research statement para futuras solicitudes de datasets</li>
+        </ul>
+      </div>
+
+
+      <!-- ===== Categoría 7: Sesión técnica 14 mayo 2026 ===== -->
+      <div class="recuento-card cat-3">
+        <div class="recuento-card-header">
+          <div class="recuento-card-icon">⑦</div>
+          <div class="recuento-card-title">Sesión técnica del 14 de mayo — primer cálculo GEMSES sobre datos reales</div>
+        </div>
+        <ul class="recuento-list">
+          <li><strong>Descompresión y verificación SHA-256</strong> de los 33 archivos MIMIC-IV <span class="meta">33/33 íntegros</span></li>
+          <li>Renombrado de carpeta para alineación con rutas <span class="meta">C:\MIMIC\mimiciv\</span></li>
+          <li>Ejecución end-to-end de tesis_exploracion_inicial.ipynb sin errores <span class="meta">11 vistas conectadas</span></li>
+          <li>Identificación de PDF corrupto de la directiva <span class="meta">8 MB de bytes vacíos</span></li>
+          <li>Recuperación del Anexo 2 desde fuente Excel oficial</li>
+          <li><strong>Regeneración del CSV oficial</strong> con codificación UTF-8 corregida <span class="meta">231 eventos</span></li>
+          <li>Normalización de naturaleza "Infección" de 5 variantes a 1</li>
+          <li>Adición de columnas de trazabilidad <span class="meta">impacto, impacto_formula, verificacion</span></li>
+          <li>Identificación de 33 eventos con discrepancia <span class="meta">pendiente</span></li>
+          <li>Carga de tabla anexo2_eventos_adversos en gemses.db</li>
+          <li>Archivado de versión no oficial CIR-01 en processed/_descartado/</li>
+          <li>Backup del CSV anterior <span class="meta">.bak_20260514_093339</span></li>
+          <li>Construcción del diccionario bilingüe mapeo_anexo2_ingles.json <span class="meta">51 → 186</span></li>
+          <li>Construcción del notebook fase2_deteccion_anexo2.ipynb</li>
+          <li>Primera corrida del pipeline sobre 2 000 epicrisis <span class="meta">1 358 con evento, 67.9 %</span></li>
+          <li><strong>Matriz GEMSES ejecutándose sobre datos reales por primera vez</strong></li>
+          <li>Generación de corpus pre-etiquetado <span class="meta">2 500 filas</span></li>
+          <li>Generación de matriz GEMSES de la muestra <span class="meta">35 eventos</span></li>
+          <li>Selección estratificada de 20 detecciones para validación experta</li>
+          <li>Traducción al castellano de los 20 fragmentos clínicos</li>
+          <li>Generación de fase2_validacion_experta_20notas.csv + GUIA.txt</li>
+        </ul>
+      </div>
+
+
+      <!-- ===== Categoría 8: Fases 3v2–10 ===== -->
+      <div class="recuento-card cat-4">
+        <div class="recuento-card-header">
+          <div class="recuento-card-icon">⑧</div>
+          <div class="recuento-card-title">Fases 3 v2 a 10 (27–30 jul 2026) — del corpus corregido al modelo final</div>
+        </div>
+        <ul class="recuento-list">
+          <li>Corpus completo: 331 793 epicrisis (100 %); ablación del regex <span class="meta">−63.7 % detecciones</span></li>
+          <li>Tier A corregido por el punto de los códigos CIE <span class="meta">411 → 109 714 ingresos</span></li>
+          <li>Etiqueta A1 no circular <span class="meta">18 989 notas · 6 naturalezas</span></li>
+          <li>Fase 4 v2–v5: split por paciente, umbral calibrado (fallido, conservado), punto de operación</li>
+          <li>Fase 5: validación Tier C por microbiología <span class="meta">resultado negativo, cerrado</span></li>
+          <li>Fase 7: confusor de época CIE-9/CIE-10 <span class="meta">AUC 0.973 → 0.840</span></li>
+          <li>Fase 8: equivalencias OMS → CIE-10-CM <span class="meta">43 códigos recuperados</span></li>
+          <li><strong>Fase 9: modelo final en cascada</strong> <span class="meta">modelo_final.pkl · resultados_finales.json</span></li>
+          <li>Fase 10: IC por paciente y cascada extremo a extremo <span class="meta">metricas_corregidas.json</span></li>
+        </ul>
+      </div>
+
+      <!-- ===== Categoría 9: Fases 6, 11–13 y OE5 ===== -->
+      <div class="recuento-card cat-1">
+        <div class="recuento-card-header">
+          <div class="recuento-card-icon">⑨</div>
+          <div class="recuento-card-title">Fases 6, 11, 12, 13 y OE5 (jul–ago 2026) — validación, transformers, LLM y español</div>
+        </div>
+        <ul class="recuento-list">
+          <li>App de anotación ciega desplegada <span class="meta">revisor.metacalidad.cloud · Docker · Basic Auth</span></li>
+          <li>Codebook v2 reconciliado con la Directiva; instrucciones al anotador 2</li>
+          <li>Panel de dos anotadores: kappa A–B 0.64; auditoría de velocidad anuló 100 anotaciones</li>
+          <li>Fase 12: sistema vs consenso experto <span class="meta">kappa 0.531 · n=68</span></li>
+          <li>Fase 11: fine-tuning BioBERT y Bio_ClinicalBERT en GPU <span class="meta">HE2 refutada</span></li>
+          <li>Fase 13: Llama 3.2 3B zero-shot (kappa 0.0) y BioClinical ModernBERT-1024 <span class="meta">42.5 h GPU</span></li>
+          <li>OE5: corpus ERSP EsSalud 6 336 reportes, tres tareas <span class="meta">informe_oe5.json</span></li>
+          <li>Registro de modelos GEM_MODELOS con 13 fichas y cifras retiradas explícitas</li>
+          <li>Paper IEEEtran del curso de PLN (12 págs) y prototipo Streamlit de punta a punta</li>
+        </ul>
+      </div>
+
+      <!-- ===== Categoría 10: Curso MIA-14 ===== -->
+      <div class="recuento-card cat-2">
+        <div class="recuento-card-header">
+          <div class="recuento-card-icon">⑩</div>
+          <div class="recuento-card-title">Trabajo de Investigación II — MIA-14 (set 2026 →)</div>
+        </div>
+        <ul class="recuento-list">
+          <li>Inventario integrado de tres frentes con capas de evidencia <span class="meta">01_INVENTARIO_MODELOS_Y_CHECKLIST</span></li>
+          <li>Estado de avance completo y pendientes por responsable <span class="meta">02_ESTADO_DE_AVANCE_COMPLETO</span></li>
+          <li>Borrador de tesis Cap. I–VI + conclusiones + anexos A–G <span class="meta">107 págs · 20-set</span></li>
+          <li>Nombre de la norma unificado tras abrir el PDF <span class="meta">Directiva N.º 7-OGCyH-ESSALUD-2020</span></li>
+          <li>Entregable semana 2: diseño reproducible del pipeline <span class="meta">25-set · MD + DOCX + PDF + diagrama</span></li>
+          <li>Repositorio del curso creado (privado) con estructura data/raw, data/processed, notebooks, .env.example</li>
+          <li>Repositorio de la tesis en privado desde el 28-jul-2026 por protección de datos personales del corpus ERSP</li>
+          <li><strong>Sprint 1 (pendiente):</strong> requirements.txt fijado, run_pipeline.py, README ejecutable</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== HALLAZGO METODOLÓGICO ===== -->
+<section id="hallazgo-pesos">
+  <div class="section-tag">Hallazgo metodológico relevante</div>
+  <h2>Los pesos de la Matriz de Priorización: lo que dice el PDF oficial frente al Excel de trabajo.</h2>
+  <p class="lead">En mayo se detectó una discrepancia entre el Excel de trabajo de la Directiva (Satisfacción 0.20, suma 0.95) y el libro GEMSES (0.25, suma 1.00). En septiembre se abrió el PDF oficial de la norma (RGG 402-GG-ESSALUD-2020) y se verificó el Anexo 03. El resultado y la decisión aplicada:</p>
+
+  <div class="impact-grid">
+    <div class="impact-card minsa">
+      <div class="icon">📖</div>
+      <h3>Libro GEMSES (Pérez Pérez 2021)</h3>
+      <p style="font-family: Cambria, serif; font-size: 1.05rem; color: var(--navy); margin-bottom: 0.5rem;"><strong>G = c·0.40 + d·0.20 + e·0.15 + f·0.25</strong></p>
+      <p>Suma de pesos = <strong>1.00</strong>. Forma teórica del modelo publicado con ISBN 978-612-00-6235-7.</p>
+    </div>
+    <div class="impact-card essalud">
+      <div class="icon">📄</div>
+      <h3>PDF oficial · Directiva N.º 7-OGCyH-ESSALUD-2020, Anexo 03</h3>
+      <p style="font-family: Cambria, serif; font-size: 1.05rem; color: var(--navy); margin-bottom: 0.5rem;"><strong>G = c·0.40 + d·0.20 + e·0.15 + f·0.25</strong></p>
+      <p>Verificado el 20-set-2026 en el PDF de la RGG 402-GG-ESSALUD-2020 (Lima, 4 de marzo de 2020): escala Muy alto 9 / Alto 6 / Medio 3 / Bajo 1 / Nulo 0 y pesos 0.40 / 0.20 / 0.15 / 0.25. <strong>Coincide con el libro.</strong> El valor 0.20 provenía del Excel de trabajo, no de la norma.</p>
+    </div>
+    <div class="impact-card global">
+      <div class="icon">🎯</div>
+      <h3>Decisión aplicada</h3>
+      <p>El módulo <code>gemses_priorizacion.py</code> (01-ago-2026) usa las fórmulas oficiales del Anexo 03 con suma 1.00. Los resultados de mayo calculados con 0.20 se consideran preliminares. La comparación 0.20 vs 0.25 queda como análisis de sensibilidad opcional en el Cap. VI.</p>
+    </div>
+    <div class="impact-card academic">
+      <div class="icon">⚠️</div>
+      <h3>Lo que sigue abierto</h3>
+      <p>La descripción de la Matriz en el cuerpo de la Directiva menciona «Impacto Ambiental» como quinta dimensión, pero el Anexo 03 usa cuatro pesos. La discrepancia está señalada desde la auditoría del 23-jun-2026 y se reporta como limitación, con una recomendación al Comité de Calidad de EsSalud para la próxima revisión de la norma.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ROADMAP ===== -->
+<section id="sprints">
+  <div class="section-tag">Fases ejecutadas y sprints del curso</div>
+  <h2>Lo que ya se ejecutó y lo que falta, con criterio de aceptación.</h2>
+  <p class="lead">El roadmap de seis fases de julio se ejecutó y se reordenó por la evidencia: la fusión multimodal y BETO nunca se corrieron; en su lugar se probaron y refutaron los transformers y se transfirió el pipeline al español. Los sprints de MIA-14 apuntan a lo que el checklist del curso señaló como carencia: reproducibilidad.</p>
+
+  <div class="roadmap">
+    <div class="phase-card">
+      <div class="num">FASES 3v2 – 4v2</div>
+      <div class="period">27 jul 2026 · ✔ hecho</div>
+      <h4>Corpus completo y etiqueta A1</h4>
+      <div class="desc">331 793 epicrisis; etiqueta causal no circular (18 989 notas); split por paciente. F1-macro 0.5256 (IC95 0.498–0.555).</div>
+      <div class="refs">fase3_v2 · fase4_v2</div>
+    </div>
+    <div class="phase-card">
+      <div class="num">FASES 7 – 10</div>
+      <div class="period">29–30 jul 2026 · ✔ hecho</div>
+      <h4>Época, equivalencias y modelo final</h4>
+      <div class="desc">Cascada TF-IDF + LinearSVC sobre 70 000 epicrisis: sens 0.762 · esp 0.770 · AUC 0.843; cascada F1-macro 0.363.</div>
+      <div class="refs">fase7 · fase8 · fase9_final · metricas_corregidas</div>
+    </div>
+    <div class="phase-card">
+      <div class="num">FASES 6 y 12</div>
+      <div class="period">28 jul – 9 ago 2026 · ✔ hecho</div>
+      <h4>Panel experto</h4>
+      <div class="desc">Dos anotadores, 78 casos comunes, kappa 0.64; sistema vs consenso kappa 0.531 (n=68). Umbral 0.61 no alcanzado; limitación declarada.</div>
+      <div class="refs">fase6_concordancia · fase12</div>
+    </div>
+    <div class="phase-card">
+      <div class="num">FASES 11 y 13</div>
+      <div class="period">31 jul – 19 ago 2026 · ✔ hecho (negativo)</div>
+      <h4>Transformers y LLM</h4>
+      <div class="desc">BioBERT, Bio_ClinicalBERT, ModernBERT-1024 y Llama 3.2: ninguno supera al lineal. HE2 refutada; ≈ 49 h de GPU.</div>
+      <div class="refs">fase11 · fase13</div>
+    </div>
+    <div class="phase-card">
+      <div class="num">OE5</div>
+      <div class="period">31 jul 2026 · ✔ hecho · re-medir</div>
+      <h4>Transferencia al español (ERSP)</h4>
+      <div class="desc">6 336 reportes con etiqueta humana: T1 0.860 · T2 0.7675 (cota superior) · T3 0.606. Pendiente partición por centro.</div>
+      <div class="refs">oe5_ersp · GEM_MODELOS/ersp-tfidf-svc</div>
+    </div>
+    <div class="phase-card">
+      <div class="num">SPRINT 1</div>
+      <div class="period">Oct 2026 · pendiente</div>
+      <h4>Reproducibilidad</h4>
+      <div class="desc">requirements.txt fijado, .env.example, run_pipeline.py, data/raw y data/processed, README ejecutable. Aceptación: regenerar la Fase 9 con un comando, ± 0.005.</div>
+      <div class="refs">Checklist del curso · lámina de reproducibilidad</div>
+    </div>
+    <div class="phase-card">
+      <div class="num">SPRINT 2</div>
+      <div class="period">Nov – Dic 2026 · pendiente</div>
+      <h4>Resultados robustos</h4>
+      <div class="desc">OE5 por centro, punto de operación del modelo final, GEMSES sobre detecciones reales, cierre de los marcadores «por determinar» del borrador.</div>
+      <div class="refs">03_PENDIENTES_BORRADOR_TESIS</div>
+    </div>
+    <div class="phase-card">
+      <div class="num">DEFENSA</div>
+      <div class="period">May 2027</div>
+      <h4>Tesis y paper</h4>
+      <div class="desc">Defensa en UNI y manuscrito sometido (BMC Medical Informatics, JMIR o Health Informatics Journal).</div>
+      <div class="refs">Cronograma del programa</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== APORTE ===== -->
+<section class="dark">
+  <div class="container">
+    <div class="section-tag">Aporte de la tesis</div>
+    <h2>Cuatro dimensiones de contribución, todas verificables.</h2>
+    <p class="lead">No "aprender IA y aplicarla a algo". Operacionalizar un modelo de excelencia institucional adoptado normativamente, sobre datos abiertos, con metodología reproducible. Eso es lo que diferencia a esta tesis del estado del arte.</p>
+
+    <div class="aporte-grid">
+      <div class="aporte-card">
+        <div class="tag">TEÓRICO</div>
+        <h3>GEMSES operacionalizable mediante IA</h3>
+        <p>Trazabilidad conceptual entre los 9 principios rectores del modelo y las salidas computacionales del flujo de procesamiento. El modelo deja de ser cualitativo para volverse herramienta de soporte cuantitativo.</p>
+      </div>
+      <div class="aporte-card metodologico">
+        <div class="tag">METODOLÓGICO</div>
+        <h3>Pipeline reproducible y publicable</h3>
+        <p>Cascada TF-IDF + LinearSVC con partición por paciente, cuatro fugas de información medidas y controladas, y resultado negativo documentado de los transformers biomédicos (HE2). Validación con panel experto y transferencia al español. Reproducible bajo PhysioNet DUA; Sprint 1 cierra el orquestador.</p>
+      </div>
+      <div class="aporte-card aplicado">
+        <div class="tag">APLICADO</div>
+        <h3>Insumo institucional transferible</h3>
+        <p>Alivia el cuello de botella manual en la codificación y priorización de ERSP regulados por la Directiva N.º 7-OGCyH-ESSALUD-2020. Ya probado sobre el corpus ERSP de EsSalud en español (OE5).</p>
+      </div>
+      <div class="aporte-card social">
+        <div class="tag">SOCIAL</div>
+        <h3>Reducción de daños evitables al paciente</h3>
+        <p>Detección oportuna de eventos adversos contribuye directamente a la reducción de daños evitables y al fortalecimiento de la cultura de seguridad sanitaria. Materializa el principio normativo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== SOBRE GEMSES ===== -->
+<section id="gemses">
+  <div class="section-tag">Sobre el Modelo GEMSES</div>
+  <h2>Gestión Moderna de los Servicios de Salud — el marco que esta tesis operacionaliza.</h2>
+  <p class="lead">Modelo de excelencia publicado por el autor en 2021, validado académicamente y cuya Matriz de Priorización fue adoptada normativamente por EsSalud en la Directiva N.º 7-OGCyH-ESSALUD-2020. Esta tesis es el primer esfuerzo documentado en convertirlo en una herramienta automatizada de soporte a la decisión clínica mediante inteligencia artificial.</p>
+
+  <div class="stats-grid">
+    <div class="stat-card mint">
+      <div class="number">9</div>
+      <div class="label">principios rectores del modelo (respuesta a crisis, cadenas de valor, resultados, integración estratégica, equipo, cliente, escalable, automatización, investigación)</div>
+    </div>
+    <div class="stat-card mint">
+      <div class="number">3</div>
+      <div class="label">macroprocesos: estratégico, misional, soporte</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">2020 · 2021</div>
+      <div class="label">2020: Directiva N.º 7-OGCyH-ESSALUD-2020 de EsSalud (RGG 402-GG-ESSALUD-2020) · 2021: libro del modelo (ISBN 978-612-00-6235-7)</div>
+    </div>
+  </div>
+
+  <div class="formula-box" style="margin-top: 3rem;">
+    <div class="label">CONOCE MÁS SOBRE EL MODELO GEMSES</div>
+    <div class="formula" style="font-family: inherit; font-size: 1.2rem; font-weight: 400;">
+      <a href="https://sites.google.com/view/gemses/inicio" target="_blank" style="color: var(--mint); text-decoration: none; border-bottom: 1px solid var(--mint); padding-bottom: 2px;">
+        sites.google.com/view/gemses
+      </a>
+    </div>
+    <div class="formula-caption" style="margin-top: 1rem;">
+      Sitio oficial del modelo · Recursos, publicaciones y aplicaciones institucionales
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="author">Carlos Pérez Pérez</div>
+  <div class="role">Maestría en Inteligencia Artificial · Universidad Nacional de Ingeniería · MIA-14 Trabajo de Investigación II · Dr. Ing. Glen Rodríguez</div>
+  <div class="links">
+    <a href="https://github.com/carlosperez100/tesis-gemses-mimic-pipeline" target="_blank">Repositorio GitHub</a>
+    <a href="https://sites.google.com/view/gemses/inicio" target="_blank">Modelo GEMSES (sitio oficial)</a>
+    <a href="https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic" target="_blank">Repositorio del curso MIA-14</a>
+    <a href="mailto:carlosperez100@gmail.com">carlosperez100@gmail.com</a>
+    <a href="#problema">Volver arriba</a>
+  </div>
+  <div class="copyright">
+    Showcase v8 · Trabajo de Investigación II · 25 de septiembre de 2026 · cifras trazadas a los JSON de resultados del repositorio<br>
+    Marco ético: dos certificaciones CITI Program independientes · Datos accedidos bajo PhysioNet DUA v1.5.0 · Repositorio sin redistribución de datos sensibles
+  </div>
+</footer>
+
+</body>
+</html>
