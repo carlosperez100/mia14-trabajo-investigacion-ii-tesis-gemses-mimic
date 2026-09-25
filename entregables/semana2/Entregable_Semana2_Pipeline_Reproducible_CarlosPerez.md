@@ -1,8 +1,8 @@
 ---
 title: "Entregable Semana 2 — Diseño reproducible del flujo experimental"
 subtitle: "Detección automatizada y priorización de eventos adversos en epicrisis (MIMIC-IV) mediante NLP y aprendizaje supervisado, con la Matriz de Priorización GEMSES"
-author: "Carlos Pérez Pérez · Maestría en Inteligencia Artificial, FIIS-UNI · Trabajo de Investigación II (MIA-14, Sección B) · Docente: Dr. Ing. Glen Rodríguez Rafael"
-date: "25 de septiembre de 2026"
+author: "Carlos Pérez Pérez · Maestría en Inteligencia Artificial, FIIS-UNI"
+date: "Trabajo de Investigación II (MIA-14, Sección B) · Docente: Dr. Ing. Glen Rodríguez Rafael · 25 de septiembre de 2026"
 lang: es
 ---
 
@@ -31,7 +31,7 @@ lang: es
 
 # 3. Baseline, familia de modelos y alternativas ya descartadas
 
-- **Baseline mínimo:** reglas regex Tier B + NegEx, precisión 65.7 % (IC95 54.0–75.8, n = 70, `REPORTE_VALIDACION_70_EVENTOS.md`), y TF-IDF + regresión logística (Fase 4).
+- **Baseline mínimo:** reglas regex Tier B + NegEx, precisión 65.7 % (IC95 54.0–75.8, n = 70, reporte de validación de 70 eventos), y TF-IDF + regresión logística (Fase 4).
 - **Familia elegida:** modelo lineal sobre TF-IDF (LinearSVC balanceado), en cascada. Es el modelo vigente desde la Fase 9 (29-jul-2026).
 - **Alternativas probadas y refutadas** con la misma partición y semilla (hipótesis HE2): ClinicalBERT congelado F1-macro 0.19; Bio_ClinicalBERT y BioBERT con ajuste fino en GPU 0.21–0.35 (2.9–4.0 h) frente a 0.459 del lineal en 48 s (`resultados_transformers.json`); BioClinical ModernBERT con ventana de 1024 tokens 0.428 tras 42.5 h de GPU (`modernbert_final.json`); Llama 3.2 3B *zero-shot* kappa 0.0 (dice sí a todo, `llm_local_vs_experto.json`). Causa medida: la ventana de 256 tokens cubre el 9 % de una epicrisis (mediana 3 148 tokens). Se documenta como resultado negativo; solo se reabriría con Longformer o BigBird y GPU dedicada.
 
@@ -74,9 +74,9 @@ Toda comparación entre modelos se hace con la misma partición (semilla 42, por
 
 Diagrama acorde al tipo de tesis, entradas y salidas por etapa, criterio de resultado correcto, registro para reproducir, separación desarrollo/evaluación y riesgos (diez): cubiertos en las secciones 1 a 6. Alcance ejecutable con los recursos del curso: **[juicio técnico]** sí, porque el modelo ya existe y el Sprint 1 es de reproducibilidad, no de modelado.
 
-**Fuentes abiertas para este entregable** (todas en el repositorio de la tesis `tesis-gemses-mimic-pipeline`):
+**Fuentes abiertas para este entregable** (todas en el repositorio de la tesis tesis-gemses-mimic-pipeline):
 
-- `11_proyecto_II/01_INVENTARIO_MODELOS_Y_CHECKLIST_2026-09-18.md` y `02_ESTADO_DE_AVANCE_COMPLETO_2026-09-18.md`.
-- `04_pipeline_codigo/fase9_modelo_final.py`, `fase10_metricas_corregidas.py` y los JSON de `datos_intermedios/`.
-- `latex_tesis/3_1_CAPITULO_MARCO_TEORICO/Capitulo3.tex` (hipótesis y umbral de kappa).
+- 11_proyecto_II: 01_INVENTARIO_MODELOS_Y_CHECKLIST_2026-09-18.md y 02_ESTADO_DE_AVANCE_COMPLETO_2026-09-18.md.
+- 04_pipeline_codigo: fase9_modelo_final.py, fase10_metricas_corregidas.py y los JSON de datos_intermedios.
+- latex_tesis: Capitulo3.tex (hipótesis y umbral de kappa).
 - Directiva N.º 7-OGCyH-ESSALUD-2020 (RGG 402-GG-ESSALUD-2020), Anexos 02 y 03.
