@@ -12,18 +12,18 @@ lang: es
 
 # 1. Diagrama del flujo principal
 
-![Pipeline reproducible en seis etapas, con las salidas de cada una, los controles contra fugas y el estado de reproducibilidad.](fig_pipeline_semana2.png)
+![Pipeline reproducible en seis etapas, con las salidas de cada una, los controles contra fugas y el estado de reproducibilidad.](fig_pipeline_semana2.png){width=100%}
 
 # 2. Entradas, componentes y salida de cada etapa
 
 | Etapa | Recibe | Qué hace | Produce (artefacto reproducible) |
 |---|---|---|---|
-| **1. Ingesta** | MIMIC-IV v3.1 + MIMIC-IV-Note v2.2 (DUA PhysioNet), leídos con DuckDB | Extrae las epicrisis (*discharge summaries*) con `subject_id`, `hadm_id` y códigos de egreso | 331 793 epicrisis de 145 914 pacientes (`fase3_v2/ablacion_final.json`) |
-| **2. Preprocesamiento y etiqueta** | Epicrisis + diagnósticos codificados | Tier A: 223 códigos CIE-10 causales + 21 equivalencias OMS→CM → etiqueta A1 no circular; emparejamiento de época CIE-9/CIE-10 en los negativos; NegEx y regex Tier B solo como baseline | Corpus de modelado de 70 000 epicrisis con prevalencia real 0.2012 (`fase9_final/resultados_finales.json`) |
-| **3. Partición y features** | Corpus de modelado | `GroupShuffleSplit` por paciente, test 20 %, semilla 42, con *assert* de pacientes disjuntos; TF-IDF de palabras (1–2-gramas, 60 000 rasgos, `min_df` 3) + TF-IDF de caracteres `char_wb` (3–5, 20 000, `min_df` 5), `sublinear_tf`; el vocabulario se ajusta **solo con train** | `dataset_final.parquet`; matrices dispersas (`fase9_modelo_final.py`, líneas 223–250) |
-| **4. Entrenamiento** | Matrices TF-IDF | Cascada de dos etapas: E1 detección evento sí/no con `LinearSVC(class_weight="balanced")`; E2 naturaleza del evento, 6 clases multietiqueta, `OneVsRest(LinearSVC)`, entrenada solo con positivos y con su propia partición por paciente; prueba de abstención con 6 textos triviales | `modelo_final.pkl` (10.7 MB, fuera de git por el DUA) |
-| **5. Evaluación** | Test reservado; panel experto; ERSP | Métricas con IC95 por *bootstrap* (200 réplicas) por nota y por paciente; cascada extremo a extremo; sistema contra consenso de expertos | `resultados_finales.json`, `metricas_corregidas.json`, `fase12/sistema_vs_experto.json` |
-| **6. Salida** | Detecciones por nota | Matriz de Priorización GEMSES (Anexo 03 de la Directiva N.º 7-OGCyH-ESSALUD-2020): G = 0.40·c + 0.20·d + 0.15·e + 0.25·f → percentiles P25/P50/P75 → banda Verde/Amarillo/Rojo y responsable | Tablero de priorización (`05_prototipo_app/motor_v2.py`, `gemses_priorizacion.py`) |
+| **1. Ingesta** | MIMIC-IV v3.1 + MIMIC-IV-Note v2.2 (DUA PhysioNet), leídos con DuckDB | Extrae las epicrisis (*discharge summaries*) con `subject_id`, `hadm_id` y códigos de egreso | 331 793 epicrisis de 145 914 pacientes (`ablacion_final.json`) |
+| **2. Preprocesamiento y etiqueta** | Epicrisis + diagnósticos codificados | Tier A: 223 códigos CIE-10 causales + 21 equivalencias OMS→CM → etiqueta A1 no circular; emparejamiento de época CIE-9/CIE-10 en los negativos; NegEx y regex Tier B solo como baseline | Corpus de modelado de 70 000 epicrisis con prevalencia real 0.2012 (`resultados_finales.json`) |
+| **3. Partición y features** | Corpus de modelado | `GroupShuffleSplit` por paciente, test 20 %, semilla 42, con *assert* de pacientes disjuntos; TF-IDF de palabras (1–2-gramas, 60 000 rasgos, `min_df` 3) + TF-IDF de caracteres `char_wb` (3–5, 20 000, `min_df` 5), `sublinear_tf`; el vocabulario se ajusta **solo con train** | `dataset_final.parquet`; matrices dispersas (`fase9_modelo_final.py`, l. 223–250) |
+| **4. Entrenamiento** | Matrices TF-IDF | Cascada de dos etapas: E1 detección evento sí/no con LinearSVC balanceado (`class_weight`); E2 naturaleza del evento, 6 clases multietiqueta, `OneVsRest(LinearSVC)`, entrenada solo con positivos y con su propia partición por paciente; prueba de abstención con 6 textos triviales | `modelo_final.pkl` (10.7 MB, fuera de git por el DUA) |
+| **5. Evaluación** | Test reservado; panel experto; ERSP | Métricas con IC95 por *bootstrap* (200 réplicas) por nota y por paciente; cascada extremo a extremo; sistema contra consenso de expertos | `resultados_finales.json`, `metricas_corregidas.json`, `sistema_vs_experto.json` |
+| **6. Salida** | Detecciones por nota | Matriz de Priorización GEMSES (Anexo 03 de la Directiva N.º 7-OGCyH-ESSALUD-2020): G = 0.40·c + 0.20·d + 0.15·e + 0.25·f → percentiles P25/P50/P75 → banda Verde/Amarillo/Rojo y responsable | Tablero de priorización (`motor_v2.py`, `gemses_priorizacion.py`) |
 
 **Fuente de datos, unidad de análisis y variable objetivo.** La unidad de análisis es la epicrisis (una por hospitalización). La variable objetivo de E1 es binaria (¿la hospitalización tuvo un evento adverso codificado como causal?) y la de E2 es la *naturaleza* del evento según la Tabla de Codificación (Anexo 02 de la misma Directiva), reducida a 6 clases con n suficiente. No hay valores faltantes numéricos ni escalamiento: el texto es la única entrada del modelo y TF-IDF ya normaliza; la fusión con variables tabulares prevista en el proyecto original **nunca se ejecutó** y queda fuera de alcance.
 
@@ -31,9 +31,9 @@ lang: es
 
 # 3. Baseline, familia de modelos y alternativas ya descartadas
 
-- **Baseline mínimo:** reglas regex Tier B + NegEx, precisión 65.7 % (IC95 54.0–75.8, n = 70, `05_validacion_experta/REPORTE_VALIDACION_70_EVENTOS.md`), y TF-IDF + regresión logística (Fase 4).
+- **Baseline mínimo:** reglas regex Tier B + NegEx, precisión 65.7 % (IC95 54.0–75.8, n = 70, `REPORTE_VALIDACION_70_EVENTOS.md`), y TF-IDF + regresión logística (Fase 4).
 - **Familia elegida:** modelo lineal sobre TF-IDF (LinearSVC balanceado), en cascada. Es el modelo vigente desde la Fase 9 (29-jul-2026).
-- **Alternativas probadas y refutadas** con la misma partición y semilla (hipótesis HE2): ClinicalBERT congelado F1-macro 0.19; Bio_ClinicalBERT y BioBERT con ajuste fino en GPU 0.21–0.35 (2.9–4.0 h) frente a 0.459 del lineal en 48 s (`fase11/resultados_transformers.json`); BioClinical ModernBERT con ventana de 1024 tokens 0.428 tras 42.5 h de GPU (`fase13/modernbert_final.json`); Llama 3.2 3B *zero-shot* kappa 0.0 (dice sí a todo, `fase13/llm_local_vs_experto.json`). Causa medida: la ventana de 256 tokens cubre el 9 % de una epicrisis (mediana 3 148 tokens). Se documenta como resultado negativo; solo se reabriría con Longformer o BigBird y GPU dedicada.
+- **Alternativas probadas y refutadas** con la misma partición y semilla (hipótesis HE2): ClinicalBERT congelado F1-macro 0.19; Bio_ClinicalBERT y BioBERT con ajuste fino en GPU 0.21–0.35 (2.9–4.0 h) frente a 0.459 del lineal en 48 s (`resultados_transformers.json`); BioClinical ModernBERT con ventana de 1024 tokens 0.428 tras 42.5 h de GPU (`modernbert_final.json`); Llama 3.2 3B *zero-shot* kappa 0.0 (dice sí a todo, `llm_local_vs_experto.json`). Causa medida: la ventana de 256 tokens cubre el 9 % de una epicrisis (mediana 3 148 tokens). Se documenta como resultado negativo; solo se reabriría con Longformer o BigBird y GPU dedicada.
 
 # 4. Criterio preliminar de evaluación
 
@@ -51,7 +51,7 @@ Toda comparación entre modelos se hace con la misma partición (semilla 42, por
 
 - **Versiones fijas:** MIMIC-IV v3.1 (DOI 10.13026/kpb9-mt58), MIMIC-IV-Note v2.2 (DOI 10.13026/1n74-ne17), Python 3.13.5, DuckDB 1.5.2; versión de scikit-learn **por fijar** en `requirements.txt`.
 - **Semillas:** 42 en la partición, en el muestreo del corpus y en el *bootstrap* (`SEED = 42`, `fase9_modelo_final.py:93`).
-- **Registro de experimentos:** un JSON de resultados por fase en `04_pipeline_codigo/datos_intermedios/fase*/`, más bitácoras fechadas en `07_bitacoras/`. Cada cifra del borrador de tesis lleva un comentario `% fuente:` con su archivo.
+- **Registro de experimentos:** un JSON de resultados por fase en `datos_intermedios/fase*/`, más bitácoras fechadas en `07_bitacoras/`. Cada cifra del borrador de tesis lleva un comentario `% fuente:` con su archivo.
 - **Artefactos:** `modelo_final.pkl`, `dataset_final.parquet`, `resultados_finales.json`, `metricas_corregidas.json`. Modelo y datos quedan fuera de git por el DUA; el repositorio de la tesis es privado desde el 28-jul-2026.
 - **Estado honesto (verificado en disco el 25-set-2026):** no existen `requirements.txt`, `.env.example`, `run_pipeline.py` ni `data/raw` y `data/processed`; hay 46 scripts, uno por fase, sin orquestador; la sección "Cómo reproducir" del README apunta al notebook exploratorio y no a la cascada; los *checkpoints* de los transformers no se guardaron (solo son reproducibles reentrenando). **Sprint 1 del curso** = cerrar exactamente esto, con criterio de aceptación medible: que un tercero con credencial PhysioNet regenere la Fase 9 con un solo comando y obtenga sens 0.7623, esp 0.7699 y AUC 0.8426 con tolerancia ± 0.005.
 
@@ -74,4 +74,9 @@ Toda comparación entre modelos se hace con la misma partición (semilla 42, por
 
 Diagrama acorde al tipo de tesis, entradas y salidas por etapa, criterio de resultado correcto, registro para reproducir, separación desarrollo/evaluación y riesgos (diez): cubiertos en las secciones 1 a 6. Alcance ejecutable con los recursos del curso: **[juicio técnico]** sí, porque el modelo ya existe y el Sprint 1 es de reproducibilidad, no de modelado.
 
-**Fuentes abiertas para este entregable:** `11_proyecto_II/01_INVENTARIO_MODELOS_Y_CHECKLIST_2026-09-18.md` y `02_ESTADO_DE_AVANCE_COMPLETO_2026-09-18.md`; `04_pipeline_codigo/fase9_modelo_final.py` y `fase10_metricas_corregidas.py`; los JSON citados en `04_pipeline_codigo/datos_intermedios/`; `latex_tesis/3_1_CAPITULO_MARCO_TEORICO/Capitulo3.tex`; Directiva N.º 7-OGCyH-ESSALUD-2020 (RGG 402-GG-ESSALUD-2020), Anexos 02 y 03. Todo en el repositorio de la tesis `tesis-gemses-mimic-pipeline`.
+**Fuentes abiertas para este entregable** (todas en el repositorio de la tesis `tesis-gemses-mimic-pipeline`):
+
+- `11_proyecto_II/01_INVENTARIO_MODELOS_Y_CHECKLIST_2026-09-18.md` y `02_ESTADO_DE_AVANCE_COMPLETO_2026-09-18.md`.
+- `04_pipeline_codigo/fase9_modelo_final.py`, `fase10_metricas_corregidas.py` y los JSON de `datos_intermedios/`.
+- `latex_tesis/3_1_CAPITULO_MARCO_TEORICO/Capitulo3.tex` (hipótesis y umbral de kappa).
+- Directiva N.º 7-OGCyH-ESSALUD-2020 (RGG 402-GG-ESSALUD-2020), Anexos 02 y 03.
