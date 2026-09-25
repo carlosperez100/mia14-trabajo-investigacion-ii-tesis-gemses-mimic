@@ -40,7 +40,7 @@ Lima, 25 de septiembre de 2026
 ```
 <!-- PORTADA-DOCX-FIN -->
 
-**Tipo de tesis:** aprendizaje supervisado (clasificación de texto clínico), con dos adaptaciones: la etiqueta de entrenamiento es de *supervisión débil* (códigos CIE-10 causales) y la evaluación se cierra con un panel de expertos y con un corpus en español con etiqueta humana.
+**Tipo de tesis:** aprendizaje supervisado (clasificación de texto clínico). La etiqueta de entrenamiento se obtiene por *supervisión débil* (*weak supervision*): no la asigna un anotador leyendo cada epicrisis, sino que se deriva automáticamente de los códigos CIE-10 causales registrados en la misma hospitalización (etiqueta A1). Esto permite entrenar con 70 000 epicrisis sin anotación manual masiva; el costo es que la etiqueta tiene ruido, y por eso su calidad se verifica con dos referencias externas ya construidas: un panel de expertos sobre una muestra de epicrisis y un corpus en español con etiqueta humana (ERSP de EsSalud). No se prevé procesar ni anotar más datos: el diseño trabaja con el corpus y las referencias ya existentes.
 
 **Continuidad.** El título de la tesis se mantiene desde el proyecto aprobado en Trabajo de Investigación I (cerrado el 14 de julio de 2026). Este documento presenta el flujo experimental tal como se ejecutó y mejoró desde entonces (Fases 3v2 a 13), incorporando lo aprendido en el curso de Procesamiento de Lenguaje Natural (auditoría adversarial de 26 hallazgos) y en la aplicación del mismo enfoque a los reportes de seguridad del paciente de EsSalud dentro del sistema GEM·VigIA.
 
