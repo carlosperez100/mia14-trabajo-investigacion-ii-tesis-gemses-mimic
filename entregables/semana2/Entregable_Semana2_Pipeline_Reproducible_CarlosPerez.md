@@ -42,7 +42,7 @@ Lima, 25 de septiembre de 2026
 
 **Tipo de tesis:** aprendizaje supervisado (clasificación de texto clínico), con dos adaptaciones: la etiqueta de entrenamiento es de *supervisión débil* (códigos CIE-10 causales) y la evaluación se cierra con un panel de expertos y con un corpus en español con etiqueta humana.
 
-**Continuidad.** El título de la tesis es el mismo del proyecto aprobado en Trabajo de Investigación I (MIA-303, cerrado el 14-jul-2026). Lo que ha cambiado es lo que se ha probado y mejorado desde entonces: este diseño integra en un solo flujo la ejecución de la tesis (Fases 3v2 a 13), lo aprendido en el curso de Procesamiento de Lenguaje Natural (auditoría adversarial de 26 hallazgos) y la experiencia del sistema GEM·VigIA sobre reportes de EsSalud en producción. Todas las cifras provienen de archivos de resultados del proyecto; las que el propio proceso invalidó no se citan. Lo que es criterio propio va rotulado **[juicio técnico]**.
+**Continuidad.** El título de la tesis se mantiene desde el proyecto aprobado en Trabajo de Investigación I (cerrado el 14 de julio de 2026). Este documento presenta el flujo experimental tal como se ejecutó y mejoró desde entonces (Fases 3v2 a 13), incorporando lo aprendido en el curso de Procesamiento de Lenguaje Natural (auditoría adversarial de 26 hallazgos) y en la aplicación del mismo enfoque a los reportes de seguridad del paciente de EsSalud dentro del sistema GEM·VigIA.
 
 # 1. Diagrama del flujo principal
 
@@ -59,7 +59,7 @@ Lima, 25 de septiembre de 2026
 | **5. Evaluación** | Test reservado; panel experto; corpus ERSP | Métricas con IC95 por *bootstrap* (200 réplicas) por nota y por paciente; cascada extremo a extremo; sistema contra consenso de expertos | JSON de resultados finales; JSON de métricas corregidas; JSON de sistema contra experto |
 | **6. Salida** | Detecciones por nota | Matriz de Priorización GEMSES (Anexo 03 de la Directiva N.º 7-OGCyH-ESSALUD-2020): G = 0.40·c + 0.20·d + 0.15·e + 0.25·f → percentiles P25/P50/P75 → banda Verde/Amarillo/Rojo y responsable | Tablero de priorización (prototipo) |
 
-**Fuente de datos, unidad de análisis y variable objetivo.** La unidad de análisis es la epicrisis (una por hospitalización). La variable objetivo de E1 es binaria (¿la hospitalización tuvo un evento adverso codificado como causal?) y la de E2 es la *naturaleza* del evento según la Tabla de Codificación (Anexo 02 de la misma Directiva), reducida a 6 clases con n suficiente. No hay valores faltantes numéricos ni escalamiento: el texto es la única entrada del modelo y TF-IDF ya normaliza; la fusión con variables tabulares prevista en el proyecto original **nunca se ejecutó** y queda fuera de alcance.
+**Fuente de datos, unidad de análisis y variable objetivo.** La unidad de análisis es la epicrisis (una por hospitalización). La variable objetivo de E1 es binaria (¿la hospitalización tuvo un evento adverso codificado como causal?) y la de E2 es la *naturaleza* del evento según la Tabla de Codificación (Anexo 02 de la misma Directiva), reducida a 6 clases con n suficiente. No hay valores faltantes numéricos ni escalamiento: el texto es la única entrada del modelo y TF-IDF ya normaliza; la fusión con variables tabulares prevista en el proyecto original no se ejecutó y queda fuera del alcance.
 
 **Regla de partición.** Se respeta la unidad *paciente*: ningún paciente aparece a la vez en train y test. En la Fase 4 se comprobó que el split por paciente no degrada el rendimiento (F1-macro 0.492 ± 0.018) y desde entonces es obligatorio. Desarrollo y ajuste se hacen con validación cruzada de 5 pliegues dentro del train; el test se toca una sola vez; el panel experto y el corpus ERSP actúan como evaluación externa.
 
@@ -88,7 +88,7 @@ MIMIC-IV no se descarga libremente: PhysioNet (MIT) exige acreditación personal
 
 - **Baseline mínimo:** reglas regex Tier B + NegEx, precisión 65.7 % (IC95 54.0–75.8, n = 70, validación experta de mayo), y TF-IDF + regresión logística (Fase 4).
 - **Familia elegida:** modelo lineal sobre TF-IDF (LinearSVC balanceado), en cascada. Es el modelo vigente desde la Fase 9 (29-jul-2026).
-- **Alternativas probadas y refutadas** con la misma partición y semilla (hipótesis HE2): ClinicalBERT congelado F1-macro 0.19; Bio_ClinicalBERT y BioBERT con ajuste fino en GPU 0.21–0.35 (2.9–4.0 h) frente a 0.459 del lineal en 48 s; BioClinical ModernBERT con ventana de 1024 tokens 0.428 tras 42.5 h de GPU; Llama 3.2 3B *zero-shot* kappa 0.0 (dice sí a todo). Causa medida: la ventana de 256 tokens cubre el 9 % de una epicrisis (mediana 3 148 tokens). Se documenta como resultado negativo; solo se reabriría con Longformer o BigBird y GPU dedicada.
+- **Alternativas probadas y refutadas** con la misma partición y semilla (hipótesis HE2): ClinicalBERT congelado F1-macro 0.19; Bio_ClinicalBERT y BioBERT con ajuste fino en GPU 0.21–0.35 (2.9–4.0 h) frente a 0.459 del lineal en 48 s; BioClinical ModernBERT con ventana de 1024 tokens 0.428 tras 42.5 h de GPU; Llama 3.2 3B *zero-shot* kappa 0.0 (clasificó todos los casos como positivos). Causa medida: la ventana de 256 tokens cubre el 9 % de una epicrisis (mediana 3 148 tokens). Se documenta como resultado negativo; solo se reabriría con Longformer o BigBird y GPU dedicada.
 
 # 5. Criterio preliminar de evaluación
 
@@ -109,23 +109,20 @@ Toda comparación entre modelos se hace con la misma partición (semilla 42, por
 - **Semillas:** 42 en la partición, en el muestreo del corpus y en el *bootstrap*.
 - **Registro de experimentos:** un archivo JSON de resultados por fase, más bitácoras fechadas por sesión. Cada cifra del borrador de tesis lleva un comentario con el archivo del que proviene, verificado por script.
 - **Artefactos:** modelo final serializado, conjunto de datos final (Parquet), JSON de resultados finales y JSON de métricas corregidas. Modelo y datos quedan fuera de git por el acuerdo de uso; el repositorio de la tesis es privado desde el 28-jul-2026.
-- **Estado honesto (verificado el 25-set-2026):** no existe aún un archivo de dependencias con versiones fijadas, ni plantilla de variables de entorno, ni un orquestador que encadene las fases, ni la estructura data/raw y data/processed; hay 46 scripts, uno por fase; la sección "Cómo reproducir" del README apunta al notebook exploratorio y no a la cascada; los *checkpoints* de los transformers no se guardaron (solo son reproducibles reentrenando). **Sprint 1 del curso** = cerrar exactamente esto, con criterio de aceptación medible: que un tercero con credencial PhysioNet regenere la Fase 9 con un solo comando y obtenga sens 0.7623, esp 0.7699 y AUC 0.8426 con tolerancia ± 0.005.
+- **Estado actual y brecha:** todavía no existe un archivo de dependencias con versiones fijadas, ni una plantilla de variables de entorno, ni un orquestador que encadene las fases, ni la estructura data/raw y data/processed; hay 46 scripts, uno por fase; la sección "Cómo reproducir" del README apunta al notebook exploratorio y no a la cascada; los *checkpoints* de los transformers no se conservaron (solo son reproducibles reentrenando). El Sprint 1 del curso se dedica a cerrar esta brecha, con un criterio de aceptación medible: que un tercero con credencial PhysioNet regenere la Fase 9 con un solo comando y obtenga sens 0.7623, esp 0.7699 y AUC 0.8426 con tolerancia ± 0.005.
 
 # 7. Riesgos técnicos previsibles y cómo se detectan o mitigan
 
 | Riesgo | Dónde se detectó (frente) | Mitigación incorporada al diseño |
 |---|---|---|
 | Fuga por circularidad regex → etiqueta | Tesis / PLN: enmascarar los disparadores solo baja 1.35 puntos | Etiqueta A1 derivada de códigos CIE-10 causales, no del regex |
-| Confusor de época CIE-9/CIE-10 | Tesis, Fase 7: AUC 0.973 → 0.840 al emparejar | Emparejamiento de época en los negativos; la cifra 0.973 queda retirada |
+| Confusor de época CIE-9/CIE-10 | Tesis, Fase 7: AUC 0.973 → 0.840 al emparejar | Emparejamiento de época en los negativos; se descarta la cifra 0.973 |
 | Fuga por paciente | PLN (auditoría adversarial) | Partición por paciente con verificación automática |
 | Fuga por estilo de redacción | GEM·VigIA: el triaje reclamo/denuncia daba 98.4 %, y 91.5 % solo con palabras funcionales | Ablaciones de control; no se usan metadatos de quién redacta |
 | Mezcla de centros asistenciales | GEM·VigIA sobre el mismo corpus ERSP: 0.77 estratificado frente a 0.42 por centro | El OE5 se re-mide con partición por centro antes de citarse; 0.7675 solo como cota superior |
 | Datos insuficientes por clase | Tesis, Fases 4 y 9 | Clases con n < 100 declaradas no viables |
 | Referencia de etiqueta débil | Panel experto limitado a infección; kappa 0.531 < 0.61 | Decisión de alcance (20-set): A1 como estándar plata principal, panel como validación secundaria; limitación declarada |
 | Costo y latencia | Transformers 2.9–42.5 h de GPU frente a 48 s | Familia lineal; transformers cerrados como resultado negativo |
-| Restricciones del entorno y datos personales | Acuerdo de uso PhysioNet; incidente del 28-jul con datos personales del corpus ERSP | Modelo y datos fuera de git; repositorio privado e historial reescrito; comunicaciones formales pendientes |
+| Restricciones del entorno y datos personales | Acuerdo de uso PhysioNet; el corpus ERSP contiene datos personales | Modelo y datos fuera del control de versiones; repositorio privado; copias de trabajo del ERSP anonimizadas antes de cualquier uso |
 | Pérdida de resultados intermedios | Tesis: se perdieron las filas por nota del primer tramo (260 000) al morir el proceso | Orquestador con *checkpoint* por fase (Sprint 1) |
 
-# 8. Verificación contra la guía (sección 11)
-
-Diagrama acorde al tipo de tesis, entradas y salidas por etapa, criterio de resultado correcto, registro para reproducir, separación desarrollo/evaluación y riesgos (diez): cubiertos en las secciones 1 a 7. Alcance ejecutable con los recursos del curso: **[juicio técnico]** sí, porque el modelo ya existe, el acceso a los datos está vigente hasta 2029 y el Sprint 1 es de reproducibilidad, no de modelado.
