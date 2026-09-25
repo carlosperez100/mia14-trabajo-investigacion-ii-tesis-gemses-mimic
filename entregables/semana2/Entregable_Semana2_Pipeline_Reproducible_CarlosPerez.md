@@ -92,6 +92,8 @@ MIMIC-IV no se descarga libremente: PhysioNet (MIT) exige acreditación personal
 
 # 5. Criterio preliminar de evaluación
 
+Toda comparación entre modelos se hace con la misma partición (semilla 42, por paciente) y se reporta siempre la cascada, porque el pipeline completo rinde menos que sus etapas.
+
 | Nivel | Criterio | Situación al 25-set-2026 |
 |---|---|---|
 | **Métrica principal** | F1-macro de la **cascada completa** con IC95 por paciente (no la etapa aislada) | 0.363 en cascada frente a 0.536 de E2 aislada |
@@ -100,7 +102,6 @@ MIMIC-IV no se descarga libremente: PhysioNet (MIT) exige acreditación personal
 | Aceptable | Supera el baseline lineal en cascada y F1 > 0.5 en toda clase con n ≥ 100 | Cumplido en Infección y Procedimiento; Sistema/Organización (n = 66) F1 0.0 |
 | Fuera de alcance | Clases con n insuficiente: Sistema/Organización, Sangre/Hemoderivados, Nutrición | Declaradas no viables, no se intenta corregirlas |
 
-Toda comparación entre modelos se hace con la misma partición (semilla 42, por paciente) y se reporta siempre la cascada, porque el pipeline completo rinde menos que sus etapas.
 
 # 6. Reproducibilidad
 
