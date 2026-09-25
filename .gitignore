@@ -1,0 +1,23 @@
+# Datos bajo DUA PhysioNet y datos personales: NUNCA al repositorio
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+*.csv.gz
+*.parquet
+*.pkl
+*.joblib
+*.xlsx
+*.db
+*.sqlite
+# Entorno
+.env
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc

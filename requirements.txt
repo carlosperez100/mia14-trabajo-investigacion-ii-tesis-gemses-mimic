@@ -1,0 +1,9 @@
+# Sprint 1: fijar TODAS las versiones con `pip freeze` del entorno de la tesis (Python 3.13.5).
+duckdb==1.5.2
+pandas>=2.2          # POR FIJAR
+pyarrow>=16          # POR FIJAR
+numpy>=2.0           # POR FIJAR
+scikit-learn>=1.5    # POR FIJAR (versión exacta del modelo_final.pkl)
+matplotlib>=3.9      # POR FIJAR
+tqdm>=4.66           # POR FIJAR
+python-dotenv>=1.0
