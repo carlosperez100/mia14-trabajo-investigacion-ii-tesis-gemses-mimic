@@ -1,0 +1,30 @@
+# Configuración única del pipeline (Sprint 1).
+# Las rutas externas (datos bajo DUA) van en .env; aquí solo parámetros.
+
+semilla: 42
+
+ingesta:
+  # Fuentes crudas (se registran con hash; NO se copian: DUA PhysioNet y tamaño)
+  crudas:
+    diagnoses_icd: "${MIMIC_DIR}/hosp/diagnoses_icd.csv.gz"
+    discharge: "${MIMIC_NOTE_DIR}/discharge.csv.gz"
+  # Etiquetas producidas por las fases 3 v2, 8 y 7 de la tesis (se copian a data/interim)
+  etiquetas:
+    a1_tier_a: "${ETIQUETAS_DIR}/fase3_v2/candidatos_tier_a_corregido.csv"
+    equivalencias_cm: "${ETIQUETAS_DIR}/fase8_equivalencias/positivos_con_equivalencias.csv"
+    positivos_cie9: "${ETIQUETAS_DIR}/fase7_epoca/positivos_ambas_epocas.csv"
+
+preprocesado:
+  razon_negativos: 2        # negativos por positivo, emparejados por época CIE
+  n_max: 70000              # techo por memoria (15.6 GB)
+  largo_min_texto: 100      # caracteres; notas más cortas se descartan
+  test_size: 0.20           # partición por paciente (GroupShuffleSplit)
+
+baseline:
+  n_bootstrap: 200
+  logistica:
+    max_features: 20000
+    C: 1.0
+  referencia_fase9:         # configuración del modelo final de la tesis
+    palabra_max_features: 60000
+    caracter_max_features: 20000

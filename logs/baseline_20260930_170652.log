@@ -1,0 +1,8 @@
+2026-09-30 17:06:52 | baseline | INFO | log -> logs\baseline_20260930_170652.log
+2026-09-30 17:07:19 | baseline | INFO | train 55,915 · test 14,085 · positivas test 53.7% · prevalencia real 0.2012
+2026-09-30 17:10:35 | baseline | INFO | dummy_mayoritaria    sens 1.0000 · esp 0.0000 · F1 0.6984 · AUC 0.5000 · PR-AUC 0.5365 · VPP 0.2012 (195.2 s)
+2026-09-30 17:13:56 | baseline | INFO | dummy_estratificada  sens 0.5545 · esp 0.4649 · F1 0.5499 · AUC 0.5097 · PR-AUC 0.5414 · VPP 0.2070 (201.6 s)
+2026-09-30 17:17:44 | baseline | INFO | logistica_tfidf      sens 0.7712 · esp 0.7935 · F1 0.7911 · AUC 0.8637 · PR-AUC 0.8787 · VPP 0.4847 (226.3 s)
+2026-09-30 17:50:44 | baseline | INFO | referencia_fase9     sens 0.7623 · esp 0.7699 · F1 0.7775 · AUC 0.8426 · PR-AUC 0.8610 · VPP 0.4549 (1979.7 s)
+2026-09-30 17:50:44 | baseline | INFO | VERIFICACIÓN Fase 9: REPRODUCE · diferencias {'sensibilidad': np.float64(0.0), 'especificidad': np.float64(0.0), 'auc': 0.0}
+2026-09-30 17:50:44 | baseline | INFO | Salidas: reportes/baseline_resultados.json · reportes/figuras/fig_baseline_roc_pr.png

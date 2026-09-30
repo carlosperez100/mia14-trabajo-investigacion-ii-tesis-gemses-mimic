@@ -21,3 +21,10 @@ __pycache__/
 *.log
 *.out
 *.toc
+
+# Sprint 1
+data/interim/*
+!data/interim/.gitkeep
+*.pkl
+# los logs del pipeline SÍ se versionan (evidencia del sprint)
+!logs/*.log

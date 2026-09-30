@@ -1,0 +1,141 @@
+{
+  "etapa": "baseline",
+  "semilla": 42,
+  "tarea": "deteccion binaria (etapa 1)",
+  "n_train": 55915,
+  "n_test": 14085,
+  "prevalencia_real": 0.2012,
+  "modelos": {
+    "dummy_mayoritaria": {
+      "sensibilidad": 1.0,
+      "sensibilidad_ic95": [
+        1.0,
+        1.0
+      ],
+      "especificidad": 0.0,
+      "especificidad_ic95": [
+        0.0,
+        0.0
+      ],
+      "precision": 0.5365,
+      "f1": 0.6984,
+      "auc": 0.5,
+      "auc_ic95": [
+        0.5,
+        0.5
+      ],
+      "pr_auc": 0.5365,
+      "vpp_prevalencia_real": 0.2012,
+      "matriz": {
+        "vn": 0,
+        "fp": 6528,
+        "fn": 0,
+        "vp": 7557
+      },
+      "segundos": 195.2
+    },
+    "dummy_estratificada": {
+      "sensibilidad": 0.5545,
+      "sensibilidad_ic95": [
+        0.5442,
+        0.5654
+      ],
+      "especificidad": 0.4649,
+      "especificidad_ic95": [
+        0.4526,
+        0.4773
+      ],
+      "precision": 0.5454,
+      "f1": 0.5499,
+      "auc": 0.5097,
+      "auc_ic95": [
+        0.5013,
+        0.5183
+      ],
+      "pr_auc": 0.5414,
+      "vpp_prevalencia_real": 0.207,
+      "matriz": {
+        "vn": 3035,
+        "fp": 3493,
+        "fn": 3367,
+        "vp": 4190
+      },
+      "segundos": 201.6
+    },
+    "logistica_tfidf": {
+      "sensibilidad": 0.7712,
+      "sensibilidad_ic95": [
+        0.7625,
+        0.7802
+      ],
+      "especificidad": 0.7935,
+      "especificidad_ic95": [
+        0.7822,
+        0.8035
+      ],
+      "precision": 0.8122,
+      "f1": 0.7911,
+      "auc": 0.8637,
+      "auc_ic95": [
+        0.8581,
+        0.8691
+      ],
+      "pr_auc": 0.8787,
+      "vpp_prevalencia_real": 0.4847,
+      "matriz": {
+        "vn": 5180,
+        "fp": 1348,
+        "fn": 1729,
+        "vp": 5828
+      },
+      "segundos": 226.3
+    },
+    "referencia_fase9": {
+      "sensibilidad": 0.7623,
+      "sensibilidad_ic95": [
+        0.7524,
+        0.7719
+      ],
+      "especificidad": 0.7699,
+      "especificidad_ic95": [
+        0.759,
+        0.7802
+      ],
+      "precision": 0.7932,
+      "f1": 0.7775,
+      "auc": 0.8426,
+      "auc_ic95": [
+        0.8361,
+        0.8483
+      ],
+      "pr_auc": 0.861,
+      "vpp_prevalencia_real": 0.4549,
+      "matriz": {
+        "vn": 5026,
+        "fp": 1502,
+        "fn": 1796,
+        "vp": 5761
+      },
+      "segundos": 1979.7
+    }
+  },
+  "verificacion_reproducibilidad": {
+    "esperado": {
+      "sensibilidad": 0.7623,
+      "especificidad": 0.7699,
+      "auc": 0.8426
+    },
+    "obtenido": {
+      "sensibilidad": 0.7623,
+      "especificidad": 0.7699,
+      "auc": 0.8426
+    },
+    "diferencia_abs": {
+      "sensibilidad": 0.0,
+      "especificidad": 0.0,
+      "auc": 0.0
+    },
+    "tolerancia": 0.005,
+    "reproduce": true
+  }
+}

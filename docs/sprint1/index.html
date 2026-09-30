@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sprint 1 · Pipeline reproducible</title>
+<meta name="description" content="MIA-14 Trabajo de Investigación II · Sprint 1: pipeline reproducible, EDA y baseline mínimo para la detección de eventos adversos en epicrisis MIMIC-IV. Carlos Pérez Pérez.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f1ec; --slide:#ffffff; --ink:#1d1d1f; --muted:#5b5b62; --line:#e2ddd4;
+  --uni:#8a1c24; --uni-soft:#f6e9ea; --ok:#1f7a4d; --ok-soft:#e5f3eb; --warn:#a65d00; --warn-soft:#fbf0de;
+  --code:#f3f1ee;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131315; --slide:#1c1c1f; --ink:#ededee; --muted:#a4a4ab; --line:#33333a;
+    --uni:#e0747c; --uni-soft:#3a2023; --ok:#6fcf9b; --ok-soft:#1d3327; --warn:#f0b35a; --warn-soft:#3a2d17; --code:#26262a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131315; --slide:#1c1c1f; --ink:#ededee; --muted:#a4a4ab; --line:#33333a;
+  --uni:#e0747c; --uni-soft:#3a2023; --ok:#6fcf9b; --ok-soft:#1d3327; --warn:#f0b35a; --warn-soft:#3a2d17; --code:#26262a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:400 18px/1.45 "Source Sans 3",system-ui,sans-serif;overflow:hidden}
+.deck{height:100%;display:flex;align-items:center;justify-content:center;padding:16px}
+.slide{display:none;width:min(1200px,100%);aspect-ratio:16/9;max-height:calc(100vh - 72px);background:var(--slide);
+  border:1px solid var(--line);border-radius:14px;padding:44px 56px;position:relative;overflow:auto;
+  box-shadow:0 10px 40px rgba(0,0,0,.08)}
+.slide.on{display:flex;flex-direction:column}
+.kicker{font:600 13px/1 "Source Sans 3";letter-spacing:.12em;text-transform:uppercase;color:var(--uni);margin-bottom:10px}
+h1,h2{font-family:"Source Serif 4",Georgia,serif;margin:0 0 18px;line-height:1.15}
+h1{font-size:44px} h2{font-size:32px}
+p{margin:0 0 12px} .muted{color:var(--muted)}
+.grid{display:grid;gap:18px} .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+.card{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:var(--slide)}
+.card h3{margin:0 0 6px;font-size:18px}
+.big{font:700 38px/1 "Source Sans 3";color:var(--uni);margin-bottom:6px}
+.ok{color:var(--ok)} .warn{color:var(--warn)}
+.tag{display:inline-block;font:600 12px/1 "Source Sans 3";padding:5px 8px;border-radius:999px;background:var(--uni-soft);color:var(--uni)}
+.tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.warn{background:var(--warn-soft);color:var(--warn)}
+table{border-collapse:collapse;width:100%;font-size:16px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.hl td{background:var(--ok-soft)}
+code,pre{font-family:"JetBrains Mono",monospace;font-size:14px}
+pre{background:var(--code);border-radius:8px;padding:14px 16px;margin:0;overflow:auto;line-height:1.5}
+img.fig{width:100%;border-radius:8px;border:1px solid var(--line);background:#fff}
+.flow{display:flex;align-items:stretch;gap:10px;margin:8px 0 18px}
+.step{flex:1;border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--slide)}
+.step b{display:block;color:var(--uni);font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.step .io{font-size:14px;color:var(--muted)}
+.arrow{align-self:center;color:var(--muted);font-size:22px}
+.funnel .row{display:flex;align-items:center;gap:12px;margin:6px 0}
+.funnel .bar{height:30px;background:var(--uni);border-radius:6px;color:#fff;font:600 14px/30px "Source Sans 3";padding-left:10px;white-space:nowrap;min-width:max-content}
+.funnel .lab{font-size:15px;color:var(--muted)}
+.cover{justify-content:center}
+.inst{display:flex;align-items:center;gap:18px;margin-bottom:26px}
+.inst .logo{height:78px;background:#fff;border-radius:8px;padding:4px}
+.uni{font:700 22px/1.2 "Source Serif 4",Georgia,serif;color:var(--uni)}
+.fac{font-size:15px;color:var(--muted)}
+table.ident{margin-top:18px;max-width:900px;font-size:16px}
+table.ident th{width:110px;text-transform:none;letter-spacing:0;font-size:15px}
+.hdr{display:flex;align-items:center;gap:10px;margin:-22px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.hdr img{height:26px;background:#fff;border-radius:4px;padding:2px}
+.hdr .sp{margin-left:auto;text-align:right}
+.foot{margin-top:auto;padding-top:14px;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.src{font-size:12.5px;color:var(--muted);margin-top:10px}
+nav{position:fixed;bottom:10px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+nav button{border:1px solid var(--line);background:var(--slide);color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;cursor:pointer}
+.bar-prog{position:fixed;top:0;left:0;height:3px;background:var(--uni);transition:width .2s}
+ul{margin:0 0 10px;padding-left:20px} li{margin:4px 0}
+@media (max-width:820px){
+  body{overflow:auto;font-size:16px}
+  .deck{display:block;padding:12px 16px 70px}
+  .slide{display:flex;flex-direction:column;aspect-ratio:auto;max-height:none;padding:22px 18px;margin-bottom:14px}
+  h1{font-size:30px} h2{font-size:24px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .flow{flex-direction:column} .arrow{transform:rotate(90deg)}
+  nav{display:none}
+  table{font-size:14px}
+}
+@media print{
+  body{overflow:visible;background:#fff} nav,.bar-prog{display:none}
+  .deck{display:block;padding:0} .slide{display:flex;page-break-after:always;box-shadow:none;max-height:none;margin:0 auto 0}
+}
+</style>
+</head>
+<body>
+<div class="bar-prog" id="prog"></div>
+<main class="deck" id="deck">
+
+<!-- 1 -->
+<section class="slide cover">
+  <div class="inst">
+    <img class="logo" src="logo_uni.png" alt="Logo de la Universidad Nacional de Ingeniería">
+    <div>
+      <div class="uni">Universidad Nacional de Ingeniería</div>
+      <div class="fac">Facultad de Ingeniería Industrial y de Sistemas · Unidad de Posgrado</div>
+      <div class="fac">Maestría en Inteligencia Artificial</div>
+    </div>
+  </div>
+  <div class="kicker">Curso MIA-14 · Trabajo de Investigación II · Ciclo 2026-2 · Sección B</div>
+  <h1>Sprint 1 · Pipeline reproducible, EDA y baseline mínimo</h1>
+  <p style="font-size:21px;max-width:900px">Detección de eventos adversos en epicrisis de MIMIC-IV, como base para la priorización con la Matriz del Modelo GEMSES.</p>
+  <table class="ident">
+    <tr><th>Alumno</th><td>Carlos Pérez Pérez</td></tr>
+    <tr><th>Docente</th><td>Dr. Ing. Glen Dario Rodríguez Rafael</td></tr>
+    <tr><th>Curso</th><td>MIA-14 Trabajo de Investigación II (en el sílabo: Proyecto de Investigación II, MIA-403)</td></tr>
+    <tr><th>Programa</th><td>Maestría en Inteligencia Artificial · FIIS-UNI</td></tr>
+    <tr><th>Fecha</th><td>Demo interna del Sprint 1 · semana 3 · viernes 2 de octubre de 2026</td></tr>
+  </table>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="kicker">El problema y la tarea</div>
+  <h2>¿La nota de alta corresponde a una hospitalización con un evento adverso?</h2>
+  <div class="grid g3" style="margin-top:6px">
+    <div class="card"><h3>Unidad de análisis</h3><p>Una epicrisis (<i>discharge summary</i>) de MIMIC-IV-Note v2.2.</p></div>
+    <div class="card"><h3>Variable objetivo</h3><p>Binaria. Positiva si la hospitalización tiene un código CIE de semántica causal explícita (estrato A1). Es <b>supervisión débil</b>.</p></div>
+    <div class="card"><h3>Partición</h3><p>Por <b>paciente</b> (GroupShuffleSplit, 80/20, semilla 42): ningún paciente aparece en train y test a la vez.</p></div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h3>Por qué importa la métrica</h3>
+    <p>La prevalencia real del evento en MIMIC-IV es <b>20.12 %</b> (109 775 de 545 497 hospitalizaciones), pero el corpus de entrenamiento tiene 53.8 % de positivas. Por eso se reportan <b>AUC</b> y <b>VPP corregido a la prevalencia real</b> (teorema de Bayes), no el F1 del test.</p>
+  </div>
+  <div class="foot"><span>Fuente de cifras: reportes/preprocesado_resumen.json</span><span>2 / 11</span></div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="kicker">Punto de partida · Track A con pipeline previo no reproducible</div>
+  <h2>Había un modelo entrenado, pero no se podía repetir</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3 class="warn">Antes del sprint (julio 2026)</h3>
+      <ul>
+        <li>46 scripts, uno por fase, sin orquestador</li>
+        <li>Rutas absolutas escritas en el código</li>
+        <li>Partición train/test no guardada</li>
+        <li>Versiones de librerías sin fijar</li>
+        <li>Sin baseline mínimo sobre el corpus corregido</li>
+      </ul>
+      <p class="muted" style="font-size:15px">Cumple la definición de «sprint defectuoso» del sílabo: código que no reproduce, splits no guardados, pipeline no reproducible.</p>
+    </div>
+    <div class="card" style="border-color:var(--ok)">
+      <h3 class="ok">Objetivo medible del Sprint 1</h3>
+      <p>Que un tercero con credencial PhysioNet clone el repositorio, ejecute <code>python src/run_pipeline.py</code> y obtenga:</p>
+      <ul>
+        <li>el mismo corpus y la misma partición;</li>
+        <li>las cifras del modelo de la tesis: sensibilidad 0.7623, especificidad 0.7699 y AUC 0.8426, con una tolerancia de <b>± 0.005</b>.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>entregables/sprint1/ROADMAP_SPRINT1.md</span><span>3 / 11</span></div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="kicker">Diseño del pipeline</div>
+  <h2>Un comando, tres etapas, salidas trazables</h2>
+  <div class="flow">
+    <div class="step"><b>1 · Ingesta</b>Verifica las fuentes, calcula SHA-256, copia las etiquetas a <code>data/interim</code> y extrae la época CIE.<div class="io">→ bitacora_datos.csv</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><b>2 · Preprocesado</b>Positivos A1, negativos emparejados por época, texto, limpieza, submuestreo y partición por paciente.<div class="io">→ dataset.parquet · splits.csv</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><b>3 · Baseline</b>Dos dummy, una logística TF-IDF y la referencia de la Fase 9. IC 95 % por bootstrap.<div class="io">→ baseline_resultados.json · figura</div></div>
+    <div class="arrow">+</div>
+    <div class="step"><b>EDA</b>Notebook orientado a riesgos: balance, confusor, atajos y fugas.<div class="io">→ 01_EDA_sprint1.ipynb</div></div>
+  </div>
+  <div class="grid g3">
+    <div class="card"><h3>Configuración</h3><p><code>config/config.yaml</code> guarda los parámetros y la semilla; <code>.env</code> guarda las rutas. En <code>src/</code> no queda ninguna ruta absoluta.</p></div>
+    <div class="card"><h3>Registro</h3><p>Cada etapa deja un log con fecha en <code>logs/</code> y conteos por paso.</p></div>
+    <div class="card"><h3>Sin fuga</h3><p>El TF-IDF se ajusta <b>solo con train</b>. La partición se lee de <code>splits.csv</code>.</p></div>
+  </div>
+  <div class="foot"><span>src/run_pipeline.py --desde · --hasta · --sin-referencia</span><span>4 / 11</span></div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="kicker">Etapa 1 · Ingesta idempotente</div>
+  <h2>Bitácora de datos: fuente, fecha, hash, tamaño</h2>
+  <table>
+    <thead><tr><th>Fuente</th><th>Rol</th><th class="n">Tamaño</th><th>SHA-256 (inicio)</th></tr></thead>
+    <tbody>
+      <tr><td>diagnoses_icd.csv.gz (MIMIC-IV v3.1)</td><td>cruda, externa (DUA)</td><td class="n">33.6 MB</td><td><code>47665a41b2a3ad99…</code></td></tr>
+      <tr><td>discharge.csv.gz (MIMIC-IV-Note v2.2)</td><td>cruda, externa (DUA)</td><td class="n">1 139.2 MB</td><td><code>27bc552edaf81c2a…</code></td></tr>
+      <tr><td>Etiquetas A1 · Tier A (fase 3 v2)</td><td>copiada a interim</td><td class="n">10.8 MB</td><td><code>778b9d3993c9e1c4…</code></td></tr>
+      <tr><td>Equivalencias CIE-10-CM (fase 8)</td><td>copiada a interim</td><td class="n">3.1 MB</td><td><code>1f130393a004a274…</code></td></tr>
+      <tr><td>Positivos CIE-9 (fase 7)</td><td>copiada a interim</td><td class="n">4.0 MB</td><td><code>4d481fbb48da4edb…</code></td></tr>
+      <tr><td>Época CIE por hospitalización</td><td>derivada</td><td class="n">2.6 MB</td><td><code>a8b53ea73a9853ad…</code></td></tr>
+    </tbody>
+  </table>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><span class="tag ok">Idempotente</span><p style="margin-top:8px">La segunda ejecución no copia ni vuelve a calcular hashes: hay caché por tamaño y fecha.</p></div>
+    <div class="card"><span class="tag">DUA PhysioNet</span><p style="margin-top:8px">MIMIC no se copia ni se versiona. Se registra su hash para demostrar que se usó el mismo archivo.</p></div>
+  </div>
+  <div class="foot"><span>data/bitacora_datos.csv · logs/ingesta_*.log</span><span>5 / 11</span></div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="kicker">Etapa 2 · Preprocesado con conteos por paso</div>
+  <h2>De 545 497 hospitalizaciones a 70 000 notas, sin pacientes compartidos</h2>
+  <div class="funnel" style="margin-top:4px">
+    <div class="row"><div class="bar" style="width:100%">545 497 hospitalizaciones con diagnóstico</div></div>
+    <div class="row"><div class="bar" style="width:60%">329 325 seleccionadas</div><span class="lab">109 775 positivas + 219 550 negativas emparejadas por época</span></div>
+    <div class="row"><div class="bar" style="width:39%">213 974 notas con texto</div><span class="lab">0 descartadas por texto nulo o corto</span></div>
+    <div class="row"><div class="bar" style="width:13%">70 000</div><span class="lab">notas finales · 37 692 positivas · 48 669 pacientes (techo por memoria)</span></div>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card"><div class="big">55 915</div>notas de entrenamiento · 53.9 % positivas</div>
+    <div class="card"><div class="big">14 085</div>notas de test · 53.7 % positivas</div>
+    <div class="card"><div class="big ok">0</div>pacientes compartidos entre train y test</div>
+  </div>
+  <p class="src">Verificación: el corpus reconstruido es idéntico <b>nota por nota, en el mismo orden y con las mismas etiquetas</b> que el de la Fase 9 de julio de 2026.</p>
+  <div class="foot"><span>reportes/preprocesado_resumen.json · logs/preprocesado_*.log</span><span>6 / 11</span></div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="kicker">EDA orientado a riesgos</div>
+  <h2>Cinco preguntas que podrían invalidar el modelo</h2>
+  <table>
+    <thead><tr><th>Riesgo</th><th>Evidencia</th><th>Decisión</th></tr></thead>
+    <tbody>
+      <tr><td>Métrica engañosa por el balance</td><td>53.8 % de positivas en el corpus frente a 20.12 % real</td><td>AUC + VPP corregido</td></tr>
+      <tr><td>Confusor de época CIE-9 / CIE-10</td><td>71.1 / 28.9 % en ambas clases; <b>AUC de la época sola = 0.500</b></td><td><span class="tag ok">Controlado</span></td></tr>
+      <tr><td>Atajo por largo de la nota</td><td>Mediana de 10 717 frente a 9 185 caracteres; <b>AUC del largo solo = 0.606</b></td><td><span class="tag warn">Moderado</span> control en el Sprint 2</td></tr>
+      <tr><td>Fuga de códigos CIE en el texto</td><td>Formato CIE-10 en 4.95 % de las positivas frente a 4.45 % de las negativas</td><td>Bajo; ablación en el Sprint 2</td></tr>
+      <tr><td>Fuga por paciente</td><td>1.44 notas por paciente; 0 compartidos</td><td>GroupKFold en el Sprint 2</td></tr>
+      <tr><td>Clases raras (etapa 2)</td><td>Sistema/Organización: 130 notas (0.34 %)</td><td>No evaluable; reportar aparte</td></tr>
+    </tbody>
+  </table>
+  <div class="foot"><span>notebooks/01_EDA_sprint1.ipynb (solo agregados, por el DUA)</span><span>7 / 11</span></div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="kicker">EDA · el riesgo que queda abierto</div>
+  <h2>Las notas más largas tienen más positivas</h2>
+  <img class="fig" src="fig_eda_largo.png" alt="Histograma del largo de la epicrisis por clase y proporción de positivas por decil de largo, que sube de 44 % a 76.5 %">
+  <p class="src">La proporción de positivas sube de 44 % en el decil más corto a 76.5 % en el más largo. Hipótesis a probar: las hospitalizaciones con evento adverso son más largas y complejas, y generan epicrisis más extensas. En el Sprint 2 se mide el AUC dentro de cada decil de largo.</p>
+  <div class="foot"><span>reportes/figuras/fig_eda_largo.png</span><span>8 / 11</span></div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="kicker">Etapa 3 · Baseline mínimo (test, partición por paciente)</div>
+  <h2>El piso, un modelo simple y el modelo de la tesis</h2>
+  <div class="grid g2" style="align-items:start">
+    <table>
+      <thead><tr><th>Modelo</th><th class="n">AUC (IC 95 %)</th><th class="n">VPP real</th></tr></thead>
+      <tbody>
+        <tr><td>Dummy mayoritaria</td><td class="n">0.500</td><td class="n">0.201</td></tr>
+        <tr><td>Dummy estratificada</td><td class="n">0.510 (0.501–0.518)</td><td class="n">0.207</td></tr>
+        <tr class="hl"><td><b>Logística TF-IDF</b></td><td class="n"><b>0.864 (0.858–0.869)</b></td><td class="n"><b>0.485</b></td></tr>
+        <tr><td>Referencia Fase 9 (LinearSVC)</td><td class="n">0.843 (0.836–0.848)</td><td class="n">0.455</td></tr>
+      </tbody>
+    </table>
+    <img class="fig" src="fig_baseline_roc_pr.png" alt="Curvas ROC y precisión-sensibilidad de los cuatro modelos">
+  </div>
+  <p class="src">VPP real: valor predictivo positivo corregido a la prevalencia de 20.12 %. Tiempos de entrenamiento: logística 226 s; referencia de la Fase 9, 1 980 s.</p>
+  <div class="foot"><span>reportes/baseline_resultados.json</span><span>9 / 11</span></div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <div class="kicker">Criterio de aceptación</div>
+  <h2>Reproduce la Fase 9 con diferencia 0.0000</h2>
+  <div class="grid g3">
+    <div class="card"><h3>Sensibilidad</h3><div class="big ok">0.7623</div>esperado 0.7623 · diferencia 0.0000</div>
+    <div class="card"><h3>Especificidad</h3><div class="big ok">0.7699</div>esperado 0.7699 · diferencia 0.0000</div>
+    <div class="card"><h3>AUC</h3><div class="big ok">0.8426</div>esperado 0.8426 · diferencia 0.0000</div>
+  </div>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card"><h3>Misma matriz de confusión que en julio</h3><p>VN 5 026 · FP 1 502 · FN 1 796 · VP 5 761</p></div>
+    <div class="card" style="border-color:var(--warn)"><h3 class="warn">Hallazgo para la tesis</h3><p>El baseline simple (logística) <b>supera</b> al modelo de la tesis, y sus IC 95 % de AUC no se solapan. La causa todavía no está probada: es una hipótesis para el Sprint 2.</p></div>
+  </div>
+  <div class="foot"><span>baseline_resultados.json → verificacion_reproducibilidad · tolerancia ± 0.005</span><span>10 / 11</span></div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <div class="kicker">Límites declarados y Sprint 2</div>
+  <h2>Lo que falta y lo que sigue</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Límites de este sprint</h3>
+      <ul>
+        <li>Las tablas de etiquetas (fases 3 v2, 8 y 7) entran como archivos registrados con hash; todavía no se regeneran desde MIMIC dentro del orquestador.</li>
+        <li>La etiqueta es débil (códigos de facturación). El panel experto es la validación secundaria.</li>
+        <li>Una sola partición train/test; todavía no hay validación cruzada.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Sprint 2 (semanas 4–6)</h3>
+      <ul>
+        <li>Integrar las fases 3 v2, 8 y 7 al orquestador</li>
+        <li>GroupKFold por paciente, con resultados por fold</li>
+        <li>Control del atajo por largo y ablación con códigos CIE enmascarados</li>
+        <li>La logística pasa a ser el baseline a batir</li>
+      </ul>
+    </div>
+  </div>
+  <h3 style="margin:18px 0 8px;font-size:18px">Reproducir</h3>
+<pre>pip install -r requirements.txt
+cp .env.example .env          # MIMIC_DIR, MIMIC_NOTE_DIR, ETIQUETAS_DIR
+python src/run_pipeline.py    # ingesta → preprocesado → baseline (~45 min en CPU)</pre>
+  <div class="foot"><span>github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic</span><span>11 / 11</span></div>
+</section>
+
+</main>
+<nav><button id="prev" aria-label="Anterior">←</button><span id="count"></span><button id="next" aria-label="Siguiente">→</button></nav>
+<script>
+const s=[...document.querySelectorAll('.slide')];let i=0;
+// cabecera institucional en cada lámina (salvo la portada)
+s.slice(1).forEach(x=>x.insertAdjacentHTML('afterbegin',
+  '<div class="hdr"><img src="logo_uni.png" alt="UNI"><span>UNI · FIIS · Maestría en Inteligencia Artificial<br>MIA-14 Trabajo de Investigación II · Dr. Ing. Glen Dario Rodríguez Rafael</span><span class="sp">Alumno: Carlos Pérez Pérez<br>Sprint 1 · 02-10-2026</span></div>'));
+const n=s.length;s.forEach((x,k)=>{const f=x.querySelector('.foot span:last-child');if(f)f.textContent=`${k+1} / ${n}`});
+function go(k){i=Math.max(0,Math.min(n-1,k));s.forEach((x,j)=>x.classList.toggle('on',j===i));
+  document.getElementById('count').textContent=`${i+1} / ${n}`;document.getElementById('prog').style.width=`${100*(i+1)/n}%`;
+  history.replaceState(null,'','#'+(i+1));}
+document.getElementById('prev').onclick=()=>go(i-1);document.getElementById('next').onclick=()=>go(i+1);
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(i+1)}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(i-1)}if(e.key==='Home')go(0);if(e.key==='End')go(n-1)});
+if(matchMedia('(max-width:820px)').matches){s.forEach(x=>x.classList.add('on'))}else{go((parseInt(location.hash.slice(1))||1)-1)}
+</script>
+</body>
+</html>

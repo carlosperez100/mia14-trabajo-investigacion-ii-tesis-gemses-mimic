@@ -1,0 +1,11 @@
+2026-09-30 17:05:15 | preprocesado | INFO | log -> logs\preprocesado_20260930_170515.log
+2026-09-30 17:05:19 | preprocesado | INFO | 1. Positivos (hospitalizaciones): {'a1': 18989, 'equivalencias': 19151, 'cie9': 74741, 'union': 109775}
+2026-09-30 17:05:19 | preprocesado | INFO |    prevalencia real 0.2012 (109,775 de 545,497)
+2026-09-30 17:05:21 | preprocesado | INFO | 2. Negativos emparejados: 219,550 (cuota por era {9: 149480, 10: 70070})
+2026-09-30 17:05:21 | preprocesado | INFO | 3. Recuperando texto de 329,325 hospitalizaciones (lotes de 20 000) ...
+2026-09-30 17:05:25 | preprocesado | INFO |    lote 0 …
+2026-09-30 17:06:33 | preprocesado | INFO |    notas recuperadas: 213,974
+2026-09-30 17:06:34 | preprocesado | INFO | 4. Limpieza: {'descartadas_texto_nulo_o_corto': 0, 'descartadas_sin_paciente_o_epoca': 0, 'quedan': 213974}
+2026-09-30 17:06:35 | preprocesado | INFO | 5. Corpus final: {'notas': 70000, 'positivas': 37692, 'pacientes': 48669, 'era10_positivos': 0.2892, 'era10_negativos': 0.2892}
+2026-09-30 17:06:35 | preprocesado | INFO | 6. Partición por paciente: {'train': 55915, 'test': 14085, 'pacientes_compartidos': 0, 'positivas_train': 0.5389, 'positivas_test': 0.5365}
+2026-09-30 17:06:45 | preprocesado | INFO | Salidas: data/processed/dataset.parquet, splits.csv (sha256 a252913516c7fe62…)

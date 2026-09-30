@@ -1,0 +1,41 @@
+{
+  "etapa": "preprocesado",
+  "semilla": 42,
+  "parametros": {
+    "razon_negativos": 2,
+    "n_max": 70000,
+    "largo_min_texto": 100,
+    "test_size": 0.2
+  },
+  "prevalencia_real": 0.2012,
+  "conteos": {
+    "positivos_hadm": {
+      "a1": 18989,
+      "equivalencias": 19151,
+      "cie9": 74741,
+      "union": 109775
+    },
+    "negativos_hadm": 219550,
+    "notas_recuperadas": 213974,
+    "limpieza": {
+      "descartadas_texto_nulo_o_corto": 0,
+      "descartadas_sin_paciente_o_epoca": 0,
+      "quedan": 213974
+    },
+    "corpus_final": {
+      "notas": 70000,
+      "positivas": 37692,
+      "pacientes": 48669,
+      "era10_positivos": 0.2892,
+      "era10_negativos": 0.2892
+    },
+    "particion": {
+      "train": 55915,
+      "test": 14085,
+      "pacientes_compartidos": 0,
+      "positivas_train": 0.5389,
+      "positivas_test": 0.5365
+    }
+  },
+  "sha256_splits": "a252913516c7fe62e88293cd6327dfa118a2df00ffb02f67c47d998418ef17a4"
+}
