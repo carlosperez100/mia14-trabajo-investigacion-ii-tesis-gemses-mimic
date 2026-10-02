@@ -14,7 +14,7 @@
 | 6 | `src/run_pipeline.py` con `--desde/--hasta` | Carlos | Ejecuta las 3 etapas en orden | Hecho |
 | 7 | Notebook EDA orientado a riesgos | Carlos | Conclusiones accionables, solo agregados (DUA) | Hecho |
 | 8 | Demo interna de 5–8 min | Carlos | Guion y figura central | Guion listo; falta ensayar |
-| 9 | Crear los issues y el tablero en GitHub Projects | Carlos | Tablero con las tareas 1–8 | Pendiente (lo hace Carlos en GitHub) |
+| 9 | Crear los issues y el tablero en GitHub Projects | Carlos | Tablero con las tareas 1–8 | Issues #1–#14 y milestones creados; falta el tablero de Projects |
 
 ## Fuera del Sprint 1 (pasa al Sprint 2)
 - Integrar al orquestador las fases que **producen** las etiquetas: 3 v2 (patrones Tier A), 8 (equivalencias CIE-10-CM) y 7 (mapeo CIE-9). Hoy entran como tablas intermedias registradas con hash; todavía no se regeneran desde MIMIC con un comando.
