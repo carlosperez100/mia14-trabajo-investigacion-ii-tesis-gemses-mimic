@@ -168,6 +168,9 @@ def main():
                   "modelos": resultados, "verificacion_reproducibilidad": verificacion},
                  REPORTES / "baseline_resultados.json")
     log.info("Salidas: reportes/baseline_resultados.json · reportes/figuras/fig_baseline_roc_pr.png")
+    import reporte_baseline
+    reporte_baseline.main()
+    log.info("Métricas -> logs/metrics_baseline.txt · reportes/figuras/fig_matrices_confusion.png")
 
 
 if __name__ == "__main__":

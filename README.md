@@ -1,99 +1,139 @@
 <p align="left"><img src="docs/sprint1/logo_uni.png" alt="Universidad Nacional de Ingeniería" height="70"></p>
 
-# Trabajo de Investigación II (MIA-14) — Tesis GEMSES × MIMIC-IV
+# 🏥 Detección de eventos adversos en epicrisis (MIMIC-IV) para su priorización con el Modelo GEMSES
 
-**Universidad Nacional de Ingeniería · Facultad de Ingeniería Industrial y de Sistemas · Unidad de Posgrado**<br>
-**Maestría en Inteligencia Artificial**
+Proyecto de investigación (Maestría en IA – UNI): un pipeline de PLN y aprendizaje automático que detecta, en la nota de alta hospitalaria, si la hospitalización tuvo un evento adverso. Es la base para priorizar esos eventos con la Matriz de Priorización del Modelo GEMSES.
 
-| Campo | Dato |
-|---|---|
-| Alumno | **Carlos Pérez Pérez** · carlosperez100@gmail.com |
-| Docente | **Dr. Ing. Glen Dario Rodríguez Rafael** |
-| Curso | **MIA-14 Trabajo de Investigación II** (sílabo: Proyecto de Investigación II, MIA-403) · ciclo 2026-2 · sección B |
-| Tesis | Detección automatizada y priorización de eventos adversos desde notas clínicas no estructuradas mediante un pipeline de NLP y aprendizaje automático: aplicación de la Matriz de Priorización del Modelo GEMSES sobre MIMIC-IV |
-| Presentación del Sprint 1 | https://carlosperez100.github.io/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/sprint1/ |
-| Tablero de tareas | [Issues](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/issues) · [Milestones](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/milestones) |
+Este repositorio forma parte del curso **Proyecto de Investigación II (MIA 403)**, dictado como **MIA-14 Trabajo de Investigación II**. Universidad Nacional de Ingeniería · Facultad de Ingeniería Industrial y de Sistemas · Unidad de Posgrado · Maestría en Inteligencia Artificial · ciclo 2026-2, sección B.
 
-## Qué es este repositorio
+**Presentación del Sprint 1:** https://carlosperez100.github.io/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/sprint1/
 
-Es el repositorio del curso: entregables por semana, sprints y el artefacto reproducible que pide el sílabo. Es una sola tesis, en continuación de Trabajo de Investigación I (MIA-303). Este repositorio ordena el código para que cualquiera pueda volver a ejecutarlo.
+---
 
-**Tarea del modelo:** a partir de la nota de alta (epicrisis) de MIMIC-IV, decidir si corresponde a una hospitalización con un evento adverso. La etiqueta sale de los códigos CIE de semántica causal (estrato A1). La partición es por paciente.
+## 👥 Autores
+- Carlos Pérez Pérez – [@carlosperez100](https://github.com/carlosperez100) · carlosperez100@gmail.com
+- Docente: Dr. Ing. Glen Dario Rodríguez Rafael – [@GlenRodriguez](https://github.com/GlenRodriguez)
 
-## Estructura de carpetas
+**Track:** A (venía de Proyecto I con un modelo entrenado, pero con un pipeline no reproducible; en el Sprint 1 se migró y se ordenó).
 
+---
+
+## 📊 Dataset
+| | MIMIC-IV-Note v2.2 (texto) | MIMIC-IV v3.1 (diagnósticos) |
+|---|---|---|
+| **Fuente** | [PhysioNet – MIMIC-IV-Note v2.2](https://physionet.org/content/mimic-iv-note/2.2/) (acceso con credencial y DUA) | [PhysioNet – MIMIC-IV v3.1](https://physionet.org/content/mimiciv/3.1/) (acceso con credencial y DUA) |
+| **Archivo** | `note/discharge.csv.gz` (1 139.2 MB) | `hosp/diagnoses_icd.csv.gz` (33.6 MB) |
+| **Registros** | 331 793 epicrisis de 145 914 pacientes | 545 497 hospitalizaciones con diagnóstico |
+| **Variables usadas** | `note_id`, `subject_id`, `hadm_id`, `text` | `hadm_id`, `icd_code`, `icd_version` |
+| **Versión usada** | archivo del 11/05/2026 | archivo del 14/05/2026 |
+| **Hash (SHA-256)** | `27bc552edaf81c2af322040cb7e8eb36417173b23c79405bb92fcf73bef2dbc5` | `47665a41b2a3ad990d6f314062d5bd6d29d467b0fd402dd94662044ec8b073d2` |
+
+- **Variable objetivo `y` (0/1):** 1 si la hospitalización tiene un código CIE de semántica causal explícita de evento adverso (estrato A1, con equivalencias CIE-10-CM y familias CIE-9). Las tablas de etiquetas se registran con su hash en [`data/bitacora_datos.csv`](data/bitacora_datos.csv).
+- **Corpus de trabajo:** 70 000 epicrisis (37 692 positivas) emparejadas por época de codificación. Partición por paciente: 55 915 de entrenamiento y 14 085 de test, con 0 pacientes compartidos.
+- **Prevalencia real del evento en MIMIC-IV:** 20.12 % (109 775 de 545 497 hospitalizaciones).
+- **Ética:** MIMIC está bajo el DUA de PhysioNet; no se redistribuye y no se publica texto clínico. Todo archivo de datos está excluido por `.gitignore`.
+
+---
+
+## 🗂️ Estructura del repositorio
 ```
-.
-├── README.md                 este archivo
-├── requirements.txt          dependencias con versiones exactas
-├── .env.example              rutas externas (copiar a .env); ningún script tiene rutas escritas
-├── .gitignore                excluye datos, modelos y .env (DUA PhysioNet)
-├── config/
-│   └── config.yaml           parámetros del pipeline y semilla (42)
-├── data/
-│   ├── raw/                  vacío en git: MIMIC-IV se lee desde la ruta del .env (DUA, no se redistribuye)
-│   ├── interim/              vacío en git: etiquetas copiadas y época CIE (salida de la ingesta)
-│   ├── processed/            vacío en git: dataset.parquet, splits.csv y modelos .pkl
-│   └── bitacora_datos.csv    bitácora de datos: fuente, fecha, SHA-256 y tamaño
-├── src/
-│   ├── run_pipeline.py       orquestador: ingesta → preprocesado → baseline
-│   ├── ingesta.py            etapa 1 (idempotente, con hash)
-│   ├── preprocesado.py       etapa 2 (limpieza, emparejamiento, partición por paciente)
-│   ├── baseline.py           etapa 3 (dummy, logística, referencia de la tesis)
-│   └── utils.py              configuración, logging y hash
-├── notebooks/
-│   └── 01_EDA_sprint1.ipynb  EDA orientado a riesgos (solo agregados)
-├── reportes/                 resultados versionados (JSON) y figuras
-├── logs/                     un log por etapa y ejecución
-├── entregables/
-│   ├── semana2/              diseño reproducible del flujo experimental
-│   └── sprint1/              roadmap y guion de la demo
-└── docs/                     GitHub Pages: presentación del Sprint 1 y showcase de la tesis
+data/
+ ├── raw/                     # vacío en git: MIMIC se lee desde la ruta del .env (DUA)
+ ├── interim/                 # etiquetas copiadas y época CIE (salida de la ingesta)
+ ├── processed/               # dataset.parquet, splits.csv y modelos (fuera de git)
+ └── bitacora_datos.csv       # versionado de datos: fuente, fecha, SHA-256 y tamaño
+notebooks/
+ └── 01_EDA_sprint1.ipynb     # EDA: calidad, distribuciones, riesgos y decisiones accionables
+src/
+ ├── run_pipeline.py          # orquestador: ingesta → preprocesado → baseline
+ ├── ingesta.py               # script de ingesta (idempotente, con hash)
+ ├── preprocesado.py          # limpieza, emparejamiento y partición por paciente
+ ├── baseline.py              # Dummy + regresión logística (+ referencia de la tesis)
+ ├── reporte_baseline.py      # escribe logs/metrics_baseline.txt y las matrices de confusión
+ └── utils.py                 # configuración, logging y hash
+config/config.yaml            # semilla, split e hiperparámetros
+logs/                         # logs por etapa y metrics_baseline.txt
+reportes/                     # resultados en JSON y figuras
+slides/                       # presentación de resultados del sprint
+entregables/                  # entregables por semana (guía de la semana 2, roadmap y guion de la demo)
+docs/                         # GitHub Pages
+README.md
+requirements.txt
+.env.example
+.gitignore
 ```
 
-## Cómo reproducir
+---
 
-Requisitos:
-- Credencial PhysioNet con acceso a MIMIC-IV v3.1 (`hosp/diagnoses_icd.csv.gz`) y a MIMIC-IV-Note v2.2 (`note/discharge.csv.gz`).
-- Las tres tablas de etiquetas de la tesis (fases 3 v2, 8 y 7).
+## ⚙️ Requisitos
 - Python 3.13 y unos 16 GB de RAM.
+- Credencial PhysioNet con acceso a MIMIC-IV v3.1 y MIMIC-IV-Note v2.2.
 
 ```bash
 pip install -r requirements.txt
-cp .env.example .env          # completar MIMIC_DIR, MIMIC_NOTE_DIR y ETIQUETAS_DIR
-python src/run_pipeline.py    # ~45 min en CPU; --sin-referencia omite el modelo de la tesis (~33 min menos)
-jupyter nbconvert --to notebook --execute --inplace notebooks/01_EDA_sprint1.ipynb
+cp .env.example .env     # completar MIMIC_DIR, MIMIC_NOTE_DIR y ETIQUETAS_DIR
 ```
 
-| Etapa | Script | Qué hace | Salidas |
-|---|---|---|---|
-| Ingesta | `src/ingesta.py` | Verifica las fuentes, calcula SHA-256, copia las etiquetas a `data/interim/` y extrae la época CIE. Es idempotente | `data/bitacora_datos.csv`, `data/interim/` |
-| Preprocesado | `src/preprocesado.py` | Positivos A1, negativos emparejados por época, texto de alta, limpieza, submuestreo y **partición por paciente guardada** | `data/processed/`, `reportes/preprocesado_resumen.json` |
-| Baseline | `src/baseline.py` | Dummy mayoritaria, dummy estratificada, logística TF-IDF y referencia de la tesis; verifica la reproducción (± 0.005) | `reportes/baseline_resultados.json`, `reportes/figuras/` |
-| EDA | `notebooks/01_EDA_sprint1.ipynb` | Balance, confusor de época, atajo por largo, fuga de códigos CIE, fuga por paciente y clases raras | `reportes/figuras/` |
+---
 
-## Resultados del Sprint 1 (ejecución del 30-09-2026)
+## 🚀 Cómo ejecutar el pipeline
+Todo de una vez (unos 45 min en CPU):
+```bash
+python src/run_pipeline.py
+```
+O etapa por etapa:
 
-Corpus: 70 000 epicrisis (55 915 de entrenamiento y 14 085 de test), con 0 pacientes compartidos. La prevalencia real del evento en MIMIC-IV es 20.12 %.
+1. **Ingesta de datos**
+   ```bash
+   python src/ingesta.py
+   ```
+   - Verifica las fuentes, calcula SHA-256 y escribe `data/bitacora_datos.csv`. La segunda ejecución no repite nada.
 
-| Modelo | AUC (IC 95 %) | VPP a prevalencia real |
-|---|---|---|
-| Dummy mayoritaria | 0.500 | 0.201 |
-| Dummy estratificada | 0.510 (0.501–0.518) | 0.207 |
-| Logística TF-IDF | **0.864 (0.858–0.869)** | **0.485** |
-| Referencia: modelo de la tesis (LinearSVC) | 0.843 (0.836–0.848) | 0.455 |
+2. **Preprocesamiento**
+   ```bash
+   python src/preprocesado.py
+   ```
+   - Arma positivos y negativos emparejados por época, recupera el texto, limpia y hace la partición por paciente (semilla 42).
+   - Guarda en `data/processed/` y deja los conteos de cada paso en `logs/preprocesado_*.log`.
 
-**Criterio de aceptación:** el pipeline reproduce el modelo de la tesis (sensibilidad 0.7623, especificidad 0.7699, AUC 0.8426) con diferencia 0.0000. Fuente: `reportes/baseline_resultados.json`.
+3. **Exploración inicial**
+   - Abrir y ejecutar `notebooks/01_EDA_sprint1.ipynb`.
 
-**Límite declarado:** las tablas de etiquetas entran como insumo registrado con hash; regenerarlas desde MIMIC dentro del orquestador es el primer issue del Sprint 2.
+4. **Entrenamiento baseline (Dummy / regresión logística)**
+   ```bash
+   python src/baseline.py                  # incluye la referencia de la tesis (~33 min más)
+   python src/baseline.py --sin-referencia # solo los baselines
+   ```
+   - Genera `logs/metrics_baseline.txt`, `reportes/baseline_resultados.json` y las figuras de `reportes/figuras/`.
 
-## Entregables
+---
 
-| Semana | Entregable | Dónde |
-|---|---|---|
-| 2 | Diseño reproducible del flujo experimental (pipeline supervisado) | `entregables/semana2/` |
-| 3 | Repositorio con README y carpetas · Sprint 1: pipeline reproducible, EDA y baseline mínimo | este repositorio · [presentación](https://carlosperez100.github.io/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/sprint1/) |
+## 📈 Resultados (Semana 3, ejecución del 30/09/2026)
+- **EDA inicial** en `notebooks/01_EDA_sprint1.ipynb`, con tres decisiones accionables para el Sprint 2.
+- **Métrica central: PR-AUC**, junto con F1 de la clase positiva y Recall. El dummy que siempre dice «sí» obtiene F1 = 0.698, porque el test tiene 53.7 % de positivas; por eso el F1 solo no basta.
 
-## Ética y datos
+| Modelo (test) | F1 (+) | Recall | PR-AUC | ROC-AUC |
+|---|---|---|---|---|
+| Dummy (más frecuente) | 0.698 | 1.000 | 0.537 | 0.500 |
+| Dummy (estratificado) | 0.550 | 0.555 | 0.541 | 0.510 |
+| **Regresión logística TF-IDF** | **0.791** | **0.771** | **0.879** | **0.864** |
+| Referencia: modelo de la tesis (LinearSVC) | 0.778 | 0.762 | 0.861 | 0.843 |
 
-MIMIC-IV v3.1 y MIMIC-IV-Note v2.2 están bajo el DUA de PhysioNet: no se redistribuyen y no se publica texto clínico. La certificación CITI está vigente. El corpus ERSP de EsSalud contiene datos personales y nunca entra a este repositorio. Todo archivo de datos, modelo o Excel está excluido por `.gitignore`.
+- **Reproducibilidad:** el pipeline vuelve a obtener el modelo de la tesis (sensibilidad 0.7623, especificidad 0.7699, ROC-AUC 0.8426) con diferencia 0.0000.
+- **Logs de resultados:** [`logs/metrics_baseline.txt`](logs/metrics_baseline.txt).
+- **Gráficos:** [curvas ROC y precisión-recall](reportes/figuras/fig_baseline_roc_pr.png) · [matrices de confusión](reportes/figuras/fig_matrices_confusion.png).
+- **Slides de resultados:** [`slides/`](slides/) y la [presentación en línea](https://carlosperez100.github.io/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/sprint1/).
+
+---
+
+## 📌 Roadmap
+Las tareas, con responsable y plazo, están en los [issues](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/issues) y [milestones](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/milestones).
+- [x] Semana 1 → Diagnóstico, estructura del repositorio y plan del Sprint 1.
+- [x] Semana 2 → Ingesta + preprocesamiento + logging (entregable de diseño del pipeline: 18/20).
+- [x] Semana 3 → EDA + baseline + demo interna.
+- [ ] Semanas 4–6 (Sprint 2) → Regenerar las etiquetas dentro del pipeline, GroupKFold por paciente, control del atajo por largo, máscara de códigos CIE y explicación de logística frente a LinearSVC.
+
+---
+
+## 📜 Licencia
+Uso académico – Universidad Nacional de Ingeniería (UNI). Los datos de MIMIC-IV se rigen por el acuerdo de uso (DUA) de PhysioNet y no forman parte de este repositorio.

@@ -127,7 +127,7 @@ ul{margin:0 0 10px;padding-left:20px} li{margin:4px 0}
   </div>
   <div class="card" style="margin-top:18px">
     <h3>Por qué importa la métrica</h3>
-    <p>La prevalencia real del evento en MIMIC-IV es <b>20.12 %</b> (109 775 de 545 497 hospitalizaciones), pero el corpus de entrenamiento tiene 53.8 % de positivas. Por eso se reportan <b>AUC</b> y <b>VPP corregido a la prevalencia real</b> (teorema de Bayes), no el F1 del test.</p>
+    <p>El test tiene 53.7 % de positivas, así que un dummy que siempre dice «sí» obtiene <b>F1 = 0.698</b>. Por eso la métrica central es la <b>PR-AUC</b> (cuyo piso es 0.537), junto con <b>F1 de la clase positiva y Recall</b>. Como la prevalencia real en MIMIC-IV es <b>20.12 %</b> (109 775 de 545 497 hospitalizaciones), también se reporta el <b>VPP corregido</b> por Bayes.</p>
   </div>
   <div class="foot"><span>Fuente de cifras: reportes/preprocesado_resumen.json</span><span>2 / 11</span></div>
 </section>
@@ -229,7 +229,7 @@ ul{margin:0 0 10px;padding-left:20px} li{margin:4px 0}
   <table>
     <thead><tr><th>Riesgo</th><th>Evidencia</th><th>Decisión</th></tr></thead>
     <tbody>
-      <tr><td>Métrica engañosa por el balance</td><td>53.8 % de positivas en el corpus frente a 20.12 % real</td><td>AUC + VPP corregido</td></tr>
+      <tr><td>Métrica engañosa por el balance</td><td>53.8 % de positivas en el corpus frente a 20.12 % real; el dummy obtiene F1 = 0.698</td><td>PR-AUC como métrica central, más F1 (+) y Recall</td></tr>
       <tr><td>Confusor de época CIE-9 / CIE-10</td><td>71.1 / 28.9 % en ambas clases; <b>AUC de la época sola = 0.500</b></td><td><span class="tag ok">Controlado</span></td></tr>
       <tr><td>Atajo por largo de la nota</td><td>Mediana de 10 717 frente a 9 185 caracteres; <b>AUC del largo solo = 0.606</b></td><td><span class="tag warn">Moderado</span> control en el Sprint 2</td></tr>
       <tr><td>Fuga de códigos CIE en el texto</td><td>Formato CIE-10 en 4.95 % de las positivas frente a 4.45 % de las negativas</td><td>Bajo; ablación en el Sprint 2</td></tr>
@@ -255,18 +255,27 @@ ul{margin:0 0 10px;padding-left:20px} li{margin:4px 0}
   <h2>El piso, un modelo simple y el modelo de la tesis</h2>
   <div class="grid g2" style="align-items:start">
     <table>
-      <thead><tr><th>Modelo</th><th class="n">AUC (IC 95 %)</th><th class="n">VPP real</th></tr></thead>
+      <thead><tr><th>Modelo</th><th class="n">PR-AUC</th><th class="n">F1 (+)</th><th class="n">Recall</th><th class="n">ROC-AUC (IC 95 %)</th></tr></thead>
       <tbody>
-        <tr><td>Dummy mayoritaria</td><td class="n">0.500</td><td class="n">0.201</td></tr>
-        <tr><td>Dummy estratificada</td><td class="n">0.510 (0.501–0.518)</td><td class="n">0.207</td></tr>
-        <tr class="hl"><td><b>Logística TF-IDF</b></td><td class="n"><b>0.864 (0.858–0.869)</b></td><td class="n"><b>0.485</b></td></tr>
-        <tr><td>Referencia Fase 9 (LinearSVC)</td><td class="n">0.843 (0.836–0.848)</td><td class="n">0.455</td></tr>
+        <tr><td>Dummy (más frecuente)</td><td class="n">0.537</td><td class="n">0.698</td><td class="n">1.000</td><td class="n">0.500</td></tr>
+        <tr><td>Dummy (estratificado)</td><td class="n">0.541</td><td class="n">0.550</td><td class="n">0.555</td><td class="n">0.510 (0.501–0.518)</td></tr>
+        <tr class="hl"><td><b>Logística TF-IDF</b></td><td class="n"><b>0.879</b></td><td class="n"><b>0.791</b></td><td class="n"><b>0.771</b></td><td class="n"><b>0.864 (0.858–0.869)</b></td></tr>
+        <tr><td>Referencia Fase 9 (LinearSVC)</td><td class="n">0.861</td><td class="n">0.778</td><td class="n">0.762</td><td class="n">0.843 (0.836–0.848)</td></tr>
       </tbody>
     </table>
     <img class="fig" src="fig_baseline_roc_pr.png" alt="Curvas ROC y precisión-sensibilidad de los cuatro modelos">
   </div>
-  <p class="src">VPP real: valor predictivo positivo corregido a la prevalencia de 20.12 %. Tiempos de entrenamiento: logística 226 s; referencia de la Fase 9, 1 980 s.</p>
-  <div class="foot"><span>reportes/baseline_resultados.json</span><span>9 / 11</span></div>
+  <p class="src">Métrica central: PR-AUC; F1 y Recall de la clase positiva. VPP corregido a la prevalencia de 20.12 %: logística 0.485 y referencia 0.455. Tiempos de entrenamiento: logística 226 s; referencia de la Fase 9, 1 980 s.</p>
+  <div class="foot"><span>logs/metrics_baseline.txt · reportes/baseline_resultados.json</span><span>9 / 11</span></div>
+</section>
+
+<!-- 9b -->
+<section class="slide">
+  <div class="kicker">Baseline · cómo se equivoca cada modelo</div>
+  <h2>Matrices de confusión en test</h2>
+  <img class="fig" src="fig_matrices_confusion.png" alt="Matrices de confusión de los cuatro modelos en test">
+  <p class="src">El dummy más frecuente acierta todas las positivas, pero ninguna negativa: por eso su F1 de 0.698 engaña. La logística reduce a la vez los falsos positivos (1 348 frente a 1 502) y los falsos negativos (1 729 frente a 1 796) respecto del modelo de la tesis.</p>
+  <div class="foot"><span>reportes/figuras/fig_matrices_confusion.png</span><span></span></div>
 </section>
 
 <!-- 10 -->

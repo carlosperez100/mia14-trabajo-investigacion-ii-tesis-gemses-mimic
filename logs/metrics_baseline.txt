@@ -1,0 +1,25 @@
+# metrics_baseline.txt · generado 2026-10-02 16:58:02 desde reportes/baseline_resultados.json
+tarea: detección binaria de evento adverso en epicrisis (etiqueta A1 por CIE)
+semilla: 42 · split: GroupShuffleSplit por paciente, test_size 0.2 · sha256 splits.csv: a252913516c7fe62…
+n_train: 55915 · n_test: 14085 · positivas en test: 0.5365 · prevalencia real: 0.2012
+hiperparámetros: {"n_bootstrap": 200, "logistica": {"max_features": 20000, "C": 1.0}, "referencia_fase9": {"palabra_max_features": 60000, "caracter_max_features": 20000}}
+
+modelo                           F1(+)  Recall  Precis  PR-AUC  ROC-AUC  Especif  VPP real
+Dummy (más frecuente)           0.6984  1.0000  0.5365  0.5365   0.5000   0.0000    0.2012
+Dummy (estratificado)           0.5499  0.5545  0.5454  0.5414   0.5097   0.4649    0.2070
+Regresión logística TF-IDF      0.7911  0.7712  0.8122  0.8787   0.8637   0.7935    0.4847
+Referencia tesis (LinearSVC)    0.7775  0.7623  0.7932  0.8610   0.8426   0.7699    0.4549
+
+IC 95 % (bootstrap, 200 remuestreos):
+  Dummy (más frecuente)          recall [1.0, 1.0] · ROC-AUC [0.5, 0.5]
+  Dummy (estratificado)          recall [0.5442, 0.5654] · ROC-AUC [0.5013, 0.5183]
+  Regresión logística TF-IDF     recall [0.7625, 0.7802] · ROC-AUC [0.8581, 0.8691]
+  Referencia tesis (LinearSVC)   recall [0.7524, 0.7719] · ROC-AUC [0.8361, 0.8483]
+
+matrices de confusión (test):
+  Dummy (más frecuente)          VN     0  FP  6528  FN     0  VP  7557
+  Dummy (estratificado)          VN  3035  FP  3493  FN  3367  VP  4190
+  Regresión logística TF-IDF     VN  5180  FP  1348  FN  1729  VP  5828
+  Referencia tesis (LinearSVC)   VN  5026  FP  1502  FN  1796  VP  5761
+
+verificación de reproducibilidad (Fase 9): REPRODUCE · diferencias {'sensibilidad': 0.0, 'especificidad': 0.0, 'auc': 0.0} · tolerancia 0.005
