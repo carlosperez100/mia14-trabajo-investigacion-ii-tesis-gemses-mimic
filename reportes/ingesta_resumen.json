@@ -1,0 +1,64 @@
+{
+  "etapa": "ingesta",
+  "generado": "2026-10-02T17:56:15",
+  "fuentes": [
+    {
+      "nombre": "diagnoses_icd",
+      "archivo": "diagnoses_icd.csv.gz",
+      "fecha_modificacion": "2026-05-14T08:49:43",
+      "tamano_bytes": 33564802,
+      "sha256": "47665a41b2a3ad990d6f314062d5bd6d29d467b0fd402dd94662044ec8b073d2"
+    },
+    {
+      "nombre": "discharge",
+      "archivo": "discharge.csv.gz",
+      "fecha_modificacion": "2026-05-11T08:31:45",
+      "tamano_bytes": 1139203149,
+      "sha256": "27bc552edaf81c2af322040cb7e8eb36417173b23c79405bb92fcf73bef2dbc5"
+    },
+    {
+      "nombre": "a1_tier_a",
+      "archivo": "candidatos_tier_a_corregido.csv",
+      "fecha_modificacion": "2026-07-26T23:23:24",
+      "tamano_bytes": 10763103,
+      "sha256": "778b9d3993c9e1c4de13606d4df90f11c025705d820b64e90de4fc73301c158e"
+    },
+    {
+      "nombre": "equivalencias_cm",
+      "archivo": "positivos_con_equivalencias.csv",
+      "fecha_modificacion": "2026-07-29T10:06:11",
+      "tamano_bytes": 3070012,
+      "sha256": "1f130393a004a274859a27cd000285a400711d9eef79f657e11269a23be7a57a"
+    },
+    {
+      "nombre": "positivos_cie9",
+      "archivo": "positivos_ambas_epocas.csv",
+      "fecha_modificacion": "2026-07-29T02:15:32",
+      "tamano_bytes": 4034353,
+      "sha256": "4d481fbb48da4edb26c69734f73d43171e9daded687d2619fa925b1a7646b685"
+    },
+    {
+      "nombre": "epoca",
+      "archivo": "epoca.parquet",
+      "fecha_modificacion": "2026-09-30T17:04:55",
+      "tamano_bytes": 2572188,
+      "sha256": "a8b53ea73a9853ad86ba1abef58ea79b395cbf37457c1a33f549e3985c91f936"
+    }
+  ],
+  "resumen": {
+    "discharge": {
+      "epicrisis": 331793,
+      "pacientes": 145914,
+      "hospitalizaciones": 331793
+    },
+    "diagnoses_icd": {
+      "filas": 6364488,
+      "pacientes": 223291,
+      "hospitalizaciones": 545497,
+      "por_version_cie": {
+        "10": 3455747,
+        "9": 2908741
+      }
+    }
+  }
+}

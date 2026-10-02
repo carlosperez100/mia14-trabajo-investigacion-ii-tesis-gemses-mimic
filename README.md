@@ -66,7 +66,7 @@ requirements.txt
 ---
 
 ## ⚙️ Requisitos
-- Python 3.13 y unos 16 GB de RAM.
+- Python 3.13. Probado en Windows 11 con 15.6 GB de RAM (el corpus se limita a 70 000 notas por memoria; ver `n_max` en `config/config.yaml`).
 - Credencial PhysioNet con acceso a MIMIC-IV v3.1 y MIMIC-IV-Note v2.2.
 
 ```bash
@@ -121,6 +121,7 @@ O etapa por etapa:
 
 - **Reproducibilidad:** el pipeline vuelve a obtener el modelo de la tesis (sensibilidad 0.7623, especificidad 0.7699, ROC-AUC 0.8426) con diferencia 0.0000.
 - **Logs de resultados:** [`logs/metrics_baseline.txt`](logs/metrics_baseline.txt).
+- **Trazabilidad:** cada cifra de este README, de la presentación y del EDA tiene su fuente en [`reportes/TRAZABILIDAD_SPRINT1.md`](reportes/TRAZABILIDAD_SPRINT1.md).
 - **Gráficos:** [curvas ROC y precisión-recall](reportes/figuras/fig_baseline_roc_pr.png) · [matrices de confusión](reportes/figuras/fig_matrices_confusion.png).
 - **Slides de resultados:** [`slides/`](slides/) y la [presentación en línea](https://carlosperez100.github.io/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/sprint1/).
 

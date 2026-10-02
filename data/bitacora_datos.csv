@@ -1,7 +1,7 @@
 nombre,rol,archivo,fecha_modificacion,tamano_bytes,sha256,registrado
-diagnoses_icd,cruda_externa_DUA,diagnoses_icd.csv.gz,2026-05-14T08:49:43,33564802,47665a41b2a3ad990d6f314062d5bd6d29d467b0fd402dd94662044ec8b073d2,2026-09-30T17:52:14
-discharge,cruda_externa_DUA,discharge.csv.gz,2026-05-11T08:31:45,1139203149,27bc552edaf81c2af322040cb7e8eb36417173b23c79405bb92fcf73bef2dbc5,2026-09-30T17:52:14
-a1_tier_a,etiqueta_copiada,candidatos_tier_a_corregido.csv,2026-07-26T23:23:24,10763103,778b9d3993c9e1c4de13606d4df90f11c025705d820b64e90de4fc73301c158e,2026-09-30T17:52:14
-equivalencias_cm,etiqueta_copiada,positivos_con_equivalencias.csv,2026-07-29T10:06:11,3070012,1f130393a004a274859a27cd000285a400711d9eef79f657e11269a23be7a57a,2026-09-30T17:52:14
-positivos_cie9,etiqueta_copiada,positivos_ambas_epocas.csv,2026-07-29T02:15:32,4034353,4d481fbb48da4edb26c69734f73d43171e9daded687d2619fa925b1a7646b685,2026-09-30T17:52:14
-epoca,derivado_interim,epoca.parquet,2026-09-30T17:04:55,2572188,a8b53ea73a9853ad86ba1abef58ea79b395cbf37457c1a33f549e3985c91f936,2026-09-30T17:52:14
+diagnoses_icd,cruda_externa_DUA,diagnoses_icd.csv.gz,2026-05-14T08:49:43,33564802,47665a41b2a3ad990d6f314062d5bd6d29d467b0fd402dd94662044ec8b073d2,2026-10-02T17:55:53
+discharge,cruda_externa_DUA,discharge.csv.gz,2026-05-11T08:31:45,1139203149,27bc552edaf81c2af322040cb7e8eb36417173b23c79405bb92fcf73bef2dbc5,2026-10-02T17:55:53
+a1_tier_a,etiqueta_copiada,candidatos_tier_a_corregido.csv,2026-07-26T23:23:24,10763103,778b9d3993c9e1c4de13606d4df90f11c025705d820b64e90de4fc73301c158e,2026-10-02T17:55:53
+equivalencias_cm,etiqueta_copiada,positivos_con_equivalencias.csv,2026-07-29T10:06:11,3070012,1f130393a004a274859a27cd000285a400711d9eef79f657e11269a23be7a57a,2026-10-02T17:55:53
+positivos_cie9,etiqueta_copiada,positivos_ambas_epocas.csv,2026-07-29T02:15:32,4034353,4d481fbb48da4edb26c69734f73d43171e9daded687d2619fa925b1a7646b685,2026-10-02T17:55:53
+epoca,derivado_interim,epoca.parquet,2026-09-30T17:04:55,2572188,a8b53ea73a9853ad86ba1abef58ea79b395cbf37457c1a33f549e3985c91f936,2026-10-02T17:55:53

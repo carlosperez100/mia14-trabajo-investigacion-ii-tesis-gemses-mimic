@@ -11,6 +11,7 @@ ETAPA 1 — INGESTA (idempotente)
 
 Uso:  python src/ingesta.py
 """
+import json
 import shutil
 from datetime import datetime
 from pathlib import Path
@@ -67,6 +68,33 @@ def main():
         log.info(f"  {len(epoca):,} hospitalizaciones · era 9 {(epoca.epoca==9).mean():.1%} "
                  f"· era 10 {(epoca.epoca==10).mean():.1%}")
     filas.append(registrar("epoca", destino, "derivado_interim", log))
+
+    # resumen del dataset (registros, pacientes, hospitalizaciones) para documentarlo en el README
+    resumen_f = INTERIM / "resumen_fuentes.json"
+    clave = {f["nombre"]: f["sha256"] for f in filas if f["rol"] == "cruda_externa_DUA"}
+    previo = json.loads(resumen_f.read_text(encoding="utf-8")) if resumen_f.exists() else {}
+    if previo.get("sha256") == clave:
+        resumen = previo
+        log.info("Resumen de fuentes sin cambios: se reutiliza")
+    else:
+        log.info("Contando registros de las fuentes crudas ...")
+        n = 0; pac = set(); hadm = set()
+        for ch in pd.read_csv(cfg["crudas"]["discharge"], usecols=["note_id", "subject_id", "hadm_id"],
+                              chunksize=100000):
+            n += len(ch); pac.update(ch.subject_id); hadm.update(ch.hadm_id)
+        d = pd.read_csv(cfg["crudas"]["diagnoses_icd"], usecols=["subject_id", "hadm_id", "icd_version"])
+        resumen = {"sha256": clave,
+                   "discharge": {"epicrisis": n, "pacientes": len(pac), "hospitalizaciones": len(hadm)},
+                   "diagnoses_icd": {"filas": int(len(d)), "pacientes": int(d.subject_id.nunique()),
+                                     "hospitalizaciones": int(d.hadm_id.nunique()),
+                                     "por_version_cie": {str(k): int(v) for k, v in d.icd_version.value_counts().items()}}}
+        resumen_f.write_text(json.dumps(resumen, indent=2), encoding="utf-8")
+    log.info(f"discharge: {resumen['discharge']} · diagnoses_icd: {resumen['diagnoses_icd']}")
+    guardar_json({"etapa": ETAPA, "generado": datetime.now().isoformat(timespec="seconds"),
+                  "fuentes": [{k: f[k] for k in ("nombre", "archivo", "fecha_modificacion", "tamano_bytes", "sha256")}
+                              for f in filas],
+                  "resumen": {k: v for k, v in resumen.items() if k != "sha256"}},
+                 RAIZ / "reportes" / "ingesta_resumen.json")
 
     bit = pd.DataFrame(filas)
     bit.to_csv(RAIZ / "data" / "bitacora_datos.csv", index=False, encoding="utf-8")
