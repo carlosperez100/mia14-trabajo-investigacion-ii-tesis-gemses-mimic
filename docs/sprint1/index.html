@@ -116,6 +116,42 @@ ul{margin:0 0 10px;padding-left:20px} li{margin:4px 0}
   </table>
 </section>
 
+<!-- 1b · recorrido del repositorio -->
+<section class="slide">
+  <div class="kicker">Recorrido del repositorio · entregable de la semana 3</div>
+  <h2>Qué contiene el repositorio y en qué orden revisarlo</h2>
+  <p style="margin-bottom:14px"><a href="https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic" style="color:var(--uni);font-weight:600">github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic</a> · organizado según el repo de ejemplo del curso</p>
+  <div class="grid g2" style="align-items:start">
+    <table>
+      <thead><tr><th>Carpeta / archivo</th><th>Contenido</th></tr></thead>
+      <tbody>
+        <tr><td><code>README.md</code></td><td>Autores, <b>dataset</b> (fuente, registros, variables, fecha y SHA-256), ejecución y resultados</td></tr>
+        <tr><td><code>data/</code></td><td><code>raw · interim · processed</code> vacías en git por el DUA; <b>bitácora de datos</b> con hash</td></tr>
+        <tr><td><code>src/</code></td><td>ingesta → preprocesado → baseline, más el orquestador <code>run_pipeline.py</code></td></tr>
+        <tr><td><code>notebooks/</code></td><td>EDA: calidad, riesgos y decisiones accionables</td></tr>
+        <tr><td><code>logs/</code></td><td>log por etapa y <code>metrics_baseline.txt</code></td></tr>
+        <tr><td><code>config/</code></td><td>semilla 42, split e hiperparámetros</td></tr>
+        <tr><td><code>reportes/ · slides/</code></td><td>resultados JSON, figuras y esta presentación</td></tr>
+        <tr><td><code>entregables/</code></td><td>semana 2, roadmap y guion de la demo</td></tr>
+        <tr><td>Issues · Milestones</td><td>tareas con responsable y plazo (Sprints 1 y 2)</td></tr>
+      </tbody>
+    </table>
+    <div class="card">
+      <h3>Orden sugerido de revisión</h3>
+      <ol style="margin:0;padding-left:20px;line-height:1.6">
+        <li><b>README</b>: proyecto, dataset y hash</li>
+        <li><b>Carpetas</b>: estructura mínima del curso</li>
+        <li><b>Cómo ejecutar</b>: <code>python src/run_pipeline.py</code></li>
+        <li><b>logs/metrics_baseline.txt</b>: métricas, semilla, split y verificación</li>
+        <li><b>Notebook EDA</b>: 3 decisiones para el Sprint 2</li>
+        <li><b>Resultados e Issues</b>: PR-AUC y tareas</li>
+      </ol>
+      <p class="src" style="margin-top:14px">Requisitos: <code>requirements.txt</code> con versiones exactas, <code>.env.example</code> con las rutas y ninguna ruta absoluta en el código.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Las láminas siguientes explican cada parte</span><span></span></div>
+</section>
+
 <!-- 2 -->
 <section class="slide">
   <div class="kicker">El problema y la tarea</div>
