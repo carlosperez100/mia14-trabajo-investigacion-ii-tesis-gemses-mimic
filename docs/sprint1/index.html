@@ -58,6 +58,13 @@ img.fig{width:100%;border-radius:8px;border:1px solid var(--line);background:#ff
 .funnel .row{display:flex;align-items:center;gap:12px;margin:6px 0}
 .funnel .bar{height:30px;background:var(--uni);border-radius:6px;color:#fff;font:600 14px/30px "Source Sans 3";padding-left:10px;white-space:nowrap;min-width:max-content}
 .funnel .lab{font-size:15px;color:var(--muted)}
+.lectura{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.lectura div{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14.5px;line-height:1.4}
+.lectura b.t{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--uni);margin-bottom:4px}
+.lectura div.c{border-color:var(--ok);background:var(--ok-soft)}
+.lectura div.c b.t{color:var(--ok)}
+img.fig.sm{max-height:42vh;object-fit:contain}
+@media (max-width:820px){.lectura{grid-template-columns:1fr}}
 .cover{justify-content:center}
 .inst{display:flex;align-items:center;gap:18px;margin-bottom:26px}
 .inst .logo{height:78px;background:#fff;border-radius:8px;padding:4px}
@@ -278,39 +285,74 @@ ul{margin:0 0 10px;padding-left:20px} li{margin:4px 0}
 
 <!-- 8 -->
 <section class="slide">
-  <div class="kicker">EDA · el riesgo que queda abierto</div>
+  <div class="kicker">EDA · gráfico 1 · largo de la nota</div>
   <h2>Las notas más largas tienen más positivas</h2>
-  <img class="fig" src="fig_eda_largo.png" alt="Histograma del largo de la epicrisis por clase y proporción de positivas por decil de largo, que sube de 44 % a 76.5 %">
-  <p class="src">La proporción de positivas sube de 44 % en el decil más corto a 76.5 % en el más largo. Hipótesis a probar: las hospitalizaciones con evento adverso son más largas y complejas, y generan epicrisis más extensas. En el Sprint 2 se mide el AUC dentro de cada decil de largo.</p>
-  <div class="foot"><span>reportes/figuras/fig_eda_largo.png</span><span>8 / 11</span></div>
+  <img class="fig sm" src="fig_eda_largo.png" alt="Histograma del largo de la epicrisis por clase y proporción de positivas por decil de largo">
+  <div class="lectura">
+    <div><b class="t">Interpretación</b>A la izquierda, la distribución del largo de las epicrisis por clase (escala logarítmica): la curva naranja (con evento) está corrida a la derecha. A la derecha, el porcentaje de notas con evento en cada décimo del largo, de la más corta a la más larga.</div>
+    <div><b class="t">Análisis</b>Las positivas son más largas: mediana de 10 717 frente a 9 185 caracteres. La proporción de positivas sube de forma continua, de 44.0 % en el decil más corto a 76.5 % en el más largo. El largo por sí solo separa las clases con un AUC de 0.606.</div>
+    <div class="c"><b class="t">Conclusión</b>Hay un <b>riesgo moderado de atajo</b>: el modelo podría aprender «nota larga = evento». Decisión para el Sprint 2: evaluar el modelo dentro de cada decil de largo y comprobar que mantiene su desempeño.</div>
+  </div>
+  <div class="foot"><span>reportes/figuras/fig_eda_largo.png</span><span></span></div>
+</section>
+
+<!-- 8b -->
+<section class="slide">
+  <div class="kicker">EDA · gráfico 2 · correlaciones simples</div>
+  <h2>Ninguna variable de contexto explica la etiqueta por sí sola</h2>
+  <img class="fig sm" src="fig_eda_correlaciones.png" alt="Matriz de correlación de Spearman entre la etiqueta, la época CIE, el largo y las notas por paciente" style="max-width:520px;align-self:center">
+  <div class="lectura">
+    <div><b class="t">Interpretación</b>Correlación de Spearman entre la etiqueta (evento sí/no) y tres variables de contexto que no son el contenido clínico: la época de codificación CIE, el largo de la nota y el número de notas del paciente. Va de −1 a 1; cerca de 0 significa sin relación.</div>
+    <div><b class="t">Análisis</b>La época tiene correlación 0.000 con la etiqueta: el emparejamiento funcionó. El largo (0.182) y las notas por paciente (0.125) tienen correlaciones débiles pero no nulas: los pacientes con más hospitalizaciones y notas más largas tienen algo más de eventos.</div>
+    <div class="c"><b class="t">Conclusión</b>El confusor de época que había inflado los resultados en la tesis está <b>controlado</b>. Las asociaciones débiles con el largo y con la cantidad de hospitalizaciones se vigilan como posibles atajos; la señal del modelo debe venir del contenido del texto.</div>
+  </div>
+  <div class="foot"><span>reportes/figuras/fig_eda_correlaciones.png</span><span></span></div>
 </section>
 
 <!-- 9 -->
 <section class="slide">
   <div class="kicker">Etapa 3 · Baseline mínimo (test, partición por paciente)</div>
   <h2>El piso, un modelo simple y el modelo de la tesis</h2>
-  <div class="grid g2" style="align-items:start">
-    <table>
-      <thead><tr><th>Modelo</th><th class="n">PR-AUC</th><th class="n">F1 (+)</th><th class="n">Recall</th><th class="n">ROC-AUC (IC 95 %)</th></tr></thead>
-      <tbody>
-        <tr><td>Dummy (más frecuente)</td><td class="n">0.537</td><td class="n">0.698</td><td class="n">1.000</td><td class="n">0.500</td></tr>
-        <tr><td>Dummy (estratificado)</td><td class="n">0.541</td><td class="n">0.550</td><td class="n">0.555</td><td class="n">0.510 (0.501–0.518)</td></tr>
-        <tr class="hl"><td><b>Logística TF-IDF</b></td><td class="n"><b>0.879</b></td><td class="n"><b>0.791</b></td><td class="n"><b>0.771</b></td><td class="n"><b>0.864 (0.858–0.869)</b></td></tr>
-        <tr><td>Referencia Fase 9 (LinearSVC)</td><td class="n">0.861</td><td class="n">0.778</td><td class="n">0.762</td><td class="n">0.843 (0.836–0.848)</td></tr>
-      </tbody>
-    </table>
-    <img class="fig" src="fig_baseline_roc_pr.png" alt="Curvas ROC y precisión-sensibilidad de los cuatro modelos">
+  <table>
+    <thead><tr><th>Modelo</th><th class="n">PR-AUC</th><th class="n">F1 (+)</th><th class="n">Recall</th><th class="n">ROC-AUC (IC 95 %)</th><th class="n">VPP real</th></tr></thead>
+    <tbody>
+      <tr><td>Dummy (más frecuente)</td><td class="n">0.537</td><td class="n">0.698</td><td class="n">1.000</td><td class="n">0.500</td><td class="n">0.201</td></tr>
+      <tr><td>Dummy (estratificado)</td><td class="n">0.541</td><td class="n">0.550</td><td class="n">0.555</td><td class="n">0.510 (0.501–0.518)</td><td class="n">0.207</td></tr>
+      <tr class="hl"><td><b>Regresión logística TF-IDF</b></td><td class="n"><b>0.879</b></td><td class="n"><b>0.791</b></td><td class="n"><b>0.771</b></td><td class="n"><b>0.864 (0.858–0.869)</b></td><td class="n"><b>0.485</b></td></tr>
+      <tr><td>Referencia tesis (LinearSVC)</td><td class="n">0.861</td><td class="n">0.778</td><td class="n">0.762</td><td class="n">0.843 (0.836–0.848)</td><td class="n">0.455</td></tr>
+    </tbody>
+  </table>
+  <div class="lectura">
+    <div><b class="t">Interpretación</b>Cuatro modelos sobre las mismas 14 085 notas de test. La <b>PR-AUC</b> es la métrica central; F1 (+) y Recall miden la clase «con evento». El VPP real es la probabilidad de que una alerta sea un evento verdadero, con la prevalencia real de 20.12 %.</div>
+    <div><b class="t">Análisis</b>Los dos dummy marcan el piso: PR-AUC de 0.54, que es la proporción de positivas del test. El dummy más frecuente obtiene F1 = 0.698 sin aprender nada, solo porque el test tiene 53.7 % de positivas. La logística supera al modelo de la tesis en todas las métricas, y sus intervalos de ROC-AUC no se solapan.</div>
+    <div class="c"><b class="t">Conclusión</b>El baseline simple <b>supera</b> al modelo de la tesis y entrena 9 veces más rápido (226 s frente a 1 980 s). Pasa a ser el modelo a batir en el Sprint 2. Con la prevalencia real, cerca de la mitad de las alertas serían verdaderas (VPP 0.485).</div>
   </div>
-  <p class="src">Métrica central: PR-AUC; F1 y Recall de la clase positiva. VPP corregido a la prevalencia de 20.12 %: logística 0.485 y referencia 0.455. Tiempos de entrenamiento: logística 226 s; referencia de la Fase 9, 1 980 s.</p>
-  <div class="foot"><span>logs/metrics_baseline.txt · reportes/baseline_resultados.json</span><span>9 / 11</span></div>
+  <div class="foot"><span>logs/metrics_baseline.txt · reportes/baseline_resultados.json</span><span></span></div>
+</section>
+
+<!-- 9a -->
+<section class="slide">
+  <div class="kicker">Baseline · gráfico 3 · curvas ROC y precisión-sensibilidad</div>
+  <h2>La logística queda por encima en todo el rango</h2>
+  <img class="fig sm" src="fig_baseline_roc_pr.png" alt="Curvas ROC y precisión-sensibilidad de los cuatro modelos">
+  <div class="lectura">
+    <div><b class="t">Interpretación</b>Cada curva muestra un modelo en todos sus umbrales posibles. En la ROC (izquierda), más arriba y a la izquierda es mejor; la diagonal es el azar. En la precisión-sensibilidad (derecha), más arriba es mejor; la línea punteada es la proporción de positivas (0.537).</div>
+    <div><b class="t">Análisis</b>Los dos dummy siguen la diagonal y la línea de base: no discriminan. La logística (verde) queda por encima de la referencia de la tesis (roja) en ambas curvas: ROC-AUC 0.864 frente a 0.843 y PR-AUC 0.879 frente a 0.861.</div>
+    <div class="c"><b class="t">Conclusión</b>La mejora no es un efecto del umbral elegido: se ve en el área bajo ambas curvas, que resume todos los umbrales. El texto de la epicrisis contiene señal real del evento (PR-AUC 0.879 frente a un piso de 0.537).</div>
+  </div>
+  <div class="foot"><span>reportes/figuras/fig_baseline_roc_pr.png</span><span></span></div>
 </section>
 
 <!-- 9b -->
 <section class="slide">
-  <div class="kicker">Baseline · cómo se equivoca cada modelo</div>
+  <div class="kicker">Baseline · gráfico 4 · cómo se equivoca cada modelo</div>
   <h2>Matrices de confusión en test</h2>
-  <img class="fig" src="fig_matrices_confusion.png" alt="Matrices de confusión de los cuatro modelos en test">
-  <p class="src">El dummy más frecuente acierta todas las positivas, pero ninguna negativa: por eso su F1 de 0.698 engaña. La logística reduce a la vez los falsos positivos (1 348 frente a 1 502) y los falsos negativos (1 729 frente a 1 796) respecto del modelo de la tesis.</p>
+  <img class="fig sm" src="fig_matrices_confusion.png" alt="Matrices de confusión de los cuatro modelos en test">
+  <div class="lectura">
+    <div><b class="t">Interpretación</b>Filas = realidad (0 sin evento, 1 con evento); columnas = predicción. La diagonal son los aciertos. Arriba a la derecha están los <b>falsos positivos</b> (alertas sin evento); abajo a la izquierda, los <b>falsos negativos</b> (eventos no detectados). El porcentaje es sobre cada fila.</div>
+    <div><b class="t">Análisis</b>El dummy más frecuente marca todo como evento: detecta el 100 % de los positivos y acierta el 0 % de los negativos. La logística acierta el 79 % de los negativos y detecta el 77 % de los eventos. Frente a la tesis tiene 154 falsos positivos menos (1 348 frente a 1 502) y 67 falsos negativos menos (1 729 frente a 1 796).</div>
+    <div class="c"><b class="t">Conclusión</b>La logística reduce <b>los dos tipos de error</b> a la vez. Aun así, el 23 % de los eventos reales no se detecta: en vigilancia de seguridad del paciente es el error más costoso, y ajustar el umbral para subir la sensibilidad es una tarea pendiente.</div>
+  </div>
   <div class="foot"><span>reportes/figuras/fig_matrices_confusion.png</span><span></span></div>
 </section>
 
