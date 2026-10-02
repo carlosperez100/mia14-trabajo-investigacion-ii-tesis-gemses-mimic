@@ -14,7 +14,14 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+from decimal import ROUND_HALF_UP, Decimal
+
 from utils import LOGS, RAIZ, REPORTES, cargar_config
+
+
+def r3(x):
+    """Redondeo a 3 decimales «hacia arriba en el medio» (0.7775 -> 0.778), igual que en el README."""
+    return str(Decimal(str(x)).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP))
 
 NOMBRES = {"dummy_mayoritaria": "Dummy (más frecuente)", "dummy_estratificada": "Dummy (estratificado)",
            "logistica_tfidf": "Regresión logística TF-IDF", "referencia_fase9": "Referencia tesis (LinearSVC)"}
@@ -68,7 +75,7 @@ def main():
                 ax.text(j, i, f"{M[i, j]:,}\n({P[i, j]:.0%})", ha="center", va="center",
                         color="white" if P[i, j] > 0.6 else "black", fontsize=9)
         ax.set_xticks([0, 1], ["pred. 0", "pred. 1"]); ax.set_yticks([0, 1], ["real 0", "real 1"])
-        ax.set_title(f"{NOMBRES.get(k, k)}\nF1(+) {m['f1']:.3f} · PR-AUC {m['pr_auc']:.3f}", fontsize=9)
+        ax.set_title(f"{NOMBRES.get(k, k)}\nF1(+) {r3(m['f1'])} · PR-AUC {r3(m['pr_auc'])}", fontsize=9)
     fig.suptitle("Matrices de confusión en test (partición por paciente)", fontsize=10)
     fig.tight_layout()
     (REPORTES / "figuras").mkdir(parents=True, exist_ok=True)

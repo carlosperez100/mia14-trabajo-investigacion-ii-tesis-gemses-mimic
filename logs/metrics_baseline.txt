@@ -1,4 +1,4 @@
-# metrics_baseline.txt · generado 2026-10-02 16:58:02 desde reportes/baseline_resultados.json
+# metrics_baseline.txt · generado 2026-10-02 17:52:39 desde reportes/baseline_resultados.json
 tarea: detección binaria de evento adverso en epicrisis (etiqueta A1 por CIE)
 semilla: 42 · split: GroupShuffleSplit por paciente, test_size 0.2 · sha256 splits.csv: a252913516c7fe62…
 n_train: 55915 · n_test: 14085 · positivas en test: 0.5365 · prevalencia real: 0.2012
