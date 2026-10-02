@@ -2,7 +2,6 @@
 
 Sigue las seis partes del «Guion de mini-demo» de la guía de la semana 3 del Dr. Rodríguez.
 
-> Es una guía para hablar, no un texto para leer. Dilo con tus palabras: el sílabo exige que los productos superen los detectores de texto generado por IA.
 
 | Min | Parte (guía) | Qué se muestra | Qué se dice |
 |---|---|---|---|
