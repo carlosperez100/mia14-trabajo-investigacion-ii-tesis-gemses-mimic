@@ -2,7 +2,7 @@
 
 # Trabajo de Investigación II (MIA-14) — Tesis GEMSES × MIMIC-IV
 
-**Universidad Nacional de Ingeniería · Facultad de Ingeniería Industrial y de Sistemas · Unidad de Posgrado**
+**Universidad Nacional de Ingeniería · Facultad de Ingeniería Industrial y de Sistemas · Unidad de Posgrado**<br>
 **Maestría en Inteligencia Artificial**
 
 | Campo | Dato |
