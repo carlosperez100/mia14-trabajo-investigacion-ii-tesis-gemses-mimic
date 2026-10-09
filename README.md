@@ -133,26 +133,76 @@ O etapa por etapa:
 ---
 
 ## 🔎 EDA reproducible (Semana 4 · rama `sprint1-eda`)
-Entregable «Github con el EDA»: `python src/eda.py` recorre el corpus de modelado (70 000 epicrisis, 48 669 pacientes) y deja todo registrado en [`logs/metrics_eda.txt`](logs/metrics_eda.txt), [`reportes/eda_resumen.json`](reportes/eda_resumen.json) y un log con hora por corrida (`logs/eda_*.log`). Solo escribe agregados; nunca texto clínico.
+Entregable «Github con el EDA». El análisis se ejecuta con un solo comando y deja registrado cada paso:
 
-| Qué vigila | Resultado (ejecución del 08/10/2026) | Lectura |
+```bash
+python src/eda.py
+```
+
+Lee el corpus que deja el preprocesado (70 000 epicrisis de 48 669 pacientes, partición por paciente con semilla 42), revisa diez puntos en orden y termina en tres decisiones para el siguiente sprint. En cada corrida escribe un log con hora (`logs/eda_*.log`), el resumen [`logs/metrics_eda.txt`](logs/metrics_eda.txt), todas las cifras en [`reportes/eda_resumen.json`](reportes/eda_resumen.json) y las figuras de esta sección. Solo produce agregados: ningún texto clínico sale del equipo.
+
+### Flujo del análisis
+![Flujo del EDA y resultado de cada paso](reportes/figuras/fig_eda_flujo.png)
+
+Cada caja es un paso, con la pregunta que responde y su resultado. El color indica la lectura: **azul**, dato descriptivo; **verde**, riesgo revisado y controlado; **ámbar**, hallazgo que pide una acción en el siguiente sprint. La figura la genera el propio script con los resultados de la corrida.
+
+### Resultados paso a paso
+
+#### Pasos 1 a 4 · Datos, calidad, descriptivas y balance
+![Distribuciones del corpus](reportes/figuras/fig_eda_distribuciones.png)
+
+- **Qué se hizo:** se revisaron nulos, tipos, duplicados y valores atípicos; se describieron el largo de las notas, las palabras, las notas por paciente y la proporción de la clase positiva en cada partición.
+- **Qué salió:** 0 nulos en las columnas de datos y 0 duplicados de nota, hospitalización o texto. La epicrisis tiene una mediana de 9 932 caracteres y 1 515 palabras; 1 933 notas (2.8 %) son atípicas por largo. Cada paciente aporta 1.44 notas en promedio. La clase positiva es 53.9 % en train y 53.7 % en test.
+- **Qué significa:** el dataset está limpio y las notas atípicas se conservan porque son notas reales. El balance viene de cómo se construyó el corpus de modelado, no de la realidad: en MIMIC-IV la prevalencia del evento es 20.1 %, por eso las métricas se reportan también a esa prevalencia.
+
+#### Paso 5 · Época de codificación CIE-9 / CIE-10 (drift)
+![Época de codificación por clase](reportes/figuras/fig_eda_balance_epoca.png)
+
+- **Qué se hizo:** se comparó la proporción de notas de cada época de codificación en las dos clases y se midió cuánto separa la época por sí sola (AUC).
+- **Qué salió:** 71.1 % CIE-9 y 28.9 % CIE-10 en ambas clases; AUC de la época sola = 0.500.
+- **Qué significa:** la época no da pistas sobre la etiqueta. Es el confusor que en una versión anterior del modelo inflaba el AUC, y el emparejamiento por época lo dejó controlado.
+
+#### Paso 6 · Largo de la nota (atajo)
+![Largo de la nota por clase y por decil](reportes/figuras/fig_eda_largo.png)
+
+- **Qué se hizo:** se comparó el largo de las notas con y sin evento, y la proporción de positivas en cada decil de largo.
+- **Qué salió:** las notas con evento son más largas (mediana de 10 717 frente a 9 185 caracteres). El largo solo da un AUC de 0.606, y la proporción de positivas sube de 44.0 % en el decil más corto a 76.5 % en el más largo.
+- **Qué significa:** riesgo moderado de que el modelo aprenda «nota larga = evento». De aquí sale la decisión 2.
+
+#### Pasos 7 y 8 · Fugas de información
+- **Códigos CIE en el texto:** aparecen con formato CIE-10 en 4.95 % de las positivas y en 4.45 % de las negativas. La diferencia es pequeña pero real: la nota podría traer escrita parte de la respuesta. De aquí sale la decisión 3.
+- **Pacientes:** 0 pacientes están a la vez en train y en test. La partición por paciente está bien hecha.
+
+#### Paso 9 · Naturaleza del evento
+Se ve en el panel inferior derecho de la figura de los pasos 1 a 4. Procedimiento tiene 17 209 notas, Cuidado del paciente 10 305, Medicación 9 933, Dispositivo médico 1 198, Infección nosocomial 1 007 y Sistema/Organización 130. El 5.0 % de las positivas tiene más de una naturaleza. Sistema/Organización no se puede evaluar con ese volumen en la etapa 2.
+
+#### Paso 10 · Correlaciones
+![Correlaciones de Spearman](reportes/figuras/fig_eda_correlaciones.png)
+
+- **Qué se hizo:** correlación de Spearman entre las variables de contexto y la etiqueta, con la variable objetivo en la última fila.
+- **Qué salió:** largo 0.182, palabras 0.181, notas del paciente 0.125 y época 0.000.
+- **Qué significa:** la etiqueta casi no depende del contexto, así que la señal tiene que venir del contenido de la nota. El largo y el número de hospitalizaciones por paciente quedan vigilados.
+
+### Resumen de resultados (ejecución del 08/10/2026)
+| Qué vigila | Resultado | Lectura |
 |---|---|---|
-| Calidad | 0 nulos en las columnas de datos; 0 duplicados de `note_id`, `hadm_id` y texto; largo de 353 a 58 156 caracteres; 1 933 outliers (2.8 %) que se conservan | Dataset limpio; los outliers son notas reales |
-| Descriptivas | largo medio 10 684 caracteres (mediana 9 932); 1 622 palabras por nota; 1.44 notas por paciente | Notas largas: la ventana de 256 tokens de un transformer cubre una fracción pequeña |
-| Balance | 53.9 % de positivas en train y 53.7 % en test, frente a 20.1 % de prevalencia real | Corpus balanceado por diseño; las métricas se reportan también a prevalencia real |
+| Calidad | 0 nulos en las columnas de datos; 0 duplicados de `note_id`, `hadm_id` y texto; largo de 353 a 58 156 caracteres; 1 933 atípicos (2.8 %) | Dataset limpio; los atípicos son notas reales |
+| Descriptivas | largo medio 10 684 caracteres (mediana 9 932); mediana de 1 515 palabras; 1.44 notas por paciente | Notas largas: la ventana de 256 tokens de un transformer cubre una fracción pequeña |
+| Balance | 53.9 % de positivas en train y 53.7 % en test, frente a 20.1 % de prevalencia real | Corpus balanceado por construcción; métricas también a prevalencia real |
 | Época CIE-9/CIE-10 (drift) | 71.1 % / 28.9 % en ambas clases; AUC de la época sola = 0.500 | Confusor controlado por el emparejamiento |
-| Largo (atajo) | AUC del largo solo = 0.606; positivas por decil de largo de 44.0 % a 76.5 % | Riesgo moderado de atajo «nota larga = evento» |
+| Largo (atajo) | AUC del largo solo = 0.606; positivas por decil de 44.0 % a 76.5 % | Riesgo moderado de atajo |
 | Códigos CIE en el texto (fuga) | CIE-10 en 4.95 % de positivas vs 4.45 % de negativas | Fuga pequeña pero real |
 | Pacientes (fuga) | 0 pacientes compartidos entre train y test | Partición por paciente correcta |
-| Naturalezas (etapa 2) | Procedimiento 17 209 · Cuidado del paciente 10 305 · Medicación 9 933 · Dispositivo 1 198 · Infección 1 007 · Sistema/Organización 130; 5.0 % multietiqueta | Sistema/Organización no es evaluable con este volumen |
-| Correlaciones (Spearman, `y` en la última fila) | largo 0.18 · palabras 0.18 · notas del paciente 0.13 · época 0.00 | La señal debe venir del contenido, no del contexto |
+| Naturalezas (etapa 2) | de 17 209 notas (Procedimiento) a 130 (Sistema/Organización); 5.0 % multietiqueta | Sistema/Organización no es evaluable |
+| Correlaciones (Spearman) | largo 0.182 · palabras 0.181 · notas del paciente 0.125 · época 0.000 | La señal debe venir del contenido |
 
-**Decisiones accionables para el Sprint 2** (verbo, paso del pipeline, ejecutable ya, medible):
-1. **Adoptar la PR-AUC como métrica central** y reportar F1 (+) y Recall a su lado [métrica]; control: tabla de métricas con PR-AUC e IC 95 % frente al piso de 0.537.
-2. **Separar la evaluación por deciles de largo** y añadir el largo como variable de control [split/features]; control: PR-AUC dentro de cada decil.
-3. **Enmascarar los patrones de código CIE** antes de vectorizar [preprocesado]; control: PR-AUC con y sin máscara en la misma partición.
+### Decisiones para el Sprint 2
+Cada una tiene verbo, afecta un paso del pipeline, se puede ejecutar ya y tiene un control medible.
+1. **Adoptar la PR-AUC como métrica central** y reportar F1 (+) y Recall a su lado [métrica]. Control: tabla de métricas con PR-AUC e IC 95 % frente al piso de 0.537.
+2. **Separar la evaluación por deciles de largo** y añadir el largo como variable de control [split y features]. Control: PR-AUC dentro de cada decil.
+3. **Enmascarar los patrones de código CIE** antes de vectorizar [preprocesado]. Control: PR-AUC con y sin máscara en la misma partición.
 
-Figuras: [distribuciones](reportes/figuras/fig_eda_distribuciones.png) · [largo por clase y deciles](reportes/figuras/fig_eda_largo.png) · [balance y época](reportes/figuras/fig_eda_balance_epoca.png) · [correlaciones](reportes/figuras/fig_eda_correlaciones.png). Versión narrada: [`notebooks/01_EDA_sprint1.ipynb`](notebooks/01_EDA_sprint1.ipynb).
+Versión narrada, con la interpretación de cada gráfico: [`notebooks/01_EDA_sprint1.ipynb`](notebooks/01_EDA_sprint1.ipynb).
 
 ---
 

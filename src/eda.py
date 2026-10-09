@@ -22,6 +22,7 @@ Secciones (cada una vigila un riesgo concreto, como en notebooks/01_EDA_sprint1.
   7 naturaleza del evento entre las positivas (clases raras para la etapa 2)
   8 correlaciones de Spearman con la variable objetivo en la ÚLTIMA fila
   9 riesgos y decisiones accionables para el siguiente sprint
+  + figura del flujo del EDA (reportes/figuras/fig_eda_flujo.png) con el resultado de cada paso
 
 Uso:  python src/eda.py
 """
@@ -67,6 +68,128 @@ def describir(serie):
     return {k: round(float(d[k]), 2) for k in ["count", "mean", "std", "min", "25%", "50%", "75%", "max"]}
 
 
+def figura_flujo(R, ruta):
+    """Diagrama del flujo del EDA: los diez pasos en orden, con el resultado de cada uno y su estado.
+    Todas las cifras salen del diccionario de resultados R (nada se escribe a mano)."""
+    import textwrap
+    from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
+
+    def r1(x):  # redondeo convencional a un decimal (53.65 -> 53.7)
+        from decimal import Decimal, ROUND_HALF_UP
+        return str(Decimal(str(x)).quantize(Decimal('0.1'), rounding=ROUND_HALF_UP))
+
+    def mil(n):
+        return f"{int(round(n)):,}".replace(",", "\u00a0")
+
+    ESTADO = {"dato": ("#EAF2F8", "#1F4E79", "Dato"),
+              "ok": ("#E8F5EE", "#1E7B4F", "Controlado"),
+              "atencion": ("#FFF3E6", "#B35C00", "Atención")}
+    nat, cy = R["naturaleza"], R["correlaciones_spearman"]["con_y"]
+    BONITO = {"Medicacion": "Medicación", "Infeccion nosocomial": "Infección nosocomial",
+              "Dispositivo medico": "Dispositivo médico", "Sistema/Organizacion": "Sistema/Organización"}
+    dec, menor = R["largo"]["pct_positivas_por_decil"], R["naturaleza"]["clases_menores_de_200"]
+    if menor:
+        res_nat = (f"{BONITO.get(menor[0], menor[0])}: {mil(nat['conteo'][menor[0]])} notas, no evaluable · "
+                   f"{nat['pct_multietiqueta']:.1f} % multietiqueta")
+    else:
+        res_nat = f"todas las clases con 200 notas o más · {nat['pct_multietiqueta']:.1f} % multietiqueta"
+    pasos = [
+        ("Datos de entrada", "Corpus de modelado del preprocesado, con partición por paciente",
+         f"{mil(R['entrada']['notas'])} epicrisis · {mil(R['entrada']['pacientes'])} pacientes · semilla {R['semilla']}", "dato"),
+        ("Calidad", "Nulos, tipos, duplicados y valores atípicos",
+         f"{R['calidad']['nulos']['columnas_sin_labels']} nulos · {R['calidad']['duplicados']['note_id']} duplicados · "
+         f"{mil(R['calidad']['outliers_largo']['n'])} atípicos ({R['calidad']['outliers_largo']['pct']:.1f} %) conservados", "ok"),
+        ("Descriptivas", "Largo, palabras y notas por paciente",
+         f"mediana de {mil(R['descriptivas']['largo_caracteres']['50%'])} caracteres y {mil(R['descriptivas']['palabras']['50%'])} "
+         f"palabras · {R['descriptivas']['notas_por_paciente']['mean']} notas por paciente", "dato"),
+        ("Balance de la clase", "Proporción de notas con evento adverso",
+         f"{r1(R['balance']['train']['pct_positivas'])} % en train · {r1(R['balance']['test']['pct_positivas'])} % en test · "
+         f"prevalencia real {100 * R['balance']['prevalencia_real_mimic']:.1f} %", "dato"),
+        ("Época CIE-9 / CIE-10", "¿La época de codificación separa las clases? (drift)",
+         f"{R['epoca']['pct_por_clase']['positiva']['CIE-9']:.1f} % CIE-9 en ambas clases · "
+         f"AUC de la época = {R['epoca']['auc_epoca_sola']:.3f}", "ok"),
+        ("Largo de la nota", "¿El largo predice el evento por sí solo? (atajo)",
+         f"AUC del largo = {R['largo']['auc_largo_solo']:.3f} · positivas del decil 1 al 10: {dec[0]:.1f} % → {dec[-1]:.1f} %",
+         "atencion"),
+        ("Códigos CIE en el texto", "¿La nota trae escrita la respuesta? (fuga)",
+         f"CIE-10 en {R['fuga_codigos']['pct_con_cie10']['positiva']:.2f} % de positivas vs "
+         f"{R['fuga_codigos']['pct_con_cie10']['negativa']:.2f} % de negativas", "atencion"),
+        ("Pacientes", "¿Un mismo paciente en train y en test? (fuga)",
+         f"{R['pacientes']['compartidos_train_test']} pacientes compartidos", "ok"),
+        ("Naturaleza del evento", "Clases disponibles para la etapa 2", res_nat, "atencion"),
+        ("Correlaciones", "Spearman entre variables de contexto y la etiqueta",
+         f"largo {cy['largo (caracteres)']:.3f} · notas del paciente {cy['notas del paciente']:.3f} · "
+         f"época {abs(cy['época CIE']):.3f}", "atencion"),
+    ]
+    fuentes = ["del paso 4", "de los pasos 6 y 10", "del paso 7"]
+
+    fig, ax = plt.subplots(figsize=(16, 10.5))
+    ax.set_xlim(0, 100); ax.set_ylim(0, 67.5); ax.axis("off")
+    ax.text(50, 66.6, "Flujo del análisis exploratorio (EDA) y resultado de cada paso", ha="center", va="center",
+            fontsize=14, fontweight="bold", color="#1F4E79")
+    AZUL = "#1F4E79"
+
+    # banda superior: dónde está el EDA dentro del pipeline
+    etapas = ["Ingesta", "Preprocesado", "EDA (este análisis)", "Baseline"]
+    for i, e in enumerate(etapas):
+        x = 14 + i * 19
+        actual = i == 2
+        ax.add_patch(FancyBboxPatch((x, 59), 15, 4.6, boxstyle="round,pad=0.25,rounding_size=0.8",
+                                    fc=AZUL if actual else "white", ec=AZUL, lw=1.6))
+        ax.text(x + 7.5, 61.3, e, ha="center", va="center", fontsize=10, fontweight="bold",
+                color="white" if actual else AZUL)
+        if i < 3:
+            ax.add_patch(FancyArrowPatch((x + 15.4, 61.3), (x + 18.6, 61.3), arrowstyle="-|>", mutation_scale=13, color=AZUL, lw=1.5))
+    ax.text(1.5, 61.3, "Pipeline:", ha="left", va="center", fontsize=10, color="#444", fontweight="bold")
+    # leyenda de estados
+    for k, (clave, (fc, ec, nombre)) in enumerate(ESTADO.items()):
+        x = 66 + k * 11
+        ax.add_patch(FancyBboxPatch((x, 55.4), 2.2, 1.6, boxstyle="round,pad=0.1,rounding_size=0.3", fc=fc, ec=ec, lw=1.2))
+        ax.text(x + 2.9, 56.2, nombre, ha="left", va="center", fontsize=8.5, color="#333")
+
+    # diez pasos en dos filas
+    W, H, G = 17.6, 19.0, 2.0
+    filas_y = [35.0, 12.5]
+    cajas = []
+    for n, (titulo, que, resultado, estado) in enumerate(pasos):
+        fila, col = divmod(n, 5)
+        x, y = 1.5 + col * (W + G), filas_y[fila]
+        fc, ec, nombre = ESTADO[estado]
+        ax.add_patch(FancyBboxPatch((x, y), W, H, boxstyle="round,pad=0.3,rounding_size=1.0", fc=fc, ec=ec, lw=1.6))
+        ax.text(x + 0.9, y + H - 1.3, f"{n + 1} · {titulo}", ha="left", va="top", fontsize=9.6, fontweight="bold", color=ec)
+        ax.text(x + 0.9, y + H - 4.4, "\n".join(textwrap.wrap(que, 34)), ha="left", va="top", fontsize=7.6,
+                style="italic", color="#444", linespacing=1.3)
+        ax.text(x + 0.9, y + H - 9.0, "\n".join(textwrap.wrap(resultado, 27)), ha="left", va="top", fontsize=8.2,
+                color="#111", fontweight="bold", linespacing=1.35)
+        ax.add_patch(FancyBboxPatch((x + 0.9, y + 0.8), 6.4, 1.9, boxstyle="round,pad=0.12,rounding_size=0.5", fc=ec, ec=ec))
+        ax.text(x + 4.1, y + 1.75, nombre, ha="center", va="center", fontsize=7.6, color="white", fontweight="bold")
+        cajas.append((x, y))
+    for n in range(9):
+        if n == 4:  # de la fila 1 a la fila 2
+            x5, y5 = cajas[4]; x6, y6 = cajas[5]
+            ax.plot([x5 + W / 2, x5 + W / 2, x6 + W / 2], [y5 - 0.4, 33.4, 33.4], color=AZUL, lw=1.5)
+            ax.add_patch(FancyArrowPatch((x6 + W / 2, 33.4), (x6 + W / 2, y6 + H + 0.4), arrowstyle="-|>",
+                                         mutation_scale=13, color=AZUL, lw=1.5))
+        elif n != 4:
+            (xa, ya), (xb, yb) = cajas[n], cajas[n + 1]
+            if ya == yb:
+                ax.add_patch(FancyArrowPatch((xa + W + 0.35, ya + H / 2), (xb - 0.35, yb + H / 2), arrowstyle="-|>",
+                                             mutation_scale=13, color=AZUL, lw=1.5))
+
+    # decisiones
+    ax.add_patch(FancyBboxPatch((1.5, 0.6), 96.0, 9.2, boxstyle="round,pad=0.3,rounding_size=1.0", fc="white", ec=AZUL, lw=1.8))
+    ax.text(3.0, 8.4, "Decisiones para el Sprint 2", ha="left", va="center", fontsize=10.5, fontweight="bold", color=AZUL)
+    for k, d in enumerate(R["decisiones"]):
+        x = 3.0 + k * 31.6
+        ax.text(x, 5.6, f"D{d['n']} · " + "\n".join(textwrap.wrap(d["decision"], 52)) + f"\n(sale {fuentes[k]})",
+                ha="left", va="top", fontsize=8.4, color="#111", linespacing=1.35)
+    xc = cajas[7][0] + W / 2
+    ax.add_patch(FancyArrowPatch((xc, cajas[7][1] - 0.4), (xc, 10.2), arrowstyle="-|>", mutation_scale=13, color=AZUL, lw=1.5))
+
+    fig.savefig(ruta, dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+
+
 def main():
     t0 = time.time()
     log = logger(ETAPA)
@@ -81,6 +204,8 @@ def main():
     df = pd.read_parquet(ruta)
     R["entrada"]["tamano_bytes"] = ruta.stat().st_size
     R["entrada"]["sha256_splits"] = sha256(PROCESSED / "splits.csv")
+    R["entrada"]["notas"] = int(len(df))
+    R["entrada"]["pacientes"] = int(df.subject_id.nunique())
     df["largo"] = df.text.str.len()
     df["palabras"] = df.text.str.count(r"\S+")
     df["notas_paciente"] = df.groupby("subject_id").note_id.transform("count")
@@ -242,6 +367,8 @@ def main():
         "sesgo_etiqueta": "la etiqueta es débil: códigos CIE de facturación, no una lectura clínica de la nota",
     }
     R["decisiones"] = DECISIONES
+    figura_flujo(R, FIG / "fig_eda_flujo.png")
+    log.info("figura del flujo del EDA: fig_eda_flujo.png")
     R["duracion_s"] = round(time.time() - t0, 1)
     guardar_json(R, REPORTES / "eda_resumen.json")
 

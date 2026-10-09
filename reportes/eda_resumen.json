@@ -1,12 +1,14 @@
 {
   "etapa": "eda",
-  "fecha": "2026-10-08T20:35:28",
+  "fecha": "2026-10-08T23:58:15",
   "semilla": 42,
   "entrada": {
     "dataset": "data/processed/dataset.parquet",
     "splits": "data/processed/splits.csv",
     "tamano_bytes": 418184900,
-    "sha256_splits": "a252913516c7fe62e88293cd6327dfa118a2df00ffb02f67c47d998418ef17a4"
+    "sha256_splits": "a252913516c7fe62e88293cd6327dfa118a2df00ffb02f67c47d998418ef17a4",
+    "notas": 70000,
+    "pacientes": 48669
   },
   "calidad": {
     "columnas": {
@@ -314,5 +316,5 @@
       "control": "diferencia de PR-AUC con y sin máscara en la misma partición"
     }
   ],
-  "duracion_s": 74.2
+  "duracion_s": 56.2
 }

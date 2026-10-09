@@ -1,4 +1,4 @@
-# metrics_eda.txt · generado 2026-10-08 20:36:42 por src/eda.py (fuente: reportes/eda_resumen.json)
+# metrics_eda.txt · generado 2026-10-08 23:59:11 por src/eda.py (fuente: reportes/eda_resumen.json)
 entrada: 70,000 notas · 48,669 pacientes · 418 MB · semilla 42 · split por paciente (sha256 splits.csv a252913516c7fe62…)
 
 calidad: nulos 0 en las columnas de datos (labels None en 32308 negativas: esperado, no tienen naturaleza) · duplicados note_id/hadm_id/texto 0/0/0 · largo 353-58156 car. · outliers 1933 (2.76 %, se conservan)
@@ -29,4 +29,4 @@ decisiones accionables para el siguiente sprint:
   2. Separar la evaluación por deciles de largo y añadir el largo como variable de control [Split / features] — porque el largo solo separa las clases (AUC del largo, ver sección 4) y la proporción de positivas crece del decil más corto al más largo: riesgo de atajo — control: PR-AUC dentro de cada decil; si cae mucho frente a la global, el modelo se apoya en el largo
   3. Enmascarar los patrones de código CIE en el texto antes de vectorizar [Preprocesado] — porque códigos con formato CIE-10 aparecen algo más en las positivas que en las negativas (sección 5): fuga posible, aunque pequeña — control: diferencia de PR-AUC con y sin máscara en la misma partición
 
-duración: 74.2 s
+duración: 56.2 s
