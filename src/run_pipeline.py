@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Orquestador del pipeline: ingesta -> preprocesado -> baseline.
+Orquestador del pipeline: ingesta -> preprocesado -> eda -> baseline.
 
 Uso:
   python src/run_pipeline.py                      # todo
@@ -13,10 +13,11 @@ import sys
 import time
 
 import baseline
+import eda
 import ingesta
 import preprocesado
 
-ETAPAS = ["ingesta", "preprocesado", "baseline"]
+ETAPAS = ["ingesta", "preprocesado", "eda", "baseline"]
 
 
 def main():
@@ -33,6 +34,8 @@ def main():
             ingesta.main()
         elif etapa == "preprocesado":
             preprocesado.main()
+        elif etapa == "eda":
+            eda.main()
         else:
             sys.argv = [sys.argv[0]] + (["--sin-referencia"] if a.sin_referencia else [])
             baseline.main()

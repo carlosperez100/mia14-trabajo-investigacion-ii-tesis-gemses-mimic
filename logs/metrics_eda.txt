@@ -1,0 +1,32 @@
+# metrics_eda.txt · generado 2026-10-08 20:36:42 por src/eda.py (fuente: reportes/eda_resumen.json)
+entrada: 70,000 notas · 48,669 pacientes · 418 MB · semilla 42 · split por paciente (sha256 splits.csv a252913516c7fe62…)
+
+calidad: nulos 0 en las columnas de datos (labels None en 32308 negativas: esperado, no tienen naturaleza) · duplicados note_id/hadm_id/texto 0/0/0 · largo 353-58156 car. · outliers 1933 (2.76 %, se conservan)
+
+descriptivas (media / mediana / desv):
+  largo_caracteres              10684.0 /     9932.0 /    4642.76
+  palabras                      1621.89 /     1515.0 /     694.56
+  notas_por_paciente               1.44 /        1.0 /       1.12
+  naturalezas_por_positiva         1.06 /        1.0 /       0.26
+
+balance de la variable objetivo:
+  train  notas  55,915 · positivas  53.89 %
+  test   notas  14,085 · positivas  53.65 %
+  All    notas  70,000 · positivas  53.85 %
+  prevalencia real en MIMIC-IV: 20.12 %
+
+época por clase: {'negativa': {'CIE-9': 71.08, 'CIE-10': 28.92}, 'positiva': {'CIE-9': 71.08, 'CIE-10': 28.92}} · AUC época sola 0.500
+largo por clase: medianas {'negativa': 9185, 'positiva': 10717} · AUC largo solo 0.606 · positivas por decil [44.0, 46.1, 45.5, 46.8, 49.6, 51.3, 55.2, 59.0, 64.5, 76.5]
+códigos CIE-10 en texto: {'negativa': 4.45, 'positiva': 4.95} · patrón CIE-9: {'negativa': 27.97, 'positiva': 33.4}
+pacientes compartidos train/test: 0
+naturalezas (positivas): {'Procedimiento': 17209, 'Cuidado del paciente': 10305, 'Medicacion': 9933, 'Dispositivo medico': 1198, 'Infeccion nosocomial': 1007, 'Sistema/Organizacion': 130} · multietiqueta 4.96 %
+Spearman con y: {'época CIE': -0.0, 'largo (caracteres)': 0.182, 'log10 largo': 0.182, 'palabras': 0.181, 'notas del paciente': 0.125}
+
+riesgos: desbalance: corpus de modelado con 53.85 % de positivas frente a una prevalencia real de 20.12 %: las métricas se reportan también a prevalencia real (VPP real) | leakage_etiqueta: códigos CIE-10 en el texto: 4.95 % de positivas vs 4.45 % de negativas | leakage_paciente: 0 pacientes compartidos entre train y test | drift: época CIE-9/CIE-10 emparejada por clase; AUC de la época sola 0.500 | atajo_largo: AUC del largo solo 0.606; positivas por decil 44.0 % → 76.5 % | clases_raras_etapa2: ['Sistema/Organizacion'] | sesgo_etiqueta: la etiqueta es débil: códigos CIE de facturación, no una lectura clínica de la nota
+
+decisiones accionables para el siguiente sprint:
+  1. Adoptar la PR-AUC como métrica central y reportar F1 (+) y Recall a su lado [Métrica] — porque el dummy que siempre dice «sí» obtiene F1 (+) = 0.698 porque el test tiene 53.7 % de positivas; el piso de la PR-AUC es la proporción de positivas (0.537) — control: tabla de métricas con PR-AUC e IC 95 % en logs/metrics_baseline.txt, comparada contra el piso
+  2. Separar la evaluación por deciles de largo y añadir el largo como variable de control [Split / features] — porque el largo solo separa las clases (AUC del largo, ver sección 4) y la proporción de positivas crece del decil más corto al más largo: riesgo de atajo — control: PR-AUC dentro de cada decil; si cae mucho frente a la global, el modelo se apoya en el largo
+  3. Enmascarar los patrones de código CIE en el texto antes de vectorizar [Preprocesado] — porque códigos con formato CIE-10 aparecen algo más en las positivas que en las negativas (sección 5): fuga posible, aunque pequeña — control: diferencia de PR-AUC con y sin máscara en la misma partición
+
+duración: 74.2 s

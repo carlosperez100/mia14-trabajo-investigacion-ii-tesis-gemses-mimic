@@ -45,9 +45,10 @@ data/
 notebooks/
  └── 01_EDA_sprint1.ipynb     # EDA: calidad, distribuciones, riesgos y decisiones accionables
 src/
- ├── run_pipeline.py          # orquestador: ingesta → preprocesado → baseline
+ ├── run_pipeline.py          # orquestador: ingesta → preprocesado → eda → baseline
  ├── ingesta.py               # script de ingesta (idempotente, con hash)
  ├── preprocesado.py          # limpieza, emparejamiento y partición por paciente
+ ├── eda.py                   # EDA reproducible con log automático y figuras (semana 4)
  ├── baseline.py              # Dummy + regresión logística (+ referencia de la tesis)
  ├── reporte_baseline.py      # escribe logs/metrics_baseline.txt y las matrices de confusión
  └── utils.py                 # configuración, logging y hash
@@ -96,8 +97,12 @@ O etapa por etapa:
    - Arma positivos y negativos emparejados por época, recupera el texto, limpia y hace la partición por paciente (semilla 42).
    - Guarda en `data/processed/` y deja los conteos de cada paso en `logs/preprocesado_*.log`.
 
-3. **Exploración inicial**
-   - Abrir y ejecutar `notebooks/01_EDA_sprint1.ipynb`.
+3. **EDA (análisis exploratorio de datos)**
+   ```bash
+   python src/eda.py
+   ```
+   - Calidad, estadísticas descriptivas, balance, época, largo, fuga de códigos, pacientes, naturalezas y correlaciones; escribe `logs/eda_*.log`, `logs/metrics_eda.txt`, `reportes/eda_resumen.json` y las figuras `reportes/figuras/fig_eda_*.png`. Tarda unos 2 minutos.
+   - La versión narrada, con interpretación de cada gráfico, está en `notebooks/01_EDA_sprint1.ipynb`.
 
 4. **Entrenamiento baseline (Dummy / regresión logística)**
    ```bash
@@ -127,11 +132,36 @@ O etapa por etapa:
 
 ---
 
+## 🔎 EDA reproducible (Semana 4 · rama `sprint1-eda`)
+Entregable «Github con el EDA»: `python src/eda.py` recorre el corpus de modelado (70 000 epicrisis, 48 669 pacientes) y deja todo registrado en [`logs/metrics_eda.txt`](logs/metrics_eda.txt), [`reportes/eda_resumen.json`](reportes/eda_resumen.json) y un log con hora por corrida (`logs/eda_*.log`). Solo escribe agregados; nunca texto clínico.
+
+| Qué vigila | Resultado (ejecución del 08/10/2026) | Lectura |
+|---|---|---|
+| Calidad | 0 nulos en las columnas de datos; 0 duplicados de `note_id`, `hadm_id` y texto; largo de 353 a 58 156 caracteres; 1 933 outliers (2.8 %) que se conservan | Dataset limpio; los outliers son notas reales |
+| Descriptivas | largo medio 10 684 caracteres (mediana 9 932); 1 622 palabras por nota; 1.44 notas por paciente | Notas largas: la ventana de 256 tokens de un transformer cubre una fracción pequeña |
+| Balance | 53.9 % de positivas en train y 53.7 % en test, frente a 20.1 % de prevalencia real | Corpus balanceado por diseño; las métricas se reportan también a prevalencia real |
+| Época CIE-9/CIE-10 (drift) | 71.1 % / 28.9 % en ambas clases; AUC de la época sola = 0.500 | Confusor controlado por el emparejamiento |
+| Largo (atajo) | AUC del largo solo = 0.606; positivas por decil de largo de 44.0 % a 76.5 % | Riesgo moderado de atajo «nota larga = evento» |
+| Códigos CIE en el texto (fuga) | CIE-10 en 4.95 % de positivas vs 4.45 % de negativas | Fuga pequeña pero real |
+| Pacientes (fuga) | 0 pacientes compartidos entre train y test | Partición por paciente correcta |
+| Naturalezas (etapa 2) | Procedimiento 17 209 · Cuidado del paciente 10 305 · Medicación 9 933 · Dispositivo 1 198 · Infección 1 007 · Sistema/Organización 130; 5.0 % multietiqueta | Sistema/Organización no es evaluable con este volumen |
+| Correlaciones (Spearman, `y` en la última fila) | largo 0.18 · palabras 0.18 · notas del paciente 0.13 · época 0.00 | La señal debe venir del contenido, no del contexto |
+
+**Decisiones accionables para el Sprint 2** (verbo, paso del pipeline, ejecutable ya, medible):
+1. **Adoptar la PR-AUC como métrica central** y reportar F1 (+) y Recall a su lado [métrica]; control: tabla de métricas con PR-AUC e IC 95 % frente al piso de 0.537.
+2. **Separar la evaluación por deciles de largo** y añadir el largo como variable de control [split/features]; control: PR-AUC dentro de cada decil.
+3. **Enmascarar los patrones de código CIE** antes de vectorizar [preprocesado]; control: PR-AUC con y sin máscara en la misma partición.
+
+Figuras: [distribuciones](reportes/figuras/fig_eda_distribuciones.png) · [largo por clase y deciles](reportes/figuras/fig_eda_largo.png) · [balance y época](reportes/figuras/fig_eda_balance_epoca.png) · [correlaciones](reportes/figuras/fig_eda_correlaciones.png). Versión narrada: [`notebooks/01_EDA_sprint1.ipynb`](notebooks/01_EDA_sprint1.ipynb).
+
+---
+
 ## 📌 Roadmap
 Las tareas, con responsable y plazo, están en los [issues](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/issues) y [milestones](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/milestones).
 - [x] Semana 1 → Diagnóstico, estructura del repositorio y plan del Sprint 1.
 - [x] Semana 2 → Ingesta + preprocesamiento + logging (entregable de diseño del pipeline: 18/20).
-- [x] Semana 3 → EDA + baseline + demo interna.
+- [x] Semana 3 → EDA + baseline + demo interna (entregable del repositorio: 20/20).
+- [x] Semana 4 → EDA reproducible con log automático (`src/eda.py`) en la rama `sprint1-eda`.
 - [ ] Semanas 4–6 (Sprint 2) → Regenerar las etiquetas dentro del pipeline, GroupKFold por paciente, control del atajo por largo, máscara de códigos CIE y explicación de logística frente a LinearSVC.
 
 ---

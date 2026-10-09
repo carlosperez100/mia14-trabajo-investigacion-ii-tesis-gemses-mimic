@@ -1,0 +1,16 @@
+2026-10-08 20:35:28 | eda | INFO | log -> logs\eda_20261008_203528.log
+2026-10-08 20:36:00 | eda | INFO | carga: 70,000 notas · 48,669 pacientes · 70,000 hospitalizaciones · 418 MB · semilla 42 · sha256 splits a252913516c7fe62…
+2026-10-08 20:36:02 | eda | INFO | 0. calidad: nulos 0 (labels None en 32308 negativas, esperado) · duplicados {'note_id': 0, 'hadm_id': 0, 'texto_identico': 0} · faltantes {'texto_vacio': 0, 'positivas_sin_naturaleza': 0, 'negativas_con_naturaleza': 0} · largo [353, 58156] · outliers 1933 (2.76 %)
+2026-10-08 20:36:03 | eda | INFO | 1. largo_caracteres: media 10684.0 · mediana 9932.0 · desv 4642.76 · min 353.0 · max 58156.0
+2026-10-08 20:36:03 | eda | INFO | 1. palabras: media 1621.89 · mediana 1515.0 · desv 694.56 · min 44.0 · max 9026.0
+2026-10-08 20:36:03 | eda | INFO | 1. notas_por_paciente: media 1.44 · mediana 1.0 · desv 1.12 · min 1.0 · max 27.0
+2026-10-08 20:36:03 | eda | INFO | 1. naturalezas_por_positiva: media 1.06 · mediana 1.0 · desv 0.26 · min 1.0 · max 5.0
+2026-10-08 20:36:03 | eda | INFO | 2. balance: test: 14,085 notas, 53.65 % positivas · train: 55,915 notas, 53.89 % positivas · All: 70,000 notas, 53.85 % positivas
+2026-10-08 20:36:03 | eda | INFO | 3. época: {'negativa': {'CIE-9': 71.08, 'CIE-10': 28.92}, 'positiva': {'CIE-9': 71.08, 'CIE-10': 28.92}} · AUC de la época sola 0.500 (≈0.5 = controlado)
+2026-10-08 20:36:03 | eda | INFO | 4. largo: medianas {'negativa': 9185, 'positiva': 10717} · AUC del largo solo 0.606 · positivas por decil 44.0 % → 76.5 %
+2026-10-08 20:36:41 | eda | INFO | 5. códigos en texto: CIE-10 {'negativa': 4.45, 'positiva': 4.95} · patrón CIE-9 {'negativa': 27.97, 'positiva': 33.4}
+2026-10-08 20:36:41 | eda | INFO | 6. pacientes compartidos train/test: 0 · notas por paciente 1.44
+2026-10-08 20:36:41 | eda | INFO | 7. naturalezas: {'Procedimiento': 17209, 'Cuidado del paciente': 10305, 'Medicacion': 9933, 'Dispositivo medico': 1198, 'Infeccion nosocomial': 1007, 'Sistema/Organizacion': 130} · multietiqueta 4.96 % · clases < 200 notas: ['Sistema/Organizacion']
+2026-10-08 20:36:41 | eda | INFO | 8. Spearman con y: {'época CIE': -0.0, 'largo (caracteres)': 0.182, 'log10 largo': 0.182, 'palabras': 0.181, 'notas del paciente': 0.125}
+2026-10-08 20:36:42 | eda | INFO | figuras: fig_eda_largo.png, fig_eda_distribuciones.png, fig_eda_balance_epoca.png, fig_eda_correlaciones.png
+2026-10-08 20:36:42 | eda | INFO | 9. decisiones: 3 · resumen -> reportes/eda_resumen.json · logs/metrics_eda.txt · 74.2 s

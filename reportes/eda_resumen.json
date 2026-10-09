@@ -1,0 +1,318 @@
+{
+  "etapa": "eda",
+  "fecha": "2026-10-08T20:35:28",
+  "semilla": 42,
+  "entrada": {
+    "dataset": "data/processed/dataset.parquet",
+    "splits": "data/processed/splits.csv",
+    "tamano_bytes": 418184900,
+    "sha256_splits": "a252913516c7fe62e88293cd6327dfa118a2df00ffb02f67c47d998418ef17a4"
+  },
+  "calidad": {
+    "columnas": {
+      "note_id": {
+        "tipo": "object",
+        "nulos": 0,
+        "unicos": 70000
+      },
+      "subject_id": {
+        "tipo": "int64",
+        "nulos": 0,
+        "unicos": 48669
+      },
+      "hadm_id": {
+        "tipo": "int64",
+        "nulos": 0,
+        "unicos": 70000
+      },
+      "text": {
+        "tipo": "object",
+        "nulos": 0,
+        "unicos": 70000
+      },
+      "y": {
+        "tipo": "int64",
+        "nulos": 0,
+        "unicos": 2
+      },
+      "epoca": {
+        "tipo": "int64",
+        "nulos": 0,
+        "unicos": 2
+      },
+      "split": {
+        "tipo": "object",
+        "nulos": 0,
+        "unicos": 2
+      },
+      "labels": {
+        "tipo": "object",
+        "nulos": 32308,
+        "unicos": null
+      }
+    },
+    "duplicados": {
+      "note_id": 0,
+      "hadm_id": 0,
+      "texto_identico": 0
+    },
+    "faltantes": {
+      "texto_vacio": 0,
+      "positivas_sin_naturaleza": 0,
+      "negativas_con_naturaleza": 0
+    },
+    "rango_largo": [
+      353,
+      58156
+    ],
+    "outliers_largo": {
+      "limite_q3_1_5iqr": 21381,
+      "n": 1933,
+      "pct": 2.76,
+      "accion": "se conservan: son notas reales"
+    },
+    "nulos": {
+      "columnas_sin_labels": 0,
+      "labels_none": 32308,
+      "nota": "labels es None en las negativas por construcción (no tienen naturaleza): no es un faltante"
+    }
+  },
+  "descriptivas": {
+    "largo_caracteres": {
+      "count": 70000.0,
+      "mean": 10684.0,
+      "std": 4642.76,
+      "min": 353.0,
+      "25%": 7453.0,
+      "50%": 9932.0,
+      "75%": 13024.25,
+      "max": 58156.0
+    },
+    "palabras": {
+      "count": 70000.0,
+      "mean": 1621.89,
+      "std": 694.56,
+      "min": 44.0,
+      "25%": 1136.0,
+      "50%": 1515.0,
+      "75%": 1981.0,
+      "max": 9026.0
+    },
+    "notas_por_paciente": {
+      "count": 48669.0,
+      "mean": 1.44,
+      "std": 1.12,
+      "min": 1.0,
+      "25%": 1.0,
+      "50%": 1.0,
+      "75%": 1.0,
+      "max": 27.0
+    },
+    "naturalezas_por_positiva": {
+      "count": 37692.0,
+      "mean": 1.06,
+      "std": 0.26,
+      "min": 1.0,
+      "25%": 1.0,
+      "50%": 1.0,
+      "75%": 1.0,
+      "max": 5.0
+    }
+  },
+  "balance": {
+    "test": {
+      "negativa": 6528,
+      "positiva": 7557,
+      "total": 14085,
+      "pct_positivas": 53.65
+    },
+    "train": {
+      "negativa": 25780,
+      "positiva": 30135,
+      "total": 55915,
+      "pct_positivas": 53.89
+    },
+    "All": {
+      "negativa": 32308,
+      "positiva": 37692,
+      "total": 70000,
+      "pct_positivas": 53.85
+    },
+    "prevalencia_real_mimic": 0.2012
+  },
+  "epoca": {
+    "pct_por_clase": {
+      "negativa": {
+        "CIE-9": 71.08,
+        "CIE-10": 28.92
+      },
+      "positiva": {
+        "CIE-9": 71.08,
+        "CIE-10": 28.92
+      }
+    },
+    "auc_epoca_sola": 0.5,
+    "pct_positivas_por_epoca": {
+      "CIE-9": 53.85,
+      "CIE-10": 53.85
+    }
+  },
+  "largo": {
+    "mediana_por_clase": {
+      "negativa": 9185,
+      "positiva": 10717
+    },
+    "auc_largo_solo": 0.606,
+    "pct_positivas_por_decil": [
+      44.0,
+      46.1,
+      45.5,
+      46.8,
+      49.6,
+      51.3,
+      55.2,
+      59.0,
+      64.5,
+      76.5
+    ]
+  },
+  "fuga_codigos": {
+    "pct_con_cie10": {
+      "negativa": 4.45,
+      "positiva": 4.95
+    },
+    "pct_con_patron_cie9": {
+      "negativa": 27.97,
+      "positiva": 33.4
+    },
+    "nota": "el patrón tipo CIE-9 (123.45) también captura decimales comunes; importa la diferencia entre clases"
+  },
+  "pacientes": {
+    "compartidos_train_test": 0,
+    "notas_por_paciente_media": 1.44
+  },
+  "naturaleza": {
+    "conteo": {
+      "Procedimiento": 17209,
+      "Cuidado del paciente": 10305,
+      "Medicacion": 9933,
+      "Dispositivo medico": 1198,
+      "Infeccion nosocomial": 1007,
+      "Sistema/Organizacion": 130
+    },
+    "pct_sobre_positivas": {
+      "Procedimiento": 45.66,
+      "Cuidado del paciente": 27.34,
+      "Medicacion": 26.35,
+      "Dispositivo medico": 3.18,
+      "Infeccion nosocomial": 2.67,
+      "Sistema/Organizacion": 0.34
+    },
+    "pct_multietiqueta": 4.96,
+    "clases_menores_de_200": [
+      "Sistema/Organizacion"
+    ]
+  },
+  "correlaciones_spearman": {
+    "variables": [
+      "época CIE",
+      "largo (caracteres)",
+      "log10 largo",
+      "palabras",
+      "notas del paciente",
+      "y (evento)"
+    ],
+    "matriz": [
+      [
+        1.0,
+        0.137,
+        0.137,
+        0.124,
+        -0.084,
+        -0.0
+      ],
+      [
+        0.137,
+        1.0,
+        1.0,
+        0.996,
+        0.166,
+        0.182
+      ],
+      [
+        0.137,
+        1.0,
+        1.0,
+        0.996,
+        0.166,
+        0.182
+      ],
+      [
+        0.124,
+        0.996,
+        0.996,
+        1.0,
+        0.172,
+        0.181
+      ],
+      [
+        -0.084,
+        0.166,
+        0.166,
+        0.172,
+        1.0,
+        0.125
+      ],
+      [
+        -0.0,
+        0.182,
+        0.182,
+        0.181,
+        0.125,
+        1.0
+      ]
+    ],
+    "con_y": {
+      "época CIE": -0.0,
+      "largo (caracteres)": 0.182,
+      "log10 largo": 0.182,
+      "palabras": 0.181,
+      "notas del paciente": 0.125
+    }
+  },
+  "riesgos": {
+    "desbalance": "corpus de modelado con 53.85 % de positivas frente a una prevalencia real de 20.12 %: las métricas se reportan también a prevalencia real (VPP real)",
+    "leakage_etiqueta": "códigos CIE-10 en el texto: 4.95 % de positivas vs 4.45 % de negativas",
+    "leakage_paciente": "0 pacientes compartidos entre train y test",
+    "drift": "época CIE-9/CIE-10 emparejada por clase; AUC de la época sola 0.500",
+    "atajo_largo": "AUC del largo solo 0.606; positivas por decil 44.0 % → 76.5 %",
+    "clases_raras_etapa2": [
+      "Sistema/Organizacion"
+    ],
+    "sesgo_etiqueta": "la etiqueta es débil: códigos CIE de facturación, no una lectura clínica de la nota"
+  },
+  "decisiones": [
+    {
+      "n": 1,
+      "decision": "Adoptar la PR-AUC como métrica central y reportar F1 (+) y Recall a su lado",
+      "paso": "Métrica",
+      "evidencia": "el dummy que siempre dice «sí» obtiene F1 (+) = 0.698 porque el test tiene 53.7 % de positivas; el piso de la PR-AUC es la proporción de positivas (0.537)",
+      "control": "tabla de métricas con PR-AUC e IC 95 % en logs/metrics_baseline.txt, comparada contra el piso"
+    },
+    {
+      "n": 2,
+      "decision": "Separar la evaluación por deciles de largo y añadir el largo como variable de control",
+      "paso": "Split / features",
+      "evidencia": "el largo solo separa las clases (AUC del largo, ver sección 4) y la proporción de positivas crece del decil más corto al más largo: riesgo de atajo",
+      "control": "PR-AUC dentro de cada decil; si cae mucho frente a la global, el modelo se apoya en el largo"
+    },
+    {
+      "n": 3,
+      "decision": "Enmascarar los patrones de código CIE en el texto antes de vectorizar",
+      "paso": "Preprocesado",
+      "evidencia": "códigos con formato CIE-10 aparecen algo más en las positivas que en las negativas (sección 5): fuga posible, aunque pequeña",
+      "control": "diferencia de PR-AUC con y sin máscara en la misma partición"
+    }
+  ],
+  "duracion_s": 74.2
+}
