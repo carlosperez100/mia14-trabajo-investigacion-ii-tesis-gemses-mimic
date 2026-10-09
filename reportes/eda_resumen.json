@@ -1,6 +1,6 @@
 {
   "etapa": "eda",
-  "fecha": "2026-10-08T23:58:15",
+  "fecha": "2026-10-09T00:14:22",
   "semilla": 42,
   "entrada": {
     "dataset": "data/processed/dataset.parquet",
@@ -316,5 +316,5 @@
       "control": "diferencia de PR-AUC con y sin máscara en la misma partición"
     }
   ],
-  "duracion_s": 56.2
+  "duracion_s": 55.2
 }

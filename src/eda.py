@@ -68,6 +68,29 @@ def describir(serie):
     return {k: round(float(d[k]), 2) for k in ["count", "mean", "std", "min", "25%", "50%", "75%", "max"]}
 
 
+NOMBRE_NAT = {"Medicacion": "Medicación", "Infeccion nosocomial": "Infección nosocomial",
+              "Dispositivo medico": "Dispositivo médico", "Sistema/Organizacion": "Sistema/Organización"}
+
+
+def _mil(n):
+    """Miles separados con espacio que no se parte entre renglones (70 000)."""
+    return f"{int(round(n)):,}".replace(",", " ")
+
+
+def _r1(x):
+    """Redondeo convencional a un decimal (53.65 -> 53.7)."""
+    from decimal import Decimal, ROUND_HALF_UP
+    return str(Decimal(str(x)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
+
+
+def pie(fig, texto, ancho, alto):
+    """Explicación corta al pie de la figura, para que se entienda aunque se abra sola."""
+    import textwrap
+    fig.tight_layout(rect=(0, alto, 1, 1))
+    fig.text(0.012, 0.012, "\n".join(textwrap.wrap(texto, ancho)), ha="left", va="bottom",
+             fontsize=8.4, color="#333", linespacing=1.35)
+
+
 def figura_flujo(R, ruta):
     """Diagrama del flujo del EDA: los diez pasos en orden, con el resultado de cada uno y su estado.
     Todas las cifras salen del diccionario de resultados R (nada se escribe a mano)."""
@@ -186,6 +209,9 @@ def figura_flujo(R, ruta):
     xc = cajas[7][0] + W / 2
     ax.add_patch(FancyArrowPatch((xc, cajas[7][1] - 0.4), (xc, 10.2), arrowstyle="-|>", mutation_scale=13, color=AZUL, lw=1.5))
 
+    ax.text(1.5, -1.3, "Cómo leer: cada caja es un paso del análisis; en cursiva, la pregunta que responde, y en negrita, el "
+            "resultado de esta corrida. Las flechas marcan el orden, y cada decisión de abajo indica de qué paso sale.",
+            ha="left", va="top", fontsize=9.5, color="#333")
     fig.savefig(ruta, dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
@@ -311,7 +337,7 @@ def main():
     log.info(f"8. Spearman con y: {R['correlaciones_spearman']['con_y']}")
 
     # ---------- figuras
-    fig, ax = plt.subplots(1, 2, figsize=(11, 4))
+    fig, ax = plt.subplots(1, 2, figsize=(11, 4.9))
     for y, nombre in [(0, "negativa"), (1, "positiva")]:
         ax[0].hist(np.log10(df.loc[df.y == y, "largo"]), bins=60, alpha=.55, density=True, label=nombre)
     ax[0].set(xlabel="log10(caracteres)", ylabel="densidad", title=f"Largo de la epicrisis (AUC del largo solo = {auc_largo:.3f})")
@@ -320,9 +346,16 @@ def main():
     ax[1].axhline(100 * df.y.mean(), ls="--", c="gray", label=f"promedio {100*df.y.mean():.1f} %")
     ax[1].set(xlabel="decil de largo (1 = más corto)", ylabel="% de notas con evento", title="Positivas por decil de largo")
     ax[1].legend()
-    fig.tight_layout(); fig.savefig(FIG / "fig_eda_largo.png", dpi=130); plt.close(fig)
+    med = R["largo"]["mediana_por_clase"]
+    pie(fig, "Cómo leer: a la izquierda, la distribución del largo de las epicrisis en escala logarítmica; en azul las notas sin "
+             "evento y en naranja las notas con evento. A la derecha, el porcentaje de notas con evento en cada decil de largo, con "
+             "el promedio en línea punteada. Lectura: las notas con evento son más largas (mediana de "
+             f"{_mil(med['positiva'])} frente a {_mil(med['negativa'])} caracteres; AUC del largo solo = {auc_largo:.3f}) y el "
+             f"porcentaje de positivas sube de {pct_decil[0]} % en el decil más corto a {pct_decil[-1]} % en el más largo: riesgo "
+             "moderado de que el modelo use el largo como atajo.", 175, 0.17)
+    fig.savefig(FIG / "fig_eda_largo.png", dpi=130); plt.close(fig)
 
-    fig, ax = plt.subplots(2, 2, figsize=(11, 7.5))
+    fig, ax = plt.subplots(2, 2, figsize=(11, 8.4))
     ax[0, 0].hist(df.palabras, bins=60, color="#1F4E79"); ax[0, 0].set(title="Palabras por epicrisis", xlabel="palabras", ylabel="notas")
     npp = df.groupby("subject_id").size()
     ax[0, 1].bar(*np.unique(np.clip(npp, 1, 6), return_counts=True), color="#1F4E79")
@@ -330,11 +363,20 @@ def main():
     bal = pd.crosstab(df.split, df.y, normalize="index").mul(100)
     bal.plot(kind="bar", stacked=True, ax=ax[1, 0], color=["#9FB8CF", "#9B2226"], rot=0)
     ax[1, 0].set(title="Balance de la variable objetivo por partición", ylabel="%"); ax[1, 0].legend(["negativa", "positiva"])
-    ax[1, 1].barh(list(R["naturaleza"]["conteo"].keys())[::-1], list(R["naturaleza"]["conteo"].values())[::-1], color="#1E7B4F")
+    ax[1, 1].barh([NOMBRE_NAT.get(k, k) for k in R["naturaleza"]["conteo"].keys()][::-1], list(R["naturaleza"]["conteo"].values())[::-1], color="#1E7B4F")
     ax[1, 1].set(title="Naturaleza del evento (positivas)", xlabel="notas")
-    fig.tight_layout(); fig.savefig(FIG / "fig_eda_distribuciones.png", dpi=130); plt.close(fig)
+    menor = R["naturaleza"]["clases_menores_de_200"]
+    txt_menor = (f"{NOMBRE_NAT.get(menor[0], menor[0])} ({_mil(R['naturaleza']['conteo'][menor[0]])} notas) es demasiado pequeña para evaluarse."
+                 if menor else "todas las naturalezas tienen 200 notas o más.")
+    pie(fig, "Cómo leer: arriba a la izquierda, cuántas palabras tiene cada epicrisis (mediana de "
+             f"{_mil(R['descriptivas']['palabras']['50%'])}). Arriba a la derecha, cuántas notas aporta cada paciente: el "
+             f"{100 * float((npp == 1).mean()):.0f} % aporta una sola. Abajo a la izquierda, la proporción de notas con y sin evento "
+             f"en train y en test ({_r1(R['balance']['train']['pct_positivas'])} % y {_r1(R['balance']['test']['pct_positivas'])} % "
+             "de positivas): la partición por paciente conserva el mismo balance. Abajo a la derecha, cuántas notas tiene cada "
+             f"naturaleza del evento; {txt_menor}", 175, 0.09)
+    fig.savefig(FIG / "fig_eda_distribuciones.png", dpi=130); plt.close(fig)
 
-    fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+    fig, ax = plt.subplots(1, 2, figsize=(10, 4.9))
     epc = pd.crosstab(df.y, df.epoca, normalize="index").mul(100)
     epc.index = ["negativa", "positiva"]; epc.columns = [f"CIE-{int(c)}" for c in epc.columns]
     epc.plot(kind="bar", stacked=True, ax=ax[0], rot=0, color=["#9FB8CF", "#1F4E79"])
@@ -342,16 +384,27 @@ def main():
     ppe = R["epoca"]["pct_positivas_por_epoca"]
     ax[1].bar(list(ppe.keys()), list(ppe.values()), color="#9B2226")
     ax[1].set(title="% de positivas por época (drift de codificación)", ylabel="% positivas")
-    fig.tight_layout(); fig.savefig(FIG / "fig_eda_balance_epoca.png", dpi=130); plt.close(fig)
+    pc = R["epoca"]["pct_por_clase"]["positiva"]
+    pie(fig, "Cómo leer: a la izquierda, qué parte de cada clase se codificó en CIE-9 y qué parte en CIE-10; las dos barras son "
+             f"iguales ({pc['CIE-9']:.1f} % y {pc['CIE-10']:.1f} %). A la derecha, el porcentaje de notas con evento dentro de cada "
+             f"época ({ppe['CIE-9']} % en CIE-9 y {ppe['CIE-10']} % en CIE-10). Lectura: la época de codificación no separa las clases "
+             f"(AUC de la época sola = {auc_epoca:.3f}), así que el modelo no puede aprender la época en lugar del evento.", 160, 0.15)
+    fig.savefig(FIG / "fig_eda_balance_epoca.png", dpi=130); plt.close(fig)
 
-    fig, ax = plt.subplots(figsize=(6.5, 5.5))
+    fig, ax = plt.subplots(figsize=(6.8, 7.2))
     im = ax.imshow(corr, cmap="RdBu_r", vmin=-1, vmax=1)
     ax.set_xticks(range(len(corr)), corr.columns, rotation=40, ha="right"); ax.set_yticks(range(len(corr)), corr.index)
     for i in range(len(corr)):
         for j in range(len(corr)):
-            ax.text(j, i, f"{corr.iloc[i, j]:.2f}", ha="center", va="center", fontsize=8)
+            ax.text(j, i, f"{abs(corr.iloc[i, j]) if corr.iloc[i, j] == 0 else corr.iloc[i, j]:.3f}", ha="center", va="center", fontsize=7.5)
     ax.set_title("Correlación de Spearman\n(variable objetivo en la última fila)", fontsize=10); fig.colorbar(im, ax=ax, shrink=0.85)
-    fig.tight_layout(); fig.savefig(FIG / "fig_eda_correlaciones.png", dpi=130); plt.close(fig)
+    cy = R["correlaciones_spearman"]["con_y"]
+    pie(fig, "Cómo leer: cada celda es la correlación de Spearman entre dos variables, de -1 a 1 (rojo, positiva; azul, negativa; "
+             "blanco, sin relación). La última fila es la variable objetivo: su relación con el largo "
+             f"({cy['largo (caracteres)']:.3f}), las palabras ({cy['palabras']:.3f}) y las notas del paciente "
+             f"({cy['notas del paciente']:.3f}) es débil, y con la época es nula ({abs(cy['época CIE']):.3f}). El bloque rojo del "
+             "centro solo indica que largo, logaritmo del largo y palabras miden lo mismo.", 100, 0.15)
+    fig.savefig(FIG / "fig_eda_correlaciones.png", dpi=130); plt.close(fig)
     log.info("figuras: fig_eda_largo.png, fig_eda_distribuciones.png, fig_eda_balance_epoca.png, fig_eda_correlaciones.png")
 
     # ---------- 9. riesgos y decisiones
