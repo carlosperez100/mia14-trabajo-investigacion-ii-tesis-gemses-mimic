@@ -202,7 +202,7 @@ Cada una tiene verbo, afecta un paso del pipeline, se puede ejecutar ya y tiene 
 2. **Separar la evaluación por deciles de largo** y añadir el largo como variable de control [split y features]. Control: PR-AUC dentro de cada decil.
 3. **Enmascarar los patrones de código CIE** antes de vectorizar [preprocesado]. Control: PR-AUC con y sin máscara en la misma partición.
 
-Versión narrada, con la interpretación de cada gráfico: [`notebooks/01_EDA_sprint1.ipynb`](notebooks/01_EDA_sprint1.ipynb).
+EDA desplegada:[`notebooks/01_EDA_sprint1.ipynb`](notebooks/01_EDA_sprint1.ipynb).
 
 ---
 
