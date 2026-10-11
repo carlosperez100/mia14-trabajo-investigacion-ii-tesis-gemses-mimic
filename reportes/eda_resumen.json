@@ -1,6 +1,6 @@
 {
   "etapa": "eda",
-  "fecha": "2026-10-09T00:14:22",
+  "fecha": "2026-10-10T19:06:25",
   "semilla": 42,
   "entrada": {
     "dataset": "data/processed/dataset.parquet",
@@ -9,6 +9,1579 @@
     "sha256_splits": "a252913516c7fe62e88293cd6327dfa118a2df00ffb02f67c47d998418ef17a4",
     "notas": 70000,
     "pacientes": 48669
+  },
+  "alcance": "las cifras describen el corpus completo (train y test); el vocabulario y el modelo de contexto se ajustan solo con train",
+  "variables": {
+    "fuentes": {
+      "hosp/admissions.csv.gz": {
+        "tamano_bytes": 19928140,
+        "sha256": "a9584ed88e9ed664a2f66f86a5cf9fd175c8bb0af50e3b6115598b19e978384e"
+      },
+      "hosp/patients.csv.gz": {
+        "tamano_bytes": 2835586,
+        "sha256": "4c7507de7ecad8c5ba7647ea4d26018e88ff6672c5fc22ab59c2a5697d687cdd"
+      },
+      "hosp/diagnoses_icd.csv.gz": {
+        "tamano_bytes": 33564802,
+        "sha256": "47665a41b2a3ad990d6f314062d5bd6d29d467b0fd402dd94662044ec8b073d2"
+      },
+      "hosp/drgcodes.csv.gz": {
+        "tamano_bytes": 9743908,
+        "sha256": "60aceace5f1291a81441ca1004891334b89526f1a8ac7cc8bc12da632e7e6087"
+      },
+      "hosp/services.csv.gz": {
+        "tamano_bytes": 8569241,
+        "sha256": "31c82ebee94e0c04d6966fbfec30579ec00f9c7816b80852f9580656e6183888"
+      },
+      "icu/icustays.csv.gz": {
+        "tamano_bytes": 3342355,
+        "sha256": "3c590ed37f1fb7a77a128f2f6961f836001512ba81adcd0dfeced2702f96bc5f"
+      },
+      "hosp/d_icd_diagnoses.csv.gz": {
+        "tamano_bytes": 876360,
+        "sha256": "a81065bf45ccf74f589bec855bbb0a07b5c014907b34ff76fe20583a2c87cc79"
+      }
+    },
+    "hospitalizaciones_sin_admision": 0,
+    "fechas": {
+      "anio_de_ingreso_registrado": [
+        2110,
+        2211
+      ],
+      "anio_real_aproximado": [
+        2006,
+        2021
+      ],
+      "ajustados_al_rango_2008_2022": 10
+    },
+    "diccionario": [
+      {
+        "variable": "edad",
+        "etiqueta": "Edad al ingreso (años)",
+        "tipo": "numérica",
+        "fuente": "patients, admissions",
+        "momento": "ingreso",
+        "uso": "descripción y sesgo",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 86
+      },
+      {
+        "variable": "sexo",
+        "etiqueta": "Sexo",
+        "tipo": "categórica",
+        "fuente": "patients",
+        "momento": "ingreso",
+        "uso": "descripción y sesgo",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 2
+      },
+      {
+        "variable": "raza",
+        "etiqueta": "Raza o etnia (agrupada)",
+        "tipo": "categórica",
+        "fuente": "admissions",
+        "momento": "ingreso",
+        "uso": "descripción y sesgo",
+        "faltantes": 2621,
+        "pct_faltantes": 3.744286,
+        "pct_faltantes_negativas": 3.364492,
+        "pct_faltantes_positivas": 4.069829,
+        "valores_distintos": 5,
+        "pct_positivas_si_falta": 58.52728,
+        "pct_positivas_si_no_falta": 53.663604
+      },
+      {
+        "variable": "seguro",
+        "etiqueta": "Tipo de seguro",
+        "tipo": "categórica",
+        "fuente": "admissions",
+        "momento": "ingreso",
+        "uso": "descripción y sesgo",
+        "faltantes": 750,
+        "pct_faltantes": 1.071429,
+        "pct_faltantes_negativas": 1.386653,
+        "pct_faltantes_positivas": 0.801231,
+        "valores_distintos": 5,
+        "pct_positivas_si_falta": 40.266667,
+        "pct_positivas_si_no_falta": 53.99278
+      },
+      {
+        "variable": "idioma_ingles",
+        "etiqueta": "Idioma inglés",
+        "tipo": "binaria",
+        "fuente": "admissions",
+        "momento": "ingreso",
+        "uso": "descripción y sesgo",
+        "faltantes": 161,
+        "pct_faltantes": 0.23,
+        "pct_faltantes_negativas": 0.194998,
+        "pct_faltantes_positivas": 0.260002,
+        "valores_distintos": 2,
+        "pct_positivas_si_falta": 60.869565,
+        "pct_positivas_si_no_falta": 53.829522
+      },
+      {
+        "variable": "estado_civil",
+        "etiqueta": "Estado civil",
+        "tipo": "categórica",
+        "fuente": "admissions",
+        "momento": "ingreso",
+        "uso": "descripción",
+        "faltantes": 1634,
+        "pct_faltantes": 2.334286,
+        "pct_faltantes_negativas": 1.984029,
+        "pct_faltantes_positivas": 2.634511,
+        "valores_distintos": 4,
+        "pct_positivas_si_falta": 60.771114,
+        "pct_positivas_si_no_falta": 53.680192
+      },
+      {
+        "variable": "tipo_ingreso",
+        "etiqueta": "Tipo de ingreso",
+        "tipo": "categórica",
+        "fuente": "admissions",
+        "momento": "ingreso",
+        "uso": "control",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 9
+      },
+      {
+        "variable": "servicio",
+        "etiqueta": "Servicio al ingreso",
+        "tipo": "categórica",
+        "fuente": "services",
+        "momento": "ingreso",
+        "uso": "control y evaluación por subgrupo",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 18
+      },
+      {
+        "variable": "horas_emergencia",
+        "etiqueta": "Horas en emergencia",
+        "tipo": "numérica",
+        "fuente": "admissions",
+        "momento": "ingreso",
+        "uso": "control",
+        "faltantes": 23242,
+        "pct_faltantes": 33.202857,
+        "pct_faltantes_negativas": 32.143741,
+        "pct_faltantes_positivas": 34.110687,
+        "valores_distintos": 2014,
+        "pct_positivas_si_falta": 55.317959,
+        "pct_positivas_si_no_falta": 53.113906
+      },
+      {
+        "variable": "periodo",
+        "etiqueta": "Periodo de atención (año aproximado)",
+        "tipo": "categórica",
+        "fuente": "patients, admissions",
+        "momento": "ingreso",
+        "uso": "drift temporal",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 5
+      },
+      {
+        "variable": "uci",
+        "etiqueta": "Paso por UCI",
+        "tipo": "binaria",
+        "fuente": "icustays",
+        "momento": "estancia",
+        "uso": "control (puede ser consecuencia del evento)",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 2
+      },
+      {
+        "variable": "estancia_dias",
+        "etiqueta": "Estancia hospitalaria (días)",
+        "tipo": "numérica",
+        "fuente": "admissions",
+        "momento": "alta",
+        "uso": "proxy de la dimensión Tiempo de GEMSES; no es predictor",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 20930
+      },
+      {
+        "variable": "destino_alta",
+        "etiqueta": "Destino al alta",
+        "tipo": "categórica",
+        "fuente": "admissions",
+        "momento": "alta",
+        "uso": "descripción",
+        "faltantes": 8754,
+        "pct_faltantes": 12.505714,
+        "pct_faltantes_negativas": 18.493871,
+        "pct_faltantes_positivas": 7.372917,
+        "valores_distintos": 13,
+        "pct_positivas_si_falta": 31.745488,
+        "pct_positivas_si_no_falta": 57.004539
+      },
+      {
+        "variable": "fallecio",
+        "etiqueta": "Fallecimiento hospitalario",
+        "tipo": "binaria",
+        "fuente": "admissions",
+        "momento": "alta",
+        "uso": "desenlace; no es predictor",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 2
+      },
+      {
+        "variable": "alta_voluntaria",
+        "etiqueta": "Alta contra indicación médica",
+        "tipo": "binaria",
+        "fuente": "admissions (del destino al alta)",
+        "momento": "alta",
+        "uso": "proxy de la dimensión Satisfacción de GEMSES",
+        "faltantes": 8754,
+        "pct_faltantes": 12.505714,
+        "pct_faltantes_negativas": 18.493871,
+        "pct_faltantes_positivas": 7.372917,
+        "valores_distintos": 2,
+        "pct_positivas_si_falta": 31.745488,
+        "pct_positivas_si_no_falta": 57.004539
+      },
+      {
+        "variable": "reingreso_30d",
+        "etiqueta": "Reingreso dentro de 30 días",
+        "tipo": "binaria",
+        "fuente": "admissions",
+        "momento": "posterior al alta",
+        "uso": "proxy de la dimensión Satisfacción de GEMSES",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 2
+      },
+      {
+        "variable": "n_diagnosticos",
+        "etiqueta": "Número de diagnósticos codificados",
+        "tipo": "numérica",
+        "fuente": "diagnoses_icd",
+        "momento": "codificación",
+        "uso": "contaminada por la etiqueta; no es predictor",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 40
+      },
+      {
+        "variable": "drg_severidad",
+        "etiqueta": "Severidad APR-DRG (1 a 4)",
+        "tipo": "numérica",
+        "fuente": "drgcodes",
+        "momento": "codificación",
+        "uso": "insumo del proxy de la dimensión Costos de GEMSES (DRG); contaminada por la etiqueta",
+        "faltantes": 14846,
+        "pct_faltantes": 21.208571,
+        "pct_faltantes_negativas": 25.253807,
+        "pct_faltantes_positivas": 17.741165,
+        "valores_distintos": 4,
+        "pct_positivas_si_falta": 45.042436,
+        "pct_positivas_si_no_falta": 56.215324
+      },
+      {
+        "variable": "largo",
+        "etiqueta": "Largo de la epicrisis (caracteres)",
+        "tipo": "numérica",
+        "fuente": "discharge (nota)",
+        "momento": "alta",
+        "uso": "control del atajo por largo",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 18025
+      },
+      {
+        "variable": "notas_paciente",
+        "etiqueta": "Epicrisis del mismo paciente en el corpus",
+        "tipo": "numérica",
+        "fuente": "discharge (nota)",
+        "momento": "corpus",
+        "uso": "control",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 23
+      },
+      {
+        "variable": "epoca",
+        "etiqueta": "Época de codificación (CIE-9 o CIE-10)",
+        "tipo": "categórica",
+        "fuente": "diagnoses_icd",
+        "momento": "codificación",
+        "uso": "confusor",
+        "faltantes": 0,
+        "pct_faltantes": 0.0,
+        "pct_faltantes_negativas": 0.0,
+        "pct_faltantes_positivas": 0.0,
+        "valores_distintos": 2
+      }
+    ],
+    "variables_de_tablas_de_mimic": 19,
+    "faltantes_por_tipo_ingreso": {
+      "horas_emergencia": {
+        "EW EMER.": 4.226049,
+        "OBSERVATION ADMIT": 15.383721,
+        "URGENT": 72.35375,
+        "SURGICAL SAME DAY ADMISSION": 99.874569,
+        "EU OBSERVATION": 0.986227,
+        "DIRECT EMER.": 92.738589,
+        "ELECTIVE": 99.37552,
+        "DIRECT OBSERVATION": 77.029608,
+        "AMBULATORY OBSERVATION": 98.496241
+      },
+      "drg_severidad": {
+        "EW EMER.": 6.139673,
+        "OBSERVATION ADMIT": 4.837209,
+        "URGENT": 7.071941,
+        "SURGICAL SAME DAY ADMISSION": 25.133271,
+        "EU OBSERVATION": 97.721476,
+        "DIRECT EMER.": 17.033195,
+        "ELECTIVE": 35.428809,
+        "DIRECT OBSERVATION": 97.230181,
+        "AMBULATORY OBSERVATION": 99.140709
+      },
+      "destino_alta": {
+        "EW EMER.": 0.151482,
+        "OBSERVATION ADMIT": 0.034884,
+        "URGENT": 0.137468,
+        "SURGICAL SAME DAY ADMISSION": 0.172468,
+        "EU OBSERVATION": 97.211359,
+        "DIRECT EMER.": 0.165975,
+        "ELECTIVE": 0.20816,
+        "DIRECT OBSERVATION": 96.800382,
+        "AMBULATORY OBSERVATION": 99.355532
+      }
+    },
+    "fuera_de_rango": {
+      "estancia_negativa": 11,
+      "estancia_negativa_con_fallecimiento": 9,
+      "edad_min_max": [
+        18,
+        103
+      ],
+      "nota": "en la estancia negativa la hora de alta registrada es anterior a la de ingreso"
+    },
+    "numericas": {
+      "edad": {
+        "n": 70000,
+        "media": 62.3585,
+        "desv": 17.7945,
+        "min": 18.0,
+        "q1": 51.0,
+        "mediana": 64.0,
+        "q3": 76.0,
+        "max": 103.0,
+        "atipicos_iqr": {
+          "n": 0,
+          "pct": 0.0
+        },
+        "negativa": {
+          "mediana": 61.0,
+          "q1": 47.0,
+          "q3": 74.0
+        },
+        "positiva": {
+          "mediana": 66.0,
+          "q1": 54.0,
+          "q3": 78.0
+        },
+        "auc_sola": 0.5832,
+        "spearman_con_y": 0.1437
+      },
+      "estancia_dias": {
+        "n": 70000,
+        "media": 6.1403,
+        "desv": 8.1206,
+        "min": -0.9451,
+        "q1": 1.9924,
+        "mediana": 3.8819,
+        "q3": 6.9793,
+        "max": 230.6889,
+        "atipicos_iqr": {
+          "n": 5675,
+          "pct": 8.107143
+        },
+        "negativa": {
+          "mediana": 2.8819,
+          "q1": 1.6431,
+          "q3": 4.9557
+        },
+        "positiva": {
+          "mediana": 4.9951,
+          "q1": 2.8229,
+          "q3": 8.9437
+        },
+        "auc_sola": 0.6773,
+        "spearman_con_y": 0.3063
+      },
+      "horas_emergencia": {
+        "n": 46758,
+        "media": 7.6713,
+        "desv": 5.5753,
+        "min": 0.0,
+        "q1": 4.5833,
+        "mediana": 6.3333,
+        "q3": 8.85,
+        "max": 139.3333,
+        "atipicos_iqr": {
+          "n": 3345,
+          "pct": 7.153856
+        },
+        "negativa": {
+          "mediana": 6.4333,
+          "q1": 4.6333,
+          "q3": 9.0167
+        },
+        "positiva": {
+          "mediana": 6.25,
+          "q1": 4.5333,
+          "q3": 8.7167
+        },
+        "auc_sola": 0.4856,
+        "spearman_con_y": -0.025
+      },
+      "n_diagnosticos": {
+        "n": 70000,
+        "media": 13.5867,
+        "desv": 7.6339,
+        "min": 1.0,
+        "q1": 8.0,
+        "mediana": 12.0,
+        "q3": 18.0,
+        "max": 57.0,
+        "atipicos_iqr": {
+          "n": 1474,
+          "pct": 2.105714
+        },
+        "negativa": {
+          "mediana": 9.0,
+          "q1": 6.0,
+          "q3": 14.0
+        },
+        "positiva": {
+          "mediana": 15.0,
+          "q1": 11.0,
+          "q3": 21.0
+        },
+        "auc_sola": 0.7402,
+        "spearman_con_y": 0.4152
+      },
+      "drg_severidad": {
+        "n": 55154,
+        "media": 2.5219,
+        "desv": 0.9163,
+        "min": 1.0,
+        "q1": 2.0,
+        "mediana": 3.0,
+        "q3": 3.0,
+        "max": 4.0,
+        "atipicos_iqr": {
+          "n": 0,
+          "pct": 0.0
+        },
+        "negativa": {
+          "mediana": 2.0,
+          "q1": 2.0,
+          "q3": 3.0
+        },
+        "positiva": {
+          "mediana": 3.0,
+          "q1": 2.0,
+          "q3": 3.0
+        },
+        "auc_sola": 0.6624,
+        "spearman_con_y": 0.2933
+      },
+      "largo": {
+        "n": 70000,
+        "media": 10683.995,
+        "desv": 4642.7639,
+        "min": 353.0,
+        "q1": 7453.0,
+        "mediana": 9932.0,
+        "q3": 13024.25,
+        "max": 58156.0,
+        "atipicos_iqr": {
+          "n": 1933,
+          "pct": 2.761429
+        },
+        "negativa": {
+          "mediana": 9185.0,
+          "q1": 7033.0,
+          "q3": 11804.25
+        },
+        "positiva": {
+          "mediana": 10717.0,
+          "q1": 7944.75,
+          "q3": 14094.0
+        },
+        "auc_sola": 0.6056,
+        "spearman_con_y": 0.1823
+      },
+      "notas_paciente": {
+        "n": 70000,
+        "media": 2.3169,
+        "desv": 2.401,
+        "min": 1.0,
+        "q1": 1.0,
+        "mediana": 1.0,
+        "q3": 3.0,
+        "max": 27.0,
+        "atipicos_iqr": {
+          "n": 3884,
+          "pct": 5.548571
+        },
+        "negativa": {
+          "mediana": 1.0,
+          "q1": 1.0,
+          "q3": 2.0
+        },
+        "positiva": {
+          "mediana": 2.0,
+          "q1": 1.0,
+          "q3": 3.0
+        },
+        "auc_sola": 0.5663,
+        "spearman_con_y": 0.1248
+      }
+    },
+    "categoricas": {
+      "sexo": {
+        "cramers_v": 0.0288,
+        "categorias": {
+          "Mujer": {
+            "n": 35382,
+            "pct_del_corpus": 50.545714,
+            "pct_positivas": 52.424962,
+            "diferencia_con_promedio": -1.4208
+          },
+          "Hombre": {
+            "n": 34618,
+            "pct_del_corpus": 49.454286,
+            "pct_positivas": 55.297822,
+            "diferencia_con_promedio": 1.4521
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 0
+      },
+      "grupo_edad": {
+        "cramers_v": 0.1483,
+        "categorias": {
+          "45 a 64": {
+            "n": 24420,
+            "pct_del_corpus": 34.885714,
+            "pct_positivas": 53.136773,
+            "diferencia_con_promedio": -0.7089
+          },
+          "65 a 79": {
+            "n": 20588,
+            "pct_del_corpus": 29.411429,
+            "pct_positivas": 57.994949,
+            "diferencia_con_promedio": 4.1492
+          },
+          "80 o más": {
+            "n": 13241,
+            "pct_del_corpus": 18.915714,
+            "pct_positivas": 61.898648,
+            "diferencia_con_promedio": 8.0529
+          },
+          "18 a 44": {
+            "n": 11751,
+            "pct_del_corpus": 16.787143,
+            "pct_positivas": 38.975406,
+            "diferencia_con_promedio": -14.8703
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 0
+      },
+      "raza": {
+        "cramers_v": 0.0806,
+        "categorias": {
+          "Blanca": {
+            "n": 49645,
+            "pct_del_corpus": 70.921429,
+            "pct_positivas": 55.935139,
+            "diferencia_con_promedio": 2.0894
+          },
+          "Negra": {
+            "n": 9661,
+            "pct_del_corpus": 13.801429,
+            "pct_positivas": 46.36166,
+            "diferencia_con_promedio": -7.4841
+          },
+          "Hispana o latina": {
+            "n": 3459,
+            "pct_del_corpus": 4.941429,
+            "pct_positivas": 44.926279,
+            "diferencia_con_promedio": -8.9194
+          },
+          "Sin dato": {
+            "n": 2621,
+            "pct_del_corpus": 3.744286,
+            "pct_positivas": 58.52728,
+            "diferencia_con_promedio": 4.6816
+          },
+          "Otra": {
+            "n": 2490,
+            "pct_del_corpus": 3.557143,
+            "pct_positivas": 51.927711,
+            "diferencia_con_promedio": -1.918
+          },
+          "Asiática": {
+            "n": 2124,
+            "pct_del_corpus": 3.034286,
+            "pct_positivas": 50.047081,
+            "diferencia_con_promedio": -3.7986
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 0
+      },
+      "seguro": {
+        "cramers_v": 0.1229,
+        "categorias": {
+          "Medicare": {
+            "n": 36079,
+            "pct_del_corpus": 51.541429,
+            "pct_positivas": 59.694005,
+            "diferencia_con_promedio": 5.8483
+          },
+          "Private": {
+            "n": 20896,
+            "pct_del_corpus": 29.851429,
+            "pct_positivas": 48.047473,
+            "diferencia_con_promedio": -5.7982
+          },
+          "Medicaid": {
+            "n": 10522,
+            "pct_del_corpus": 15.031429,
+            "pct_positivas": 46.654628,
+            "diferencia_con_promedio": -7.1911
+          },
+          "Other": {
+            "n": 1735,
+            "pct_del_corpus": 2.478571,
+            "pct_positivas": 51.469741,
+            "diferencia_con_promedio": -2.376
+          },
+          "Sin dato": {
+            "n": 750,
+            "pct_del_corpus": 1.071429,
+            "pct_positivas": 40.266667,
+            "diferencia_con_promedio": -13.579
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 18
+      },
+      "estado_civil": {
+        "cramers_v": 0.0719,
+        "categorias": {
+          "MARRIED": {
+            "n": 31208,
+            "pct_del_corpus": 44.582857,
+            "pct_positivas": 54.719944,
+            "diferencia_con_promedio": 0.8742
+          },
+          "SINGLE": {
+            "n": 23123,
+            "pct_del_corpus": 33.032857,
+            "pct_positivas": 49.574017,
+            "diferencia_con_promedio": -4.2717
+          },
+          "WIDOWED": {
+            "n": 8686,
+            "pct_del_corpus": 12.408571,
+            "pct_positivas": 60.39604,
+            "diferencia_con_promedio": 6.5503
+          },
+          "DIVORCED": {
+            "n": 5349,
+            "pct_del_corpus": 7.641429,
+            "pct_positivas": 54.458777,
+            "diferencia_con_promedio": 0.6131
+          },
+          "Sin dato": {
+            "n": 1634,
+            "pct_del_corpus": 2.334286,
+            "pct_positivas": 60.771114,
+            "diferencia_con_promedio": 6.9254
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 0
+      },
+      "tipo_ingreso": {
+        "cramers_v": 0.1964,
+        "categorias": {
+          "EW EMER.": {
+            "n": 32347,
+            "pct_del_corpus": 46.21,
+            "pct_positivas": 56.886265,
+            "diferencia_con_promedio": 3.0406
+          },
+          "OBSERVATION ADMIT": {
+            "n": 8600,
+            "pct_del_corpus": 12.285714,
+            "pct_positivas": 58.953488,
+            "diferencia_con_promedio": 5.1078
+          },
+          "URGENT": {
+            "n": 6547,
+            "pct_del_corpus": 9.352857,
+            "pct_positivas": 58.057125,
+            "diferencia_con_promedio": 4.2114
+          },
+          "SURGICAL SAME DAY ADMISSION": {
+            "n": 6378,
+            "pct_del_corpus": 9.111429,
+            "pct_positivas": 44.873001,
+            "diferencia_con_promedio": -8.9727
+          },
+          "EU OBSERVATION": {
+            "n": 5881,
+            "pct_del_corpus": 8.401429,
+            "pct_positivas": 30.21595,
+            "diferencia_con_promedio": -23.6298
+          },
+          "DIRECT EMER.": {
+            "n": 4820,
+            "pct_del_corpus": 6.885714,
+            "pct_positivas": 67.842324,
+            "diferencia_con_promedio": 13.9966
+          },
+          "ELECTIVE": {
+            "n": 2402,
+            "pct_del_corpus": 3.431429,
+            "pct_positivas": 61.365529,
+            "diferencia_con_promedio": 7.5198
+          },
+          "DIRECT OBSERVATION": {
+            "n": 2094,
+            "pct_del_corpus": 2.991429,
+            "pct_positivas": 31.99618,
+            "diferencia_con_promedio": -21.8495
+          },
+          "AMBULATORY OBSERVATION": {
+            "n": 931,
+            "pct_del_corpus": 1.33,
+            "pct_positivas": 39.419979,
+            "diferencia_con_promedio": -14.4257
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 0
+      },
+      "servicio": {
+        "cramers_v": 0.2251,
+        "categorias": {
+          "MED": {
+            "n": 29425,
+            "pct_del_corpus": 42.035714,
+            "pct_positivas": 52.961767,
+            "diferencia_con_promedio": -0.8839
+          },
+          "SURG": {
+            "n": 7482,
+            "pct_del_corpus": 10.688571,
+            "pct_positivas": 55.199145,
+            "diferencia_con_promedio": 1.3534
+          },
+          "CMED": {
+            "n": 5928,
+            "pct_del_corpus": 8.468571,
+            "pct_positivas": 46.963563,
+            "diferencia_con_promedio": -6.8822
+          },
+          "OMED": {
+            "n": 5421,
+            "pct_del_corpus": 7.744286,
+            "pct_positivas": 69.544365,
+            "diferencia_con_promedio": 15.6987
+          },
+          "ORTHO": {
+            "n": 4620,
+            "pct_del_corpus": 6.6,
+            "pct_positivas": 65.714286,
+            "diferencia_con_promedio": 11.8686
+          },
+          "NMED": {
+            "n": 3290,
+            "pct_del_corpus": 4.7,
+            "pct_positivas": 34.316109,
+            "diferencia_con_promedio": -19.5296
+          },
+          "NSURG": {
+            "n": 2667,
+            "pct_del_corpus": 3.81,
+            "pct_positivas": 59.092613,
+            "diferencia_con_promedio": 5.2469
+          },
+          "VSURG": {
+            "n": 2318,
+            "pct_del_corpus": 3.311429,
+            "pct_positivas": 71.570319,
+            "diferencia_con_promedio": 17.7246
+          },
+          "CSURG": {
+            "n": 1723,
+            "pct_del_corpus": 2.461429,
+            "pct_positivas": 61.056297,
+            "diferencia_con_promedio": 7.2106
+          },
+          "TRAUM": {
+            "n": 1472,
+            "pct_del_corpus": 2.102857,
+            "pct_positivas": 71.73913,
+            "diferencia_con_promedio": 17.8934
+          },
+          "PSYCH": {
+            "n": 1244,
+            "pct_del_corpus": 1.777143,
+            "pct_positivas": 13.18328,
+            "diferencia_con_promedio": -40.6624
+          },
+          "GYN": {
+            "n": 1076,
+            "pct_del_corpus": 1.537143,
+            "pct_positivas": 40.799257,
+            "diferencia_con_promedio": -13.0465
+          },
+          "GU": {
+            "n": 930,
+            "pct_del_corpus": 1.328571,
+            "pct_positivas": 35.806452,
+            "diferencia_con_promedio": -18.0393
+          },
+          "TSURG": {
+            "n": 831,
+            "pct_del_corpus": 1.187143,
+            "pct_positivas": 53.54994,
+            "diferencia_con_promedio": -0.2958
+          },
+          "PSURG": {
+            "n": 692,
+            "pct_del_corpus": 0.988571,
+            "pct_positivas": 55.924855,
+            "diferencia_con_promedio": 2.0791
+          },
+          "OBS": {
+            "n": 683,
+            "pct_del_corpus": 0.975714,
+            "pct_positivas": 10.102489,
+            "diferencia_con_promedio": -43.7432
+          },
+          "ENT": {
+            "n": 190,
+            "pct_del_corpus": 0.271429,
+            "pct_positivas": 40.526316,
+            "diferencia_con_promedio": -13.3194
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 8
+      },
+      "destino_alta": {
+        "cramers_v": 0.3168,
+        "categorias": {
+          "HOME": {
+            "n": 25374,
+            "pct_del_corpus": 36.248571,
+            "pct_positivas": 41.570111,
+            "diferencia_con_promedio": -12.2756
+          },
+          "HOME HEALTH CARE": {
+            "n": 16368,
+            "pct_del_corpus": 23.382857,
+            "pct_positivas": 62.432796,
+            "diferencia_con_promedio": 8.5871
+          },
+          "SKILLED NURSING FACILITY": {
+            "n": 10579,
+            "pct_del_corpus": 15.112857,
+            "pct_positivas": 73.825503,
+            "diferencia_con_promedio": 19.9798
+          },
+          "Sin dato": {
+            "n": 8754,
+            "pct_del_corpus": 12.505714,
+            "pct_positivas": 31.745488,
+            "diferencia_con_promedio": -22.1002
+          },
+          "REHAB": {
+            "n": 2726,
+            "pct_del_corpus": 3.894286,
+            "pct_positivas": 75.055026,
+            "diferencia_con_promedio": 21.2093
+          },
+          "CHRONIC/LONG TERM ACUTE CARE": {
+            "n": 2007,
+            "pct_del_corpus": 2.867143,
+            "pct_positivas": 81.514699,
+            "diferencia_con_promedio": 27.669
+          },
+          "DIED": {
+            "n": 1875,
+            "pct_del_corpus": 2.678571,
+            "pct_positivas": 73.493333,
+            "diferencia_con_promedio": 19.6476
+          },
+          "HOSPICE": {
+            "n": 740,
+            "pct_del_corpus": 1.057143,
+            "pct_positivas": 68.648649,
+            "diferencia_con_promedio": 14.8029
+          },
+          "AGAINST ADVICE": {
+            "n": 452,
+            "pct_del_corpus": 0.645714,
+            "pct_positivas": 42.035398,
+            "diferencia_con_promedio": -11.8103
+          },
+          "PSYCH FACILITY": {
+            "n": 387,
+            "pct_del_corpus": 0.552857,
+            "pct_positivas": 32.55814,
+            "diferencia_con_promedio": -21.2876
+          },
+          "ACUTE HOSPITAL": {
+            "n": 345,
+            "pct_del_corpus": 0.492857,
+            "pct_positivas": 61.15942,
+            "diferencia_con_promedio": 7.3137
+          },
+          "OTHER FACILITY": {
+            "n": 283,
+            "pct_del_corpus": 0.404286,
+            "pct_positivas": 59.717314,
+            "diferencia_con_promedio": 5.8716
+          },
+          "ASSISTED LIVING": {
+            "n": 101,
+            "pct_del_corpus": 0.144286,
+            "pct_positivas": 64.356436,
+            "diferencia_con_promedio": 10.5107
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 9
+      },
+      "periodo": {
+        "cramers_v": 0.0166,
+        "categorias": {
+          "2011-2013": {
+            "n": 20195,
+            "pct_del_corpus": 28.85,
+            "pct_positivas": 52.577371,
+            "diferencia_con_promedio": -1.2683
+          },
+          "2014-2016": {
+            "n": 18440,
+            "pct_del_corpus": 26.342857,
+            "pct_positivas": 54.332972,
+            "diferencia_con_promedio": 0.4873
+          },
+          "2008-2010": {
+            "n": 16939,
+            "pct_del_corpus": 24.198571,
+            "pct_positivas": 54.347954,
+            "diferencia_con_promedio": 0.5022
+          },
+          "2017-2019": {
+            "n": 13232,
+            "pct_del_corpus": 18.902857,
+            "pct_positivas": 54.519347,
+            "diferencia_con_promedio": 0.6736
+          },
+          "2020-2022": {
+            "n": 1194,
+            "pct_del_corpus": 1.705714,
+            "pct_positivas": 53.18258,
+            "diferencia_con_promedio": -0.6631
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 0
+      },
+      "idioma_ingles": {
+        "cramers_v": 0.0176,
+        "categorias": {
+          "Sí": {
+            "n": 63274,
+            "pct_del_corpus": 90.391429,
+            "pct_positivas": 54.090148,
+            "diferencia_con_promedio": 0.2444
+          },
+          "No": {
+            "n": 6565,
+            "pct_del_corpus": 9.378571,
+            "pct_positivas": 51.317593,
+            "diferencia_con_promedio": -2.5281
+          },
+          "Sin dato": {
+            "n": 161,
+            "pct_del_corpus": 0.23,
+            "pct_positivas": 60.869565,
+            "diferencia_con_promedio": 7.0239
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 0
+      },
+      "uci": {
+        "cramers_v": 0.144,
+        "categorias": {
+          "No": {
+            "n": 54868,
+            "pct_del_corpus": 78.382857,
+            "pct_positivas": 50.076547,
+            "diferencia_con_promedio": -3.7692
+          },
+          "Sí": {
+            "n": 15132,
+            "pct_del_corpus": 21.617143,
+            "pct_positivas": 67.512556,
+            "diferencia_con_promedio": 13.6668
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 0
+      },
+      "fallecio": {
+        "cramers_v": 0.0654,
+        "categorias": {
+          "No": {
+            "n": 68106,
+            "pct_del_corpus": 97.294286,
+            "pct_positivas": 53.302205,
+            "diferencia_con_promedio": -0.5435
+          },
+          "Sí": {
+            "n": 1894,
+            "pct_del_corpus": 2.705714,
+            "pct_positivas": 73.389652,
+            "diferencia_con_promedio": 19.5439
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 0
+      },
+      "alta_voluntaria": {
+        "cramers_v": 0.1693,
+        "categorias": {
+          "No": {
+            "n": 60794,
+            "pct_del_corpus": 86.848571,
+            "pct_positivas": 57.115834,
+            "diferencia_con_promedio": 3.2701
+          },
+          "Sin dato": {
+            "n": 8754,
+            "pct_del_corpus": 12.505714,
+            "pct_positivas": 31.745488,
+            "diferencia_con_promedio": -22.1002
+          },
+          "Sí": {
+            "n": 452,
+            "pct_del_corpus": 0.645714,
+            "pct_positivas": 42.035398,
+            "diferencia_con_promedio": -11.8103
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 0
+      },
+      "reingreso_30d": {
+        "cramers_v": 0.065,
+        "categorias": {
+          "No": {
+            "n": 54518,
+            "pct_del_corpus": 77.882857,
+            "pct_positivas": 52.118566,
+            "diferencia_con_promedio": -1.7271
+          },
+          "Sí": {
+            "n": 15482,
+            "pct_del_corpus": 22.117143,
+            "pct_positivas": 59.927658,
+            "diferencia_con_promedio": 6.0819
+          }
+        },
+        "epicrisis_en_categorias_no_publicadas": 0
+      }
+    },
+    "asociacion_categoricas": {
+      "variables": [
+        "sexo",
+        "grupo_edad",
+        "raza",
+        "seguro",
+        "estado_civil",
+        "tipo_ingreso",
+        "servicio",
+        "destino_alta",
+        "periodo",
+        "uci",
+        "fallecio",
+        "reingreso_30d",
+        "epoca",
+        "y"
+      ],
+      "matriz": [
+        [
+          1.0,
+          0.0946,
+          0.0843,
+          0.0573,
+          0.2296,
+          0.0501,
+          0.1975,
+          0.0867,
+          0.0136,
+          0.0717,
+          0.0159,
+          0.026,
+          0.0117,
+          0.0288
+        ],
+        [
+          0.0946,
+          1.0,
+          0.0887,
+          0.3803,
+          0.3091,
+          0.0909,
+          0.2099,
+          0.2451,
+          0.0329,
+          0.097,
+          0.0841,
+          0.0466,
+          0.0476,
+          0.1483
+        ],
+        [
+          0.0843,
+          0.0887,
+          1.0,
+          0.1116,
+          0.2633,
+          0.0753,
+          0.0918,
+          0.0749,
+          0.046,
+          0.1848,
+          0.1055,
+          0.07,
+          0.0417,
+          0.0806
+        ],
+        [
+          0.0573,
+          0.3803,
+          0.1116,
+          1.0,
+          0.1909,
+          0.062,
+          0.1189,
+          0.171,
+          0.0395,
+          0.0719,
+          0.0652,
+          0.0444,
+          0.0427,
+          0.1229
+        ],
+        [
+          0.2296,
+          0.3091,
+          0.2633,
+          0.1909,
+          1.0,
+          0.0659,
+          0.1202,
+          0.1388,
+          0.0312,
+          0.1479,
+          0.1099,
+          0.0619,
+          0.0521,
+          0.0719
+        ],
+        [
+          0.0501,
+          0.0909,
+          0.0753,
+          0.062,
+          0.0659,
+          1.0,
+          0.254,
+          0.3523,
+          0.2697,
+          0.2386,
+          0.0967,
+          0.1107,
+          0.5793,
+          0.1964
+        ],
+        [
+          0.1975,
+          0.2099,
+          0.0918,
+          0.1189,
+          0.1202,
+          0.254,
+          1.0,
+          0.1149,
+          0.0404,
+          0.3523,
+          0.0788,
+          0.1828,
+          0.0684,
+          0.2251
+        ],
+        [
+          0.0867,
+          0.2451,
+          0.0749,
+          0.171,
+          0.1388,
+          0.3523,
+          0.1149,
+          1.0,
+          0.0645,
+          0.3941,
+          0.9752,
+          0.1352,
+          0.0573,
+          0.3168
+        ],
+        [
+          0.0136,
+          0.0329,
+          0.046,
+          0.0395,
+          0.0312,
+          0.2697,
+          0.0404,
+          0.0645,
+          1.0,
+          0.0397,
+          0.0092,
+          0.0192,
+          0.8428,
+          0.0166
+        ],
+        [
+          0.0717,
+          0.097,
+          0.1848,
+          0.0719,
+          0.1479,
+          0.2386,
+          0.3523,
+          0.3941,
+          0.0397,
+          1.0,
+          0.2465,
+          0.0262,
+          0.0205,
+          0.144
+        ],
+        [
+          0.0159,
+          0.0841,
+          0.1055,
+          0.0652,
+          0.1099,
+          0.0967,
+          0.0788,
+          0.9752,
+          0.0092,
+          0.2465,
+          1.0,
+          0.0889,
+          0.0019,
+          0.0654
+        ],
+        [
+          0.026,
+          0.0466,
+          0.07,
+          0.0444,
+          0.0619,
+          0.1107,
+          0.1828,
+          0.1352,
+          0.0192,
+          0.0262,
+          0.0889,
+          1.0,
+          0.0118,
+          0.065
+        ],
+        [
+          0.0117,
+          0.0476,
+          0.0417,
+          0.0427,
+          0.0521,
+          0.5793,
+          0.0684,
+          0.0573,
+          0.8428,
+          0.0205,
+          0.0019,
+          0.0118,
+          1.0,
+          0.0
+        ],
+        [
+          0.0288,
+          0.1483,
+          0.0806,
+          0.1229,
+          0.0719,
+          0.1964,
+          0.2251,
+          0.3168,
+          0.0166,
+          0.144,
+          0.0654,
+          0.065,
+          0.0,
+          1.0
+        ]
+      ],
+      "pares_mas_asociados": [
+        {
+          "a": "epoca",
+          "b": "tipo_ingreso",
+          "cramers_v": 0.5793
+        },
+        {
+          "a": "uci",
+          "b": "destino_alta",
+          "cramers_v": 0.3941
+        },
+        {
+          "a": "seguro",
+          "b": "grupo_edad",
+          "cramers_v": 0.3803
+        },
+        {
+          "a": "uci",
+          "b": "servicio",
+          "cramers_v": 0.3523
+        },
+        {
+          "a": "destino_alta",
+          "b": "tipo_ingreso",
+          "cramers_v": 0.3523
+        }
+      ]
+    },
+    "tipo_ingreso_por_epoca": {
+      "AMBULATORY OBSERVATION": {
+        "CIE-9": 1.69236,
+        "CIE-10": 0.439571
+      },
+      "DIRECT EMER.": {
+        "CIE-9": 8.095994,
+        "CIE-10": 3.911691
+      },
+      "DIRECT OBSERVATION": {
+        "CIE-9": 2.130525,
+        "CIE-10": 5.106929
+      },
+      "ELECTIVE": {
+        "CIE-9": 3.40482,
+        "CIE-10": 3.496814
+      },
+      "EU OBSERVATION": {
+        "CIE-9": 8.887906,
+        "CIE-10": 7.206006
+      },
+      "EW EMER.": {
+        "CIE-9": 57.055856,
+        "CIE-10": 19.558453
+      },
+      "OBSERVATION ADMIT": {
+        "CIE-9": 0.936627,
+        "CIE-10": 40.173853
+      },
+      "SURGICAL SAME DAY ADMISSION": {
+        "CIE-9": 8.50602,
+        "CIE-10": 10.599101
+      },
+      "URGENT": {
+        "CIE-9": 9.289892,
+        "CIE-10": 9.507581
+      }
+    },
+    "particion": {
+      "train": {
+        "n": 55915,
+        "pct_positivas": 53.894304,
+        "mediana_edad": 64.0,
+        "mediana_estancia_dias": 3.8833,
+        "mediana_largo": 9915.0,
+        "pct_hombres": 49.306984,
+        "pct_uci": 21.6847,
+        "pct_cie10": 28.645265,
+        "pct_cie10_positivas": 28.458603,
+        "pct_cie10_negativas": 28.86346,
+        "auc_epoca_sola": 0.498
+      },
+      "test": {
+        "n": 14085,
+        "pct_positivas": 53.652822,
+        "mediana_edad": 63.0,
+        "mediana_estancia_dias": 3.8764,
+        "mediana_largo": 10001.0,
+        "pct_hombres": 50.039049,
+        "pct_uci": 21.348953,
+        "pct_cie10": 30.031949,
+        "pct_cie10_positivas": 30.77941,
+        "pct_cie10_negativas": 29.166667,
+        "auc_epoca_sola": 0.5081
+      }
+    },
+    "contexto": {
+      "al_ingreso": {
+        "variables": [
+          "edad",
+          "sexo",
+          "raza",
+          "seguro",
+          "estado_civil",
+          "tipo_ingreso",
+          "servicio"
+        ],
+        "roc_auc": 0.6926,
+        "pr_auc": 0.7077,
+        "roc_auc_ic95": [
+          0.683347,
+          0.700959
+        ],
+        "pr_auc_ic95": [
+          0.695543,
+          0.719971
+        ]
+      },
+      "al_alta": {
+        "variables": [
+          "edad",
+          "estancia_dias",
+          "largo",
+          "sexo",
+          "raza",
+          "seguro",
+          "estado_civil",
+          "tipo_ingreso",
+          "servicio",
+          "destino_alta"
+        ],
+        "roc_auc": 0.7603,
+        "pr_auc": 0.7818,
+        "roc_auc_ic95": [
+          0.75233,
+          0.768714
+        ],
+        "pr_auc_ic95": [
+          0.771199,
+          0.792279
+        ]
+      },
+      "nota": "regresión logística sin texto, ajustada en train y medida en test con la partición del pipeline; no incluye el número de diagnósticos ni la severidad APR-DRG; IC 95 % con 500 remuestreos de pacientes",
+      "modelo_de_texto": {
+        "roc_auc": 0.8637,
+        "pr_auc": 0.8787,
+        "roc_auc_ic95": [
+          0.8581,
+          0.8691
+        ],
+        "fuente": "reportes/baseline_resultados.json (src/baseline.py)"
+      },
+      "dummy": {
+        "roc_auc": 0.5,
+        "pr_auc": 0.5365
+      }
+    },
+    "drift_periodo": {
+      "2008-2010": {
+        "n": 16939,
+        "pct_positivas": 54.347954,
+        "pct_cie10": 0.0,
+        "mediana_largo": 8826.0,
+        "mediana_edad": 63.0,
+        "mediana_n_diagnosticos": 10.0
+      },
+      "2011-2013": {
+        "n": 20195,
+        "pct_positivas": 52.577371,
+        "pct_cie10": 0.014855,
+        "mediana_largo": 9967.0,
+        "mediana_edad": 63.0,
+        "mediana_n_diagnosticos": 12.0
+      },
+      "2014-2016": {
+        "n": 18440,
+        "pct_positivas": 54.332972,
+        "pct_cie10": 32.288503,
+        "mediana_largo": 10199.5,
+        "mediana_edad": 64.0,
+        "mediana_n_diagnosticos": 14.0
+      },
+      "2017-2019": {
+        "n": 13232,
+        "pct_positivas": 54.519347,
+        "pct_cie10": 98.972189,
+        "mediana_largo": 10988.5,
+        "mediana_edad": 65.0,
+        "mediana_n_diagnosticos": 14.0
+      },
+      "2020-2022": {
+        "n": 1194,
+        "pct_positivas": 53.18258,
+        "pct_cie10": 100.0,
+        "mediana_largo": 11182.5,
+        "mediana_edad": 65.5,
+        "mediana_n_diagnosticos": 16.0
+      }
+    },
+    "drift_resumen": {
+      "rango_pct_positivas_corpus": [
+        52.577371,
+        54.519347
+      ],
+      "rango_mediana_largo": [
+        8826.0,
+        11182.5
+      ],
+      "rango_prevalencia_real_con_epicrisis": [
+        21.599792,
+        31.119641
+      ]
+    }
   },
   "calidad": {
     "columnas": {
@@ -70,7 +1643,7 @@
     "outliers_largo": {
       "limite_q3_1_5iqr": 21381,
       "n": 1933,
-      "pct": 2.76,
+      "pct": 2.761429,
       "accion": "se conservan: son notas reales"
     },
     "nulos": {
@@ -126,68 +1699,100 @@
       "negativa": 6528,
       "positiva": 7557,
       "total": 14085,
-      "pct_positivas": 53.65
+      "pct_positivas": 53.652822
     },
     "train": {
       "negativa": 25780,
       "positiva": 30135,
       "total": 55915,
-      "pct_positivas": 53.89
+      "pct_positivas": 53.894304
     },
     "All": {
       "negativa": 32308,
       "positiva": 37692,
       "total": 70000,
-      "pct_positivas": 53.85
+      "pct_positivas": 53.845714
     },
-    "prevalencia_real_mimic": 0.2012
+    "prevalencia_real_mimic": 0.201239,
+    "prevalencia_real_con_epicrisis": 0.27588
   },
   "epoca": {
     "pct_por_clase": {
       "negativa": {
-        "CIE-9": 71.08,
-        "CIE-10": 28.92
+        "CIE-9": 71.075275,
+        "CIE-10": 28.924725
       },
       "positiva": {
-        "CIE-9": 71.08,
-        "CIE-10": 28.92
+        "CIE-9": 71.07609,
+        "CIE-10": 28.92391
       }
     },
     "auc_epoca_sola": 0.5,
     "pct_positivas_por_epoca": {
-      "CIE-9": 53.85,
-      "CIE-10": 53.85
+      "CIE-9": 53.845999,
+      "CIE-10": 53.845014
     }
   },
   "largo": {
     "mediana_por_clase": {
-      "negativa": 9185,
-      "positiva": 10717
+      "negativa": 9185.0,
+      "positiva": 10717.0
     },
-    "auc_largo_solo": 0.606,
+    "auc_largo_solo": 0.6056,
     "pct_positivas_por_decil": [
-      44.0,
-      46.1,
-      45.5,
-      46.8,
-      49.6,
-      51.3,
-      55.2,
-      59.0,
-      64.5,
-      76.5
+      43.9857,
+      46.0814,
+      45.4922,
+      46.779,
+      49.5998,
+      51.2927,
+      55.2143,
+      58.9714,
+      64.5235,
+      76.5252
     ]
   },
   "fuga_codigos": {
-    "pct_con_cie10": {
-      "negativa": 4.45,
-      "positiva": 4.95
+    "patron_general": {
+      "notas": 3306,
+      "pct_positivas": 4.953306,
+      "pct_negativas": 4.454005,
+      "coincidencias": 4241,
+      "pct_coincidencias_T95_a_T99": 72.459326,
+      "pct_notas_con_solo_T95_a_T99": 74.440411,
+      "cadenas_mas_frecuentes": {
+        "T98.2": 247,
+        "T98.1": 244,
+        "T98.3": 202,
+        "T98.4": 191,
+        "T97.9": 176,
+        "T97.8": 176
+      },
+      "codigos_T95_a_T99_en_el_diccionario_de_mimic": 0,
+      "nota": "letra, dos dígitos, punto y decimales; también captura valores como una temperatura escrita T98.2"
     },
-    "pct_con_patron_cie9": {
-      "negativa": 27.97,
-      "positiva": 33.4
-    },
-    "nota": "el patrón tipo CIE-9 (123.45) también captura decimales comunes; importa la diferencia entre clases"
+    "familias_de_la_etiqueta": {
+      "notas": 44,
+      "positivas": 37,
+      "negativas": 7,
+      "pct_positivas": 0.098164,
+      "pct_negativas": 0.021666,
+      "codigos_cie10": {
+        "notas": 20,
+        "positivas": 20,
+        "negativas": 0,
+        "pct_positivas": 0.053062,
+        "pct_negativas": 0.0
+      },
+      "codigos_cie9": {
+        "notas": 24,
+        "positivas": 17,
+        "negativas": 7,
+        "pct_positivas": 0.045102,
+        "pct_negativas": 0.021666
+      },
+      "nota": "búsqueda por patrón de los códigos escritos con punto; un número con la misma forma (996.5) también cuenta, así que es una cota superior"
+    }
   },
   "pacientes": {
     "compartidos_train_test": 0,
@@ -203,118 +1808,1281 @@
       "Sistema/Organizacion": 130
     },
     "pct_sobre_positivas": {
-      "Procedimiento": 45.66,
-      "Cuidado del paciente": 27.34,
-      "Medicacion": 26.35,
-      "Dispositivo medico": 3.18,
-      "Infeccion nosocomial": 2.67,
-      "Sistema/Organizacion": 0.34
+      "Procedimiento": 45.656903,
+      "Cuidado del paciente": 27.340019,
+      "Medicacion": 26.353072,
+      "Dispositivo medico": 3.178393,
+      "Infeccion nosocomial": 2.671654,
+      "Sistema/Organizacion": 0.344901
     },
-    "pct_multietiqueta": 4.96,
+    "pct_multietiqueta": 4.955959,
     "clases_menores_de_200": [
       "Sistema/Organizacion"
+    ],
+    "por_epoca": {
+      "CIE-9": {
+        "positivas": 26790,
+        "pct_multietiqueta": 0.0,
+        "conteo": {
+          "Procedimiento": 13005,
+          "Cuidado del paciente": 7155,
+          "Medicacion": 6630
+        }
+      },
+      "CIE-10": {
+        "positivas": 10902,
+        "pct_multietiqueta": 17.134471,
+        "conteo": {
+          "Procedimiento": 4204,
+          "Medicacion": 3303,
+          "Cuidado del paciente": 3150,
+          "Dispositivo medico": 1198,
+          "Infeccion nosocomial": 1007,
+          "Sistema/Organizacion": 130
+        }
+      }
+    },
+    "solo_en_una_epoca": [
+      "Dispositivo medico",
+      "Infeccion nosocomial",
+      "Sistema/Organizacion"
+    ]
+  },
+  "texto": {
+    "secciones": {
+      "por_seccion": {
+        "Chief Complaint": {
+          "pct": 96.761429,
+          "pct_negativas": 96.966696,
+          "pct_positivas": 96.585482
+        },
+        "Major Surgical or Invasive Procedure": {
+          "pct": 99.487143,
+          "pct_negativas": 99.613099,
+          "pct_positivas": 99.379179
+        },
+        "History of Present Illness": {
+          "pct": 98.694286,
+          "pct_negativas": 98.59168,
+          "pct_positivas": 98.782235
+        },
+        "Past Medical History": {
+          "pct": 98.802857,
+          "pct_negativas": 98.690727,
+          "pct_positivas": 98.898971
+        },
+        "Social History": {
+          "pct": 97.63,
+          "pct_negativas": 97.387644,
+          "pct_positivas": 97.837737
+        },
+        "Family History": {
+          "pct": 97.214286,
+          "pct_negativas": 96.95741,
+          "pct_positivas": 97.434469
+        },
+        "Physical Exam": {
+          "pct": 96.501429,
+          "pct_negativas": 96.421939,
+          "pct_positivas": 96.569564
+        },
+        "Pertinent Results": {
+          "pct": 96.16,
+          "pct_negativas": 95.818373,
+          "pct_positivas": 96.452828
+        },
+        "Brief Hospital Course": {
+          "pct": 88.148571,
+          "pct_negativas": 88.306302,
+          "pct_positivas": 88.013372
+        },
+        "Medications on Admission": {
+          "pct": 94.44,
+          "pct_negativas": 94.716479,
+          "pct_positivas": 94.203014
+        },
+        "Discharge Medications": {
+          "pct": 97.902857,
+          "pct_negativas": 97.9974,
+          "pct_positivas": 97.821819
+        },
+        "Discharge Disposition": {
+          "pct": 98.761429,
+          "pct_negativas": 99.055961,
+          "pct_positivas": 98.508967
+        },
+        "Discharge Diagnosis": {
+          "pct": 95.38,
+          "pct_negativas": 96.80884,
+          "pct_positivas": 94.155258
+        },
+        "Discharge Condition": {
+          "pct": 99.632857,
+          "pct_negativas": 99.78024,
+          "pct_positivas": 99.506527
+        },
+        "Discharge Instructions": {
+          "pct": 99.065714,
+          "pct_negativas": 99.319054,
+          "pct_positivas": 98.848562
+        },
+        "Followup Instructions": {
+          "pct": 97.975714,
+          "pct_negativas": 98.30073,
+          "pct_positivas": 97.697124
+        }
+      },
+      "presentes_en_mas_del_95_pct": 14,
+      "mediana_por_nota": 16.0,
+      "pct_notas_con_todas": 67.802857,
+      "pct_notas_con_menos_de_12": 1.185714,
+      "auc_numero_de_secciones": 0.4926
+    },
+    "vocabulario": {
+      "notas_train": 55915,
+      "terminos": 5271,
+      "frecuencia_minima_pct": 1.0,
+      "mas_asociados_al_evento": [
+        {
+          "termino": "facility",
+          "pct_positivas": 63.77,
+          "pct_negativas": 38.24,
+          "log_odds": 1.044,
+          "z": 59.5
+        },
+        {
+          "termino": "vancomycin",
+          "pct_positivas": 27.41,
+          "pct_negativas": 10.95,
+          "log_odds": 1.122,
+          "z": 47.2
+        },
+        {
+          "termino": "fracture",
+          "pct_positivas": 28.88,
+          "pct_negativas": 13.58,
+          "log_odds": 0.949,
+          "z": 42.8
+        },
+        {
+          "termino": "extended",
+          "pct_positivas": 42.62,
+          "pct_negativas": 25.76,
+          "log_odds": 0.761,
+          "z": 41.4
+        },
+        {
+          "termino": "wound",
+          "pct_positivas": 34.26,
+          "pct_negativas": 18.52,
+          "log_odds": 0.83,
+          "z": 41.3
+        },
+        {
+          "termino": "line",
+          "pct_positivas": 30.39,
+          "pct_negativas": 15.8,
+          "log_odds": 0.844,
+          "z": 39.9
+        },
+        {
+          "termino": "cefepime",
+          "pct_positivas": 16.22,
+          "pct_negativas": 5.21,
+          "log_odds": 1.258,
+          "z": 39.2
+        },
+        {
+          "termino": "placement",
+          "pct_positivas": 34.39,
+          "pct_negativas": 19.57,
+          "log_odds": 0.767,
+          "z": 38.7
+        },
+        {
+          "termino": "picc",
+          "pct_positivas": 14.29,
+          "pct_negativas": 4.11,
+          "log_odds": 1.357,
+          "z": 38.3
+        },
+        {
+          "termino": "culture",
+          "pct_positivas": 35.67,
+          "pct_negativas": 21.1,
+          "log_odds": 0.729,
+          "z": 37.5
+        },
+        {
+          "termino": "placed",
+          "pct_positivas": 45.01,
+          "pct_negativas": 29.55,
+          "log_odds": 0.669,
+          "z": 37.4
+        },
+        {
+          "termino": "cultures",
+          "pct_positivas": 27.34,
+          "pct_negativas": 14.32,
+          "log_odds": 0.812,
+          "z": 36.9
+        },
+        {
+          "termino": "rehab",
+          "pct_positivas": 25.25,
+          "pct_negativas": 12.65,
+          "log_odds": 0.847,
+          "z": 36.9
+        },
+        {
+          "termino": "fall",
+          "pct_positivas": 27.75,
+          "pct_negativas": 14.79,
+          "log_odds": 0.794,
+          "z": 36.5
+        },
+        {
+          "termino": "complicated",
+          "pct_positivas": 26.76,
+          "pct_negativas": 14.14,
+          "log_odds": 0.797,
+          "z": 36.0
+        }
+      ],
+      "mas_asociados_a_sin_evento": [
+        {
+          "termino": "independent",
+          "pct_positivas": 42.27,
+          "pct_negativas": 58.19,
+          "log_odds": -0.642,
+          "z": -37.4
+        },
+        {
+          "termino": "ambulatory",
+          "pct_positivas": 63.11,
+          "pct_negativas": 72.92,
+          "log_odds": -0.454,
+          "z": -24.7
+        },
+        {
+          "termino": "prosody",
+          "pct_positivas": 1.36,
+          "pct_negativas": 4.96,
+          "log_odds": -1.332,
+          "z": -23.2
+        },
+        {
+          "termino": "home",
+          "pct_positivas": 90.35,
+          "pct_negativas": 95.33,
+          "log_odds": -0.78,
+          "z": -22.0
+        },
+        {
+          "termino": "psychiatric",
+          "pct_positivas": 5.59,
+          "pct_negativas": 10.39,
+          "log_odds": -0.671,
+          "z": -20.8
+        },
+        {
+          "termino": "knowledge",
+          "pct_positivas": 1.52,
+          "pct_negativas": 4.57,
+          "log_odds": -1.128,
+          "z": -20.3
+        },
+        {
+          "termino": "psychiatrist",
+          "pct_positivas": 1.87,
+          "pct_negativas": 5.03,
+          "log_odds": -1.022,
+          "z": -20.0
+        },
+        {
+          "termino": "cocaine",
+          "pct_positivas": 3.43,
+          "pct_negativas": 7.23,
+          "log_odds": -0.786,
+          "z": -19.8
+        },
+        {
+          "termino": "behavior",
+          "pct_positivas": 1.8,
+          "pct_negativas": 4.88,
+          "log_odds": -1.029,
+          "z": -19.8
+        },
+        {
+          "termino": "mthdone",
+          "pct_positivas": 2.08,
+          "pct_negativas": 5.29,
+          "log_odds": -0.965,
+          "z": -19.7
+        },
+        {
+          "termino": "judgment",
+          "pct_positivas": 0.95,
+          "pct_negativas": 3.54,
+          "log_odds": -1.345,
+          "z": -19.7
+        },
+        {
+          "termino": "suicidal",
+          "pct_positivas": 1.86,
+          "pct_negativas": 4.95,
+          "log_odds": -1.008,
+          "z": -19.6
+        },
+        {
+          "termino": "factors",
+          "pct_positivas": 7.56,
+          "pct_negativas": 12.42,
+          "log_odds": -0.55,
+          "z": -19.1
+        },
+        {
+          "termino": "thoughts",
+          "pct_positivas": 1.0,
+          "pct_negativas": 3.51,
+          "log_odds": -1.277,
+          "z": -19.1
+        },
+        {
+          "termino": "legal",
+          "pct_positivas": 0.83,
+          "pct_negativas": 3.23,
+          "log_odds": -1.386,
+          "z": -19.1
+        }
+      ],
+      "nota": "términos de 3 letras o más presentes en al menos el 1 % de las notas de train; se ordenan por la puntuación z del logaritmo de la razón de odds de aparecer en una nota con evento frente a una sin evento"
+    }
+  },
+  "prevalencia_real": {
+    "todas": {
+      "hospitalizaciones": 545497,
+      "pct_positivas": 20.12385,
+      "con_epicrisis": 331604,
+      "pct_positivas_con_epicrisis": 27.588027
+    },
+    "por_epoca": {
+      "CIE-9": {
+        "hospitalizaciones": 291120,
+        "pct_positivas": 25.673262,
+        "con_epicrisis": 209316,
+        "pct_positivas_con_epicrisis": 31.064515
+      },
+      "CIE-10": {
+        "hospitalizaciones": 254377,
+        "pct_positivas": 13.772865,
+        "con_epicrisis": 122288,
+        "pct_positivas_con_epicrisis": 21.637446
+      }
+    },
+    "por_periodo": {
+      "2008-2010": {
+        "hospitalizaciones": 103317,
+        "pct_positivas": 25.354975,
+        "con_epicrisis": 70862,
+        "pct_positivas_con_epicrisis": 31.119641
+      },
+      "2011-2013": {
+        "hospitalizaciones": 116824,
+        "pct_positivas": 25.111279,
+        "con_epicrisis": 85637,
+        "pct_positivas_con_epicrisis": 30.308161
+      },
+      "2014-2016": {
+        "hospitalizaciones": 116967,
+        "pct_positivas": 22.833791,
+        "con_epicrisis": 87640,
+        "pct_positivas_con_epicrisis": 27.777271
+      },
+      "2017-2019": {
+        "hospitalizaciones": 113866,
+        "pct_positivas": 16.443012,
+        "con_epicrisis": 79789,
+        "pct_positivas_con_epicrisis": 21.900262
+      },
+      "2020-2022": {
+        "hospitalizaciones": 94523,
+        "pct_positivas": 9.322599,
+        "con_epicrisis": 7676,
+        "pct_positivas_con_epicrisis": 21.599792
+      }
+    },
+    "por_periodo_y_epoca_con_epicrisis": {
+      "2008-2010": {
+        "CIE-9": {
+          "con_epicrisis": 70862,
+          "pct_positivas": 31.119641
+        }
+      },
+      "2011-2013": {
+        "CIE-9": {
+          "con_epicrisis": 85622,
+          "pct_positivas": 30.311135
+        }
+      },
+      "2014-2016": {
+        "CIE-9": {
+          "con_epicrisis": 52247,
+          "pct_positivas": 32.20472
+        },
+        "CIE-10": {
+          "con_epicrisis": 35393,
+          "pct_positivas": 21.241488
+        }
+      },
+      "2017-2019": {
+        "CIE-10": {
+          "con_epicrisis": 79204,
+          "pct_positivas": 21.819605
+        }
+      },
+      "2020-2022": {
+        "CIE-10": {
+          "con_epicrisis": 7676,
+          "pct_positivas": 21.599792
+        }
+      }
+    },
+    "pct_con_epicrisis_por_fuente_de_positivas": {
+      "códigos de la tabla": 100.0,
+      "equivalencias CIE-10-CM": 55.22427,
+      "familias CIE-9": 86.999104
+    },
+    "nota": "positiva = hospitalización con código de causa explícita (misma regla del preprocesado); el modelo solo ve hospitalizaciones con epicrisis, y esa es la base que le corresponde",
+    "cie10_con_familias_completas": {
+      "con_epicrisis": 122288,
+      "pct_positivas_con_la_etiqueta_actual": 21.637446,
+      "pct_positivas_con_las_familias_completas": 31.777443,
+      "nota": "si en CIE-10 dieran etiqueta todos los códigos de las familias de causa explícita y los efectos adversos de medicamentos, como ocurre en CIE-9, y no solo los que están en la tabla del proyecto"
+    }
+  },
+  "ruido_etiqueta": {
+    "negativas": {
+      "cie10": {
+        "n": 9345,
+        "con_codigo_de_familia_causal": 451,
+        "con_efecto_adverso_de_farmaco": 368,
+        "con_alguno": 805,
+        "pct_con_alguno": 8.614232,
+        "codigos_mas_frecuentes": [
+          {
+            "codigo": "T380X5A",
+            "epicrisis": 102,
+            "titulo_en_mimic": "Adverse effect of glucocorticoids and synthetic analogues, initial encounter"
+          },
+          {
+            "codigo": "Y838",
+            "epicrisis": 88,
+            "titulo_en_mimic": "Other surgical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure"
+          },
+          {
+            "codigo": "Y831",
+            "epicrisis": 71,
+            "titulo_en_mimic": "Surgical operation with implant of artificial internal device as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure"
+          },
+          {
+            "codigo": "W010XXA",
+            "epicrisis": 45,
+            "titulo_en_mimic": "Fall on same level from slipping, tripping and stumbling without subsequent striking against object, initial encounter"
+          },
+          {
+            "codigo": "T82855A",
+            "epicrisis": 24,
+            "titulo_en_mimic": "Stenosis of coronary artery stent, initial encounter"
+          },
+          {
+            "codigo": "T447X5A",
+            "epicrisis": 24,
+            "titulo_en_mimic": "Adverse effect of beta-adrenoreceptor antagonists, initial encounter"
+          },
+          {
+            "codigo": "W1789XA",
+            "epicrisis": 20,
+            "titulo_en_mimic": "Other fall from one level to another, initial encounter"
+          },
+          {
+            "codigo": "T502X5A",
+            "epicrisis": 19,
+            "titulo_en_mimic": "Adverse effect of carbonic-anhydrase inhibitors, benzothiadiazides and other diuretics, initial encounter"
+          }
+        ]
+      },
+      "cie9": {
+        "n": 22963,
+        "con_codigo_de_familia_causal": 0,
+        "pct": 0.0
+      },
+      "definicion": "familias de causa explícita: T80 a T88, Y63, Y65, Y83, Y84, W00 a W19 y L89; efecto adverso de medicamento: T36 a T50 con 5 en el sexto carácter. En CIE-9 la etiqueta usa las familias completas; en CIE-10, solo los códigos de la tabla del proyecto"
+    },
+    "caidas": {
+      "positivas_solo_por_caida": 6296,
+      "pct_de_las_positivas": 16.70381,
+      "con_el_hospital_como_lugar": 159,
+      "sin_el_hospital_como_lugar": 6137,
+      "pct_sin_el_hospital_como_lugar": 97.474587,
+      "sin_codigo_de_lugar": 2960,
+      "cie10": {
+        "n": 2010,
+        "con_codigo_de_lugar": 1706,
+        "en_hospital": 159,
+        "pct_en_hospital": 7.910448,
+        "en_residencia_privada": 884,
+        "titulos_en_mimic": {
+          "Y92.23x": "Hospital as the place of occurrence of the external cause",
+          "Y92.0x": "Non-institutional (private) residence as the place of occurrence of the external cause"
+        }
+      },
+      "cie9": {
+        "n": 4286,
+        "con_codigo_de_lugar": 1630,
+        "en_el_hogar": 813,
+        "en_institucion_residencial": 240,
+        "titulos_en_mimic": {
+          "E849.0": "Home accidents",
+          "E849.7": "Accidents occurring in residential institution"
+        },
+        "codigos_de_lugar_en_el_diccionario": {
+          "E8490": "Home accidents",
+          "E8491": "Farm accidents",
+          "E8492": "Mine and quarry accidents",
+          "E8493": "Accidents occurring in industrial places and premises",
+          "E8494": "Accidents occurring in place for recreation and sport",
+          "E8495": "Street and highway accidents",
+          "E8496": "Accidents occurring in public building",
+          "E8497": "Accidents occurring in residential institution",
+          "E8498": "Accidents occurring in other specified places",
+          "E8499": "Accidents occurring in unspecified place"
+        },
+        "algun_codigo_de_lugar_menciona_el_hospital": false
+      },
+      "pct_de_las_positivas_del_servicio": {
+        "TRAUM": 74.242424,
+        "NSURG": 51.142132,
+        "ORTHO": 47.694335,
+        "NMED": 19.574845,
+        "MED": 15.875257
+      },
+      "nota": "los códigos de caída (W) son de causa externa: dicen que hubo una caída, no dónde; el lugar va en otro código (Y92 o E849)"
+    },
+    "ulcera_cie9": {
+      "positivas_de_la_familia": 2736,
+      "sin_codigo_707_0": 1739,
+      "pct_sin_codigo_707_0": 63.559942,
+      "de_ellas_con_codigo_707_1": 1652,
+      "titulos_en_mimic": {
+        "707.0x": "Pressure ulcer, unspecified site",
+        "707.1x": "Ulcer of lower limb, unspecified"
+      }
+    }
+  },
+  "eventos": {
+    "fuentes": {
+      "data/catalogos/anexo02_catalogo_231.csv": {
+        "tamano_bytes": 23301,
+        "sha256": "219fc20b1cb70b3db9a95e0da07549463f323f29d28c0a10a6c4ed413835dfe4"
+      },
+      "data/catalogos/anexo02_tabla_cie10.csv": {
+        "tamano_bytes": 56283,
+        "sha256": "c7784c54be21a58db198d1e624b25b438d3a9f47492c633291a5a729e7961614"
+      }
+    },
+    "catalogo": {
+      "eventos": 231,
+      "naturalezas": 12,
+      "por_naturaleza": {
+        "INFECCIÓN ASOCIADA": 49,
+        "PROCEDIMIENTO": 34,
+        "MEDICACIÓN": 33,
+        "HISTORIA CLÍNICA": 23,
+        "GESTIÓN ORGANIZACIÓN": 21,
+        "CUIDADO DEL PACIENTE": 19,
+        "SANGRE/HEMODERIVADOS": 19,
+        "COMPORTAMIENTO": 14,
+        "DISPOSITIVO MÉDICO": 9,
+        "NUTRICIÓN": 6,
+        "DIAGNÓSTICO": 2,
+        "INSUMOS": 2
+      },
+      "por_nivel_de_deteccion": {
+        "A": 94,
+        "B": 60,
+        "C": 11,
+        "D": 23,
+        "E": 43
+      },
+      "detectables": 188
+    },
+    "mapeo": {
+      "filas": 272,
+      "codigos_cie10_distintos": 223,
+      "eventos_nombrados": 237,
+      "por_fuente": {
+        "CIE-10 OMS": 149,
+        "CIE-10-CM": 94,
+        "CIE-10-CM (proxy)": 29
+      },
+      "filas_enlazadas_al_catalogo": 137,
+      "filas_enlazadas_por_fuente": {
+        "CIE-10-CM": 94,
+        "CIE-10-CM (proxy)": 29,
+        "CIE-10 OMS": 14
+      },
+      "filas_sin_enlace": 135,
+      "filas_sin_enlace_por_fuente": {
+        "CIE-10 OMS": 135
+      },
+      "filas_sin_enlace_detalle": {
+        "identificador_fuera_del_catalogo": 68,
+        "identificador_de_otra_naturaleza": 60,
+        "misma_naturaleza_y_otro_evento": 7
+      },
+      "eventos_con_codigo": 128,
+      "eventos_con_codigo_por_la_tabla": 124,
+      "eventos_con_codigo_solo_por_equivalencias": 4,
+      "eventos_por_tipo_de_codigo": {
+        "sin código": 103,
+        "código propio": 54,
+        "código compartido con otro evento": 41,
+        "código aproximado (proxy)": 29,
+        "equivalencia CIE-10-CM": 4
+      },
+      "con_codigo_por_nivel_de_deteccion": {
+        "A": {
+          "eventos": 94,
+          "con_codigo": 62
+        },
+        "B": {
+          "eventos": 60,
+          "con_codigo": 50
+        },
+        "C": {
+          "eventos": 11,
+          "con_codigo": 8
+        },
+        "D": {
+          "eventos": 23,
+          "con_codigo": 4
+        },
+        "E": {
+          "eventos": 43,
+          "con_codigo": 4
+        }
+      },
+      "nivel_A_sin_codigo": 32,
+      "nivel_A_sin_codigo_con_su_codigo_en_filas_sin_enlace": 12,
+      "codigos_asignados_a_mas_de_un_evento": 14
+    },
+    "observado": {
+      "hospitalizaciones_con_codigo_de_evento": 76118,
+      "eventos_observados": 157,
+      "eventos_del_catalogo_observados": 78,
+      "eventos_del_catalogo_con_codigo_de_causa_explicita": 23,
+      "eventos_del_catalogo_solo_con_codigo_de_condicion": 55,
+      "complicaciones_sin_enlace_observadas": 79,
+      "causa_explicita": {
+        "hospitalizaciones": 35034,
+        "con_evento_del_catalogo": 24993,
+        "solo_complicaciones_sin_enlace": 10041,
+        "eventos": 57,
+        "eventos_del_catalogo": 23,
+        "por_tabla": {
+          "directa": 18989,
+          "equivalencia": 19151
+        }
+      },
+      "condicion": {
+        "hospitalizaciones": 59110,
+        "con_evento_del_catalogo": 34228,
+        "solo_complicaciones_sin_enlace": 24882,
+        "eventos": 102,
+        "eventos_del_catalogo": 57,
+        "por_tabla": {
+          "directa": 53375,
+          "equivalencia": 12217
+        }
+      },
+      "eventos_que_concentran_el_80_pct": 24,
+      "top": [
+        {
+          "evento": "Falla renal aguda no especificada",
+          "hospitalizaciones": 19705,
+          "con_codigo_de_causa_explicita": 0,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Reacción adversa al medicamento",
+          "hospitalizaciones": 14090,
+          "con_codigo_de_causa_explicita": 14090,
+          "en_el_catalogo": true
+        },
+        {
+          "evento": "Infección del torrente sanguíneo",
+          "hospitalizaciones": 11826,
+          "con_codigo_de_causa_explicita": 105,
+          "en_el_catalogo": true
+        },
+        {
+          "evento": "Otras infecciones del trato urinario",
+          "hospitalizaciones": 9659,
+          "con_codigo_de_causa_explicita": 0,
+          "en_el_catalogo": true
+        },
+        {
+          "evento": "Caída de paciente",
+          "hospitalizaciones": 8326,
+          "con_codigo_de_causa_explicita": 5551,
+          "en_el_catalogo": true
+        },
+        {
+          "evento": "Insuficiencia respiratoria aguda",
+          "hospitalizaciones": 6959,
+          "con_codigo_de_causa_explicita": 0,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Neumonia organismo no especificado",
+          "hospitalizaciones": 5790,
+          "con_codigo_de_causa_explicita": 0,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Estreptococos/estafilococos como causa",
+          "hospitalizaciones": 5017,
+          "con_codigo_de_causa_explicita": 0,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Sepsis no especificada",
+          "hospitalizaciones": 4481,
+          "con_codigo_de_causa_explicita": 0,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Otros procedimientos medicos causa reaccion",
+          "hospitalizaciones": 3021,
+          "con_codigo_de_causa_explicita": 3021,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Falla renal aguda con necrosis tubular",
+          "hospitalizaciones": 2503,
+          "con_codigo_de_causa_explicita": 0,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Anastomosis bypass o injerto causa reaccion",
+          "hospitalizaciones": 2250,
+          "con_codigo_de_causa_explicita": 2250,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Diarrea asociada a antimicrobianos",
+          "hospitalizaciones": 2189,
+          "con_codigo_de_causa_explicita": 0,
+          "en_el_catalogo": true
+        },
+        {
+          "evento": "Ulcera por presion / Lesion de piel",
+          "hospitalizaciones": 2030,
+          "con_codigo_de_causa_explicita": 2030,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Embolia pulmonar sin cor pulmonale",
+          "hospitalizaciones": 1989,
+          "con_codigo_de_causa_explicita": 0,
+          "en_el_catalogo": false
+        }
+      ],
+      "top_causa_explicita": [
+        {
+          "evento": "Reacción adversa al medicamento",
+          "hospitalizaciones": 14090,
+          "en_el_catalogo": true
+        },
+        {
+          "evento": "Caída de paciente",
+          "hospitalizaciones": 5551,
+          "en_el_catalogo": true
+        },
+        {
+          "evento": "Otros procedimientos medicos causa reaccion",
+          "hospitalizaciones": 3021,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Anastomosis bypass o injerto causa reaccion",
+          "hospitalizaciones": 2250,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Ulcera por presion / Lesion de piel",
+          "hospitalizaciones": 2030,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Infeccion postprocedimiento",
+          "hospitalizaciones": 1845,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Lesiones secundarias a procedimientos",
+          "hospitalizaciones": 1780,
+          "en_el_catalogo": true
+        },
+        {
+          "evento": "Hematoma relacionado con procedimiento",
+          "hospitalizaciones": 1749,
+          "en_el_catalogo": true
+        },
+        {
+          "evento": "Trasplante de organo como causa de reaccion",
+          "hospitalizaciones": 1225,
+          "en_el_catalogo": false
+        },
+        {
+          "evento": "Hemorragia/hematoma por anticoagulación",
+          "hospitalizaciones": 1198,
+          "en_el_catalogo": true
+        }
+      ],
+      "nota": "«causa explícita» es el estrato de códigos que da la etiqueta positiva; «condición» es el de códigos que pueden ser el motivo de ingreso y no se usan como etiqueta"
+    },
+    "corpus": {
+      "positivas": 37692,
+      "con_evento_del_catalogo": 6801,
+      "pct_con_evento_del_catalogo": 18.043617,
+      "solo_complicacion_sin_enlace": 4100,
+      "pct_solo_complicacion_sin_enlace": 10.87764,
+      "solo_familia_cie9": 26791,
+      "pct_solo_familia_cie9": 71.078743,
+      "familias_cie9": {
+        "complicaciones_atencion": 11504,
+        "farmacos_uso_terapeutico": 6630,
+        "caidas": 4419,
+        "ulcera_presion": 2737,
+        "incidentes_asistenciales": 1501
+      },
+      "eventos_del_catalogo": {
+        "presentes": 22,
+        "con_100_epicrisis_o_mas": 8,
+        "con_30_epicrisis_o_mas_en_test": 7
+      },
+      "equivalencias_cie10cm": {
+        "eventos": 12,
+        "eventos_con_el_nombre_del_catalogo": 12
+      }
+    },
+    "por_naturaleza": {
+      "INFECCIÓN ASOCIADA": {
+        "en_el_catalogo": 49,
+        "con_codigo": 31,
+        "observados": 27,
+        "con_codigo_de_causa_explicita": 3,
+        "en_las_positivas_del_corpus": 2
+      },
+      "PROCEDIMIENTO": {
+        "en_el_catalogo": 34,
+        "con_codigo": 24,
+        "observados": 20,
+        "con_codigo_de_causa_explicita": 10,
+        "en_las_positivas_del_corpus": 10
+      },
+      "MEDICACIÓN": {
+        "en_el_catalogo": 33,
+        "con_codigo": 17,
+        "observados": 6,
+        "con_codigo_de_causa_explicita": 2,
+        "en_las_positivas_del_corpus": 2
+      },
+      "HISTORIA CLÍNICA": {
+        "en_el_catalogo": 23,
+        "con_codigo": 0,
+        "observados": 0,
+        "con_codigo_de_causa_explicita": 0,
+        "en_las_positivas_del_corpus": 0
+      },
+      "GESTIÓN ORGANIZACIÓN": {
+        "en_el_catalogo": 21,
+        "con_codigo": 12,
+        "observados": 7,
+        "con_codigo_de_causa_explicita": 3,
+        "en_las_positivas_del_corpus": 3
+      },
+      "CUIDADO DEL PACIENTE": {
+        "en_el_catalogo": 19,
+        "con_codigo": 10,
+        "observados": 8,
+        "con_codigo_de_causa_explicita": 2,
+        "en_las_positivas_del_corpus": 2
+      },
+      "SANGRE/HEMODERIVADOS": {
+        "en_el_catalogo": 19,
+        "con_codigo": 13,
+        "observados": 2,
+        "con_codigo_de_causa_explicita": 2,
+        "en_las_positivas_del_corpus": 2
+      },
+      "COMPORTAMIENTO": {
+        "en_el_catalogo": 14,
+        "con_codigo": 10,
+        "observados": 5,
+        "con_codigo_de_causa_explicita": 0,
+        "en_las_positivas_del_corpus": 0
+      },
+      "DISPOSITIVO MÉDICO": {
+        "en_el_catalogo": 9,
+        "con_codigo": 4,
+        "observados": 3,
+        "con_codigo_de_causa_explicita": 1,
+        "en_las_positivas_del_corpus": 1
+      },
+      "NUTRICIÓN": {
+        "en_el_catalogo": 6,
+        "con_codigo": 5,
+        "observados": 0,
+        "con_codigo_de_causa_explicita": 0,
+        "en_las_positivas_del_corpus": 0
+      },
+      "DIAGNÓSTICO": {
+        "en_el_catalogo": 2,
+        "con_codigo": 2,
+        "observados": 0,
+        "con_codigo_de_causa_explicita": 0,
+        "en_las_positivas_del_corpus": 0
+      },
+      "INSUMOS": {
+        "en_el_catalogo": 2,
+        "con_codigo": 0,
+        "observados": 0,
+        "con_codigo_de_causa_explicita": 0,
+        "en_las_positivas_del_corpus": 0
+      }
+    },
+    "naturalezas_sin_codigo": [
+      "HISTORIA CLÍNICA",
+      "INSUMOS"
+    ],
+    "naturalezas_sin_eventos_observados": [
+      "HISTORIA CLÍNICA",
+      "NUTRICIÓN",
+      "DIAGNÓSTICO",
+      "INSUMOS"
     ]
   },
   "correlaciones_spearman": {
     "variables": [
+      "edad",
+      "sexo (hombre)",
+      "estancia (días)",
+      "horas en emergencia",
+      "n.º de diagnósticos",
+      "severidad APR-DRG",
+      "paso por UCI",
+      "fallecimiento",
+      "reingreso a 30 días",
       "época CIE",
       "largo (caracteres)",
-      "log10 largo",
-      "palabras",
       "notas del paciente",
       "y (evento)"
     ],
     "matriz": [
       [
         1.0,
-        0.137,
-        0.137,
-        0.124,
-        -0.084,
+        -0.0141,
+        0.072,
+        -0.0465,
+        0.3401,
+        0.196,
+        0.0908,
+        0.0871,
+        -0.0317,
+        0.007,
+        0.1485,
+        0.0057,
+        0.1437
+      ],
+      [
+        -0.0141,
+        1.0,
+        0.0437,
+        -0.0493,
+        0.0569,
+        0.0666,
+        0.0717,
+        0.0159,
+        0.026,
+        0.0117,
+        0.0386,
+        0.0204,
+        0.0288
+      ],
+      [
+        0.072,
+        0.0437,
+        1.0,
+        -0.0158,
+        0.4614,
+        0.4544,
+        0.3486,
+        0.0823,
+        0.0937,
+        0.0614,
+        0.4677,
+        0.064,
+        0.3063
+      ],
+      [
+        -0.0465,
+        -0.0493,
+        -0.0158,
+        1.0,
+        0.0274,
+        -0.0886,
+        -0.2202,
+        -0.0766,
+        0.0063,
+        0.2639,
+        0.0671,
+        0.0286,
+        -0.025
+      ],
+      [
+        0.3401,
+        0.0569,
+        0.4614,
+        0.0274,
+        1.0,
+        0.6373,
+        0.2918,
+        0.1644,
+        0.1115,
+        0.1389,
+        0.5589,
+        0.2365,
+        0.4152
+      ],
+      [
+        0.196,
+        0.0666,
+        0.4544,
+        -0.0886,
+        0.6373,
+        1.0,
+        0.3318,
+        0.2238,
+        0.1065,
+        0.0088,
+        0.4572,
+        0.1737,
+        0.2933
+      ],
+      [
+        0.0908,
+        0.0717,
+        0.3486,
+        -0.2202,
+        0.2918,
+        0.3318,
+        1.0,
+        0.2465,
+        -0.0262,
+        0.0205,
+        0.2164,
+        -0.1043,
+        0.144
+      ],
+      [
+        0.0871,
+        0.0159,
+        0.0823,
+        -0.0766,
+        0.1644,
+        0.2238,
+        0.2465,
+        1.0,
+        -0.0889,
+        -0.0019,
+        -0.0177,
+        -0.0634,
+        0.0654
+      ],
+      [
+        -0.0317,
+        0.026,
+        0.0937,
+        0.0063,
+        0.1115,
+        0.1065,
+        -0.0262,
+        -0.0889,
+        1.0,
+        -0.0118,
+        0.1005,
+        0.2829,
+        0.065
+      ],
+      [
+        0.007,
+        0.0117,
+        0.0614,
+        0.2639,
+        0.1389,
+        0.0088,
+        0.0205,
+        -0.0019,
+        -0.0118,
+        1.0,
+        0.1372,
+        -0.0843,
         -0.0
       ],
       [
-        0.137,
+        0.1485,
+        0.0386,
+        0.4677,
+        0.0671,
+        0.5589,
+        0.4572,
+        0.2164,
+        -0.0177,
+        0.1005,
+        0.1372,
         1.0,
-        1.0,
-        0.996,
-        0.166,
-        0.182
+        0.1659,
+        0.1823
       ],
       [
-        0.137,
+        0.0057,
+        0.0204,
+        0.064,
+        0.0286,
+        0.2365,
+        0.1737,
+        -0.1043,
+        -0.0634,
+        0.2829,
+        -0.0843,
+        0.1659,
         1.0,
-        1.0,
-        0.996,
-        0.166,
-        0.182
+        0.1248
       ],
       [
-        0.124,
-        0.996,
-        0.996,
-        1.0,
-        0.172,
-        0.181
-      ],
-      [
-        -0.084,
-        0.166,
-        0.166,
-        0.172,
-        1.0,
-        0.125
-      ],
-      [
+        0.1437,
+        0.0288,
+        0.3063,
+        -0.025,
+        0.4152,
+        0.2933,
+        0.144,
+        0.0654,
+        0.065,
         -0.0,
-        0.182,
-        0.182,
-        0.181,
-        0.125,
+        0.1823,
+        0.1248,
         1.0
       ]
     ],
     "con_y": {
+      "edad": 0.1437,
+      "sexo (hombre)": 0.0288,
+      "estancia (días)": 0.3063,
+      "horas en emergencia": -0.025,
+      "n.º de diagnósticos": 0.4152,
+      "severidad APR-DRG": 0.2933,
+      "paso por UCI": 0.144,
+      "fallecimiento": 0.0654,
+      "reingreso a 30 días": 0.065,
       "época CIE": -0.0,
-      "largo (caracteres)": 0.182,
-      "log10 largo": 0.182,
-      "palabras": 0.181,
-      "notas del paciente": 0.125
-    }
+      "largo (caracteres)": 0.1823,
+      "notas del paciente": 0.1248
+    },
+    "pares_mas_correlacionados": [
+      {
+        "a": "severidad APR-DRG",
+        "b": "n.º de diagnósticos",
+        "rho": 0.6373
+      },
+      {
+        "a": "largo (caracteres)",
+        "b": "n.º de diagnósticos",
+        "rho": 0.5589
+      },
+      {
+        "a": "largo (caracteres)",
+        "b": "estancia (días)",
+        "rho": 0.4677
+      },
+      {
+        "a": "n.º de diagnósticos",
+        "b": "estancia (días)",
+        "rho": 0.4614
+      }
+    ],
+    "nota": "cada celda usa las epicrisis que tienen los dos datos (entre 38407 y 70000 según el par)"
   },
   "riesgos": {
-    "desbalance": "corpus de modelado con 53.85 % de positivas frente a una prevalencia real de 20.12 %: las métricas se reportan también a prevalencia real (VPP real)",
-    "leakage_etiqueta": "códigos CIE-10 en el texto: 4.95 % de positivas vs 4.45 % de negativas",
+    "desbalance": "corpus de modelado con 53.8 % de positivas; prevalencia real de 27.6 % entre las hospitalizaciones con epicrisis (20.1 % sobre todas las hospitalizaciones)",
+    "leakage_etiqueta": "códigos de las familias de la etiqueta escritos en 44 notas (0.10 % de las positivas, 0.02 % de las negativas)",
     "leakage_paciente": "0 pacientes compartidos entre train y test",
-    "drift": "época CIE-9/CIE-10 emparejada por clase; AUC de la época sola 0.500",
+    "drift_de_la_etiqueta": "prevalencia real de 31.1 % en la época CIE-9 y de 21.6 % en la CIE-10; en el corpus el muestreo por época la iguala",
     "atajo_largo": "AUC del largo solo 0.606; positivas por decil 44.0 % → 76.5 %",
     "clases_raras_etapa2": [
       "Sistema/Organizacion"
     ],
-    "sesgo_etiqueta": "la etiqueta es débil: códigos CIE de facturación, no una lectura clínica de la nota"
+    "naturalezas_solo_en_una_epoca": [
+      "Dispositivo medico",
+      "Infeccion nosocomial",
+      "Sistema/Organizacion"
+    ],
+    "etiqueta_debil": "la etiqueta sale de códigos de diagnóstico de facturación, no de una lectura clínica de la nota",
+    "ruido_en_negativas": "8.6 % de las negativas CIE-10 llevan un código de las familias de causa explícita que no está en la tabla",
+    "ruido_en_positivas": "16.7 % de las positivas lo son solo por un código de caída; en CIE-10 el 7.9 % de ellas tiene el hospital como lugar de ocurrencia; 1739 positivas de la familia CIE-9 de úlcera no tienen un código de úlcera por presión (707.0x)",
+    "variables_contaminadas": "el número de diagnósticos (AUC 0.740) y la severidad APR-DRG (AUC 0.662) salen de la misma codificación que la etiqueta: no se usan como predictores",
+    "faltantes_no_aleatorios": "horas_emergencia falta en 33.2 % (55.3 % de positivas cuando falta, 53.1 % cuando no); destino_alta falta en 12.5 % (31.7 % de positivas cuando falta, 57.0 % cuando no); drg_severidad falta en 21.2 % (45.0 % de positivas cuando falta, 56.2 % cuando no)",
+    "diferencias_por_subgrupo": "V de Cramér de la etiqueta con el servicio 0.225 y con el tipo de ingreso 0.196",
+    "mezcla_de_casos": "un modelo sin texto alcanza ROC-AUC 0.693 con variables del ingreso y 0.760 con las del alta",
+    "cobertura_del_catalogo": "128 de 231 eventos con código; 135 de 272 filas de la tabla sin enlace con el catálogo",
+    "origen_de_la_etiqueta": "de las positivas del corpus, el 18.0 % tiene un evento del catálogo, el 10.9 % una complicación sin enlace y el 71.1 % solo familia CIE-9"
   },
   "decisiones": [
     {
       "n": 1,
-      "decision": "Adoptar la PR-AUC como métrica central y reportar F1 (+) y Recall a su lado",
-      "paso": "Métrica",
-      "evidencia": "el dummy que siempre dice «sí» obtiene F1 (+) = 0.698 porque el test tiene 53.7 % de positivas; el piso de la PR-AUC es la proporción de positivas (0.537)",
-      "control": "tabla de métricas con PR-AUC e IC 95 % en logs/metrics_baseline.txt, comparada contra el piso"
+      "decision": "Excluir de la clase negativa las hospitalizaciones que tengan cualquier código de las familias de causa explícita",
+      "paso": "Preprocesado",
+      "evidencia": "805 de las 9345 negativas de la época CIE-10 (8.6 %) llevan un código de esas familias (T80 a T88, Y63, Y65, Y83, Y84, W00 a W19, L89 o efecto adverso de medicamento) que no está en la tabla del proyecto; en la época CIE-9, donde se usan las familias completas, son 0",
+      "control": "porcentaje de negativas CIE-10 con código de esas familias: hoy 8.6 %, debe quedar en 0 % al regenerar el corpus; se reporta la PR-AUC antes y después"
     },
     {
       "n": 2,
-      "decision": "Separar la evaluación por deciles de largo y añadir el largo como variable de control",
-      "paso": "Split / features",
-      "evidencia": "el largo solo separa las clases (AUC del largo, ver sección 4) y la proporción de positivas crece del decil más corto al más largo: riesgo de atajo",
-      "control": "PR-AUC dentro de cada decil; si cae mucho frente a la global, el modelo se apoya en el largo"
+      "decision": "Dejar como positivas por caída solo las que tienen el hospital como lugar de ocurrencia y sacar las demás de las dos clases",
+      "paso": "Preprocesado",
+      "evidencia": "6296 positivas (16.7 %) lo son solo por un código de caída; en la época CIE-10, de 2010 solo 159 (7.9 %) tienen el hospital como lugar de ocurrencia y 884 una residencia privada; 2960 no tienen código de lugar y en la época CIE-9 ningún código de lugar corresponde al hospital",
+      "control": "positivas solo por caída sin el hospital como lugar de ocurrencia: hoy 6137 de 6296 (97.5 %), deben quedar en 0; se reporta la PR-AUC antes y después"
     },
     {
       "n": 3,
-      "decision": "Enmascarar los patrones de código CIE en el texto antes de vectorizar",
-      "paso": "Preprocesado",
-      "evidencia": "códigos con formato CIE-10 aparecen algo más en las positivas que en las negativas (sección 5): fuga posible, aunque pequeña",
-      "control": "diferencia de PR-AUC con y sin máscara en la misma partición"
+      "decision": "Evaluar el modelo dentro de cada servicio, grupo de edad y decil de largo, y compararlo con el modelo de contexto sin texto",
+      "paso": "Evaluación",
+      "evidencia": "un modelo que no lee el texto alcanza un ROC-AUC de 0.693 con las variables del ingreso y de 0.760 con las del alta, frente a 0.864 del modelo de texto; el largo de la nota solo da 0.606",
+      "control": "ROC-AUC del modelo de texto mayor que el del modelo de contexto en cada estrato con 200 epicrisis o más en test, con un intervalo de confianza al 95 % por paciente para la diferencia que no incluya el cero"
     }
   ],
-  "duracion_s": 55.2
+  "acciones_registradas": [
+    "Limitar la familia CIE-9 de úlcera por presión a los códigos 707.0x: 1739 de sus 2736 positivas no tienen ninguno.",
+    "Usar como prevalencia real el 27.6 % de las hospitalizaciones con epicrisis, y no el 20.1 % sobre todas las hospitalizaciones, al calcular el valor predictivo positivo.",
+    "Reportar las métricas por época de codificación, por periodo y por subgrupo (servicio, tipo de ingreso, sexo, grupo de edad, raza y seguro): la etiqueta se define con familias completas en CIE-9 y con los códigos de la tabla en CIE-10.",
+    "Enlazar con el catálogo del Anexo 02 las 135 filas de la tabla de códigos cuyo identificador no es el del catálogo, o declararlas sin equivalente, antes de reportar cobertura o frecuencia por evento.",
+    "No usar como predictores el número de diagnósticos ni la severidad APR-DRG: salen de la misma codificación que la etiqueta.",
+    "Mantener la segunda etapa a nivel de naturaleza: la frecuencia por evento no alcanza para un clasificador por evento.",
+    "Tratar como dato faltante la estancia de las 11 hospitalizaciones con estancia negativa al calcular el proxy de la dimensión Tiempo.",
+    "No enmascarar códigos CIE en el texto: los códigos de las familias de la etiqueta aparecen escritos en 44 notas; el patrón general usado antes contaba sobre todo temperaturas.",
+    "Mantener la PR-AUC como métrica central, adoptada en la semana 3."
+  ],
+  "duracion_s": 205.1
 }

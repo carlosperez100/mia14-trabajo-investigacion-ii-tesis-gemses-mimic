@@ -1,7 +1,8 @@
-# metrics_eda.txt · generado 2026-10-09 00:15:17 por src/eda.py (fuente: reportes/eda_resumen.json)
+# metrics_eda.txt · generado 2026-10-10 19:09:50 por src/eda.py (fuente: reportes/eda_resumen.json)
 entrada: 70,000 notas · 48,669 pacientes · 418 MB · semilla 42 · split por paciente (sha256 splits.csv a252913516c7fe62…)
+alcance: las cifras describen el corpus completo (train y test); el vocabulario y el modelo de contexto se ajustan solo con train
 
-calidad: nulos 0 en las columnas de datos (labels None en 32308 negativas: esperado, no tienen naturaleza) · duplicados note_id/hadm_id/texto 0/0/0 · largo 353-58156 car. · outliers 1933 (2.76 %, se conservan)
+calidad: nulos 0 en las columnas del corpus (labels None en 32308 negativas: esperado, no tienen naturaleza) · duplicados note_id/hadm_id/texto 0/0/0 · largo 353-58156 car. · atípicos por largo 1933 (2.76 %, se conservan)
 
 descriptivas (media / mediana / desv):
   largo_caracteres              10684.0 /     9932.0 /    4642.76
@@ -13,20 +14,200 @@ balance de la variable objetivo:
   train  notas  55,915 · positivas  53.89 %
   test   notas  14,085 · positivas  53.65 %
   All    notas  70,000 · positivas  53.85 %
-  prevalencia real en MIMIC-IV: 20.12 %
 
-época por clase: {'negativa': {'CIE-9': 71.08, 'CIE-10': 28.92}, 'positiva': {'CIE-9': 71.08, 'CIE-10': 28.92}} · AUC época sola 0.500
-largo por clase: medianas {'negativa': 9185, 'positiva': 10717} · AUC largo solo 0.606 · positivas por decil [44.0, 46.1, 45.5, 46.8, 49.6, 51.3, 55.2, 59.0, 64.5, 76.5]
-códigos CIE-10 en texto: {'negativa': 4.45, 'positiva': 4.95} · patrón CIE-9: {'negativa': 27.97, 'positiva': 33.4}
+prevalencia real (hospitalizaciones / % con evento / con epicrisis / % con evento entre las que tienen epicrisis):
+  todas       545,497 /  20.12 /  331,604 /  27.59
+  CIE-9       291,120 /  25.67 /  209,316 /  31.06
+  CIE-10      254,377 /  13.77 /  122,288 /  21.64
+  2008-2010   103,317 /  25.35 /   70,862 /  31.12
+  2011-2013   116,824 /  25.11 /   85,637 /  30.31
+  2014-2016   116,967 /  22.83 /   87,640 /  27.78
+  2017-2019   113,866 /  16.44 /   79,789 /  21.90
+  2020-2022    94,523 /   9.32 /    7,676 /  21.60
+  dentro de cada periodo, por época (solo con epicrisis): 2008-2010: CIE-9 31.12 % · 2011-2013: CIE-9 30.31 % · 2014-2016: CIE-9 32.20 %, CIE-10 21.24 % · 2017-2019: CIE-10 21.82 % · 2020-2022: CIE-10 21.60 %
+  % con epicrisis de cada fuente de positivas: {'códigos de la tabla': 100.0, 'equivalencias CIE-10-CM': 55.22427, 'familias CIE-9': 86.999104}
+  CIE-10 con epicrisis, si dieran etiqueta las familias completas: {'con_epicrisis': 122288, 'pct_positivas_con_la_etiqueta_actual': 21.637446, 'pct_positivas_con_las_familias_completas': 31.777443, 'nota': 'si en CIE-10 dieran etiqueta todos los códigos de las familias de causa explícita y los efectos adversos de medicamentos, como ocurre en CIE-9, y no solo los que están en la tabla del proyecto'}
+
+época por clase (corpus): {'negativa': {'CIE-9': 71.075275, 'CIE-10': 28.924725}, 'positiva': {'CIE-9': 71.07609, 'CIE-10': 28.92391}} · AUC de la época sola 0.500
+largo por clase: medianas {'negativa': 9185.0, 'positiva': 10717.0} · AUC del largo solo 0.606 · positivas por decil [44.0, 46.1, 45.5, 46.8, 49.6, 51.3, 55.2, 59.0, 64.5, 76.5]
+códigos en el texto: patrón general 3306 notas (4.95 % de positivas, 4.45 % de negativas); 72.5 % de las 4241 coincidencias son T95 a T99 {'T98.2': 247, 'T98.1': 244, 'T98.3': 202, 'T98.4': 191, 'T97.9': 176, 'T97.8': 176}; códigos T95 a T99 en el diccionario de MIMIC: 0
+códigos de las familias de la etiqueta en el texto: 44 notas (37 positivas, 7 negativas) · con forma CIE-10 {'notas': 20, 'positivas': 20, 'negativas': 0, 'pct_positivas': 0.053062, 'pct_negativas': 0.0} · con forma CIE-9 {'notas': 24, 'positivas': 17, 'negativas': 7, 'pct_positivas': 0.045102, 'pct_negativas': 0.021666}
 pacientes compartidos train/test: 0
 naturalezas (positivas): {'Procedimiento': 17209, 'Cuidado del paciente': 10305, 'Medicacion': 9933, 'Dispositivo medico': 1198, 'Infeccion nosocomial': 1007, 'Sistema/Organizacion': 130} · multietiqueta 4.96 %
-Spearman con y: {'época CIE': -0.0, 'largo (caracteres)': 0.182, 'log10 largo': 0.182, 'palabras': 0.181, 'notas del paciente': 0.125}
+  CIE-9: positivas 26,790 · multietiqueta 0.00 % · {'Procedimiento': 13005, 'Cuidado del paciente': 7155, 'Medicacion': 6630}
+  CIE-10: positivas 10,902 · multietiqueta 17.13 % · {'Procedimiento': 4204, 'Medicacion': 3303, 'Cuidado del paciente': 3150, 'Dispositivo medico': 1198, 'Infeccion nosocomial': 1007, 'Sistema/Organizacion': 130}
+Spearman con y: {'edad': 0.1437, 'sexo (hombre)': 0.0288, 'estancia (días)': 0.3063, 'horas en emergencia': -0.025, 'n.º de diagnósticos': 0.4152, 'severidad APR-DRG': 0.2933, 'paso por UCI': 0.144, 'fallecimiento': 0.0654, 'reingreso a 30 días': 0.065, 'época CIE': -0.0, 'largo (caracteres)': 0.1823, 'notas del paciente': 0.1248}
+pares de variables más correlacionados: [{'a': 'severidad APR-DRG', 'b': 'n.º de diagnósticos', 'rho': 0.6373}, {'a': 'largo (caracteres)', 'b': 'n.º de diagnósticos', 'rho': 0.5589}, {'a': 'largo (caracteres)', 'b': 'estancia (días)', 'rho': 0.4677}, {'a': 'n.º de diagnósticos', 'b': 'estancia (días)', 'rho': 0.4614}]
 
-riesgos: desbalance: corpus de modelado con 53.85 % de positivas frente a una prevalencia real de 20.12 %: las métricas se reportan también a prevalencia real (VPP real) | leakage_etiqueta: códigos CIE-10 en el texto: 4.95 % de positivas vs 4.45 % de negativas | leakage_paciente: 0 pacientes compartidos entre train y test | drift: época CIE-9/CIE-10 emparejada por clase; AUC de la época sola 0.500 | atajo_largo: AUC del largo solo 0.606; positivas por decil 44.0 % → 76.5 % | clases_raras_etapa2: ['Sistema/Organizacion'] | sesgo_etiqueta: la etiqueta es débil: códigos CIE de facturación, no una lectura clínica de la nota
+contenido del texto:
+  secciones: 14 de 16 en más del 95 % de las notas · notas con todas 67.80 % · AUC del número de secciones 0.493
+  sección (% del corpus / % negativas / % positivas):
+    Chief Complaint                         96.76 /  96.97 /  96.59
+    Major Surgical or Invasive Procedure    99.49 /  99.61 /  99.38
+    History of Present Illness              98.69 /  98.59 /  98.78
+    Past Medical History                    98.80 /  98.69 /  98.90
+    Social History                          97.63 /  97.39 /  97.84
+    Family History                          97.21 /  96.96 /  97.43
+    Physical Exam                           96.50 /  96.42 /  96.57
+    Pertinent Results                       96.16 /  95.82 /  96.45
+    Brief Hospital Course                   88.15 /  88.31 /  88.01
+    Medications on Admission                94.44 /  94.72 /  94.20
+    Discharge Medications                   97.90 /  98.00 /  97.82
+    Discharge Disposition                   98.76 /  99.06 /  98.51
+    Discharge Diagnosis                     95.38 /  96.81 /  94.16
+    Discharge Condition                     99.63 /  99.78 /  99.51
+    Discharge Instructions                  99.07 /  99.32 /  98.85
+    Followup Instructions                   97.98 /  98.30 /  97.70
+  vocabulario (solo train): 5,271 términos en al menos el 1 % de las notas
+  más asociados al evento (% positivas / % negativas): facility 63.77/38.24 · vancomycin 27.41/10.95 · fracture 28.88/13.58 · extended 42.62/25.76 · wound 34.26/18.52 · line 30.39/15.8 · cefepime 16.22/5.21 · placement 34.39/19.57 · picc 14.29/4.11 · culture 35.67/21.1 · placed 45.01/29.55 · cultures 27.34/14.32 · rehab 25.25/12.65 · fall 27.75/14.79 · complicated 26.76/14.14
+  más asociados a sin evento (% positivas / % negativas): independent 42.27/58.19 · ambulatory 63.11/72.92 · prosody 1.36/4.96 · home 90.35/95.33 · psychiatric 5.59/10.39 · knowledge 1.52/4.57 · psychiatrist 1.87/5.03 · cocaine 3.43/7.23 · behavior 1.8/4.88 · mthdone 2.08/5.29 · judgment 0.95/3.54 · suicidal 1.86/4.95 · factors 7.56/12.42 · thoughts 1.0/3.51 · legal 0.83/3.23
+
+variables de la hospitalización (21 variables; 19 de tablas de MIMIC-IV):
+  variable                 tipo        faltantes %   momento            uso
+  edad                     numérica          0.00   ingreso            descripción y sesgo
+  sexo                     categórica        0.00   ingreso            descripción y sesgo
+  raza                     categórica        3.74   ingreso            descripción y sesgo
+  seguro                   categórica        1.07   ingreso            descripción y sesgo
+  idioma_ingles            binaria           0.23   ingreso            descripción y sesgo
+  estado_civil             categórica        2.33   ingreso            descripción
+  tipo_ingreso             categórica        0.00   ingreso            control
+  servicio                 categórica        0.00   ingreso            control y evaluación por subgrupo
+  horas_emergencia         numérica         33.20   ingreso            control
+  periodo                  categórica        0.00   ingreso            drift temporal
+  uci                      binaria           0.00   estancia           control (puede ser consecuencia del evento)
+  estancia_dias            numérica          0.00   alta               proxy de la dimensión Tiempo de GEMSES; no es predictor
+  destino_alta             categórica       12.51   alta               descripción
+  fallecio                 binaria           0.00   alta               desenlace; no es predictor
+  alta_voluntaria          binaria          12.51   alta               proxy de la dimensión Satisfacción de GEMSES
+  reingreso_30d            binaria           0.00   posterior al alta  proxy de la dimensión Satisfacción de GEMSES
+  n_diagnosticos           numérica          0.00   codificación       contaminada por la etiqueta; no es predictor
+  drg_severidad            numérica         21.21   codificación       insumo del proxy de la dimensión Costos de GEMSES (DRG); contaminada por la etiqueta
+  largo                    numérica          0.00   alta               control del atajo por largo
+  notas_paciente           numérica          0.00   corpus             control
+  epoca                    categórica        0.00   codificación       confusor
+
+faltantes según el tipo de ingreso (% sin dato):
+  horas_emergencia   SURGICAL SAME DAY ADMISSION 99.9 · ELECTIVE 99.4 · AMBULATORY OBSERVATION 98.5 · DIRECT EMER. 92.7 · DIRECT OBSERVATION 77.0 · URGENT 72.4 · OBSERVATION ADMIT 15.4 · EW EMER. 4.2 · EU OBSERVATION 1.0
+  drg_severidad      AMBULATORY OBSERVATION 99.1 · EU OBSERVATION 97.7 · DIRECT OBSERVATION 97.2 · ELECTIVE 35.4 · SURGICAL SAME DAY ADMISSION 25.1 · DIRECT EMER. 17.0 · URGENT 7.1 · EW EMER. 6.1 · OBSERVATION ADMIT 4.8
+  destino_alta       AMBULATORY OBSERVATION 99.4 · EU OBSERVATION 97.2 · DIRECT OBSERVATION 96.8 · ELECTIVE 0.2 · SURGICAL SAME DAY ADMISSION 0.2 · DIRECT EMER. 0.2 · EW EMER. 0.2 · URGENT 0.1 · OBSERVATION ADMIT 0.0
+faltantes y etiqueta (% de positivas cuando falta / cuando no falta): raza 58.53/53.66 · seguro 40.27/53.99 · idioma_ingles 60.87/53.83 · estado_civil 60.77/53.68 · horas_emergencia 55.32/53.11 · destino_alta 31.75/57.00 · alta_voluntaria 31.75/57.00 · drg_severidad 45.04/56.22
+fuera de rango: estancias negativas 11 (con fallecimiento 9) · edad de 18 a 103 años
+
+numéricas (media / desv / mín / q1 / mediana / q3 / máx / % atípicos IQR):
+  edad                   62.36 /     17.79 /   18.00 /    51.00 /    64.00 /    76.00 /    103.00 /  0.00
+  estancia_dias           6.14 /      8.12 /   -0.95 /     1.99 /     3.88 /     6.98 /    230.69 /  8.11
+  horas_emergencia        7.67 /      5.58 /    0.00 /     4.58 /     6.33 /     8.85 /    139.33 /  7.15
+  n_diagnosticos         13.59 /      7.63 /    1.00 /     8.00 /    12.00 /    18.00 /     57.00 /  2.11
+  drg_severidad           2.52 /      0.92 /    1.00 /     2.00 /     3.00 /     3.00 /      4.00 /  0.00
+  largo               10684.00 /   4642.76 /  353.00 /  7453.00 /  9932.00 / 13024.25 /  58156.00 /  2.76
+  notas_paciente          2.32 /      2.40 /    1.00 /     1.00 /     1.00 /     3.00 /     27.00 /  5.55
+
+numéricas por clase (mediana negativa / mediana positiva / AUC de la variable sola / Spearman con y):
+  edad                    61.00 /      66.00 /  0.583 /  0.144
+  estancia_dias            2.88 /       5.00 /  0.677 /  0.306
+  horas_emergencia         6.43 /       6.25 /  0.486 / -0.025
+  n_diagnosticos           9.00 /      15.00 /  0.740 /  0.415
+  drg_severidad            2.00 /       3.00 /  0.662 /  0.293
+  largo                 9185.00 /   10717.00 /  0.606 /  0.182
+  notas_paciente           1.00 /       2.00 /  0.566 /  0.125
+
+categóricas (V de Cramér con la etiqueta; «Sin dato» cuenta como categoría):
+  destino_alta 0.317 · servicio 0.225 · tipo_ingreso 0.196 · alta_voluntaria 0.169 · grupo_edad 0.148 · uci 0.144 · seguro 0.123 · raza 0.081 · estado_civil 0.072 · fallecio 0.065 · reingreso_30d 0.065 · sexo 0.029 · idioma_ingles 0.018 · periodo 0.017
+  % de positivas por categoría (n):
+    servicio: MED 53.0 (29425) · SURG 55.2 (7482) · CMED 47.0 (5928) · OMED 69.5 (5421) · ORTHO 65.7 (4620) · NMED 34.3 (3290) · NSURG 59.1 (2667) · VSURG 71.6 (2318) · CSURG 61.1 (1723) · TRAUM 71.7 (1472) · PSYCH 13.2 (1244) · GYN 40.8 (1076) · GU 35.8 (930) · TSURG 53.5 (831) · PSURG 55.9 (692) · OBS 10.1 (683) · ENT 40.5 (190)
+    tipo_ingreso: EW EMER. 56.9 (32347) · OBSERVATION ADMIT 59.0 (8600) · URGENT 58.1 (6547) · SURGICAL SAME DAY ADMISSION 44.9 (6378) · EU OBSERVATION 30.2 (5881) · DIRECT EMER. 67.8 (4820) · ELECTIVE 61.4 (2402) · DIRECT OBSERVATION 32.0 (2094) · AMBULATORY OBSERVATION 39.4 (931)
+    destino_alta: HOME 41.6 (25374) · HOME HEALTH CARE 62.4 (16368) · SKILLED NURSING FACILITY 73.8 (10579) · Sin dato 31.7 (8754) · REHAB 75.1 (2726) · CHRONIC/LONG TERM ACUTE CARE 81.5 (2007) · DIED 73.5 (1875) · HOSPICE 68.6 (740) · AGAINST ADVICE 42.0 (452) · PSYCH FACILITY 32.6 (387) · ACUTE HOSPITAL 61.2 (345) · OTHER FACILITY 59.7 (283) · ASSISTED LIVING 64.4 (101)
+    grupo_edad: 45 a 64 53.1 (24420) · 65 a 79 58.0 (20588) · 80 o más 61.9 (13241) · 18 a 44 39.0 (11751)
+    sexo: Mujer 52.4 (35382) · Hombre 55.3 (34618)
+    raza: Blanca 55.9 (49645) · Negra 46.4 (9661) · Hispana o latina 44.9 (3459) · Sin dato 58.5 (2621) · Otra 51.9 (2490) · Asiática 50.0 (2124)
+    seguro: Medicare 59.7 (36079) · Private 48.0 (20896) · Medicaid 46.7 (10522) · Other 51.5 (1735) · Sin dato 40.3 (750)
+    uci: No 50.1 (54868) · Sí 67.5 (15132)
+    fallecio: No 53.3 (68106) · Sí 73.4 (1894)
+    reingreso_30d: No 52.1 (54518) · Sí 59.9 (15482)
+  pares de variables categóricas más asociados: epoca-tipo_ingreso 0.579 · uci-destino_alta 0.394 · seguro-grupo_edad 0.380 · uci-servicio 0.352 · destino_alta-tipo_ingreso 0.352
+  tipo de ingreso por época (% de las epicrisis de la época, CIE-9 / CIE-10): AMBULATORY OBSERVATION 1.7/0.4 · DIRECT EMER. 8.1/3.9 · DIRECT OBSERVATION 2.1/5.1 · ELECTIVE 3.4/3.5 · EU OBSERVATION 8.9/7.2 · EW EMER. 57.1/19.6 · OBSERVATION ADMIT 0.9/40.2 · SURGICAL SAME DAY ADMISSION 8.5/10.6 · URGENT 9.3/9.5
+
+train frente a test:
+  train  {'n': 55915, 'pct_positivas': 53.894304, 'mediana_edad': 64.0, 'mediana_estancia_dias': 3.8833, 'mediana_largo': 9915.0, 'pct_hombres': 49.306984, 'pct_uci': 21.6847, 'pct_cie10': 28.645265, 'pct_cie10_positivas': 28.458603, 'pct_cie10_negativas': 28.86346, 'auc_epoca_sola': 0.498}
+  test   {'n': 14085, 'pct_positivas': 53.652822, 'mediana_edad': 63.0, 'mediana_estancia_dias': 3.8764, 'mediana_largo': 10001.0, 'pct_hombres': 50.039049, 'pct_uci': 21.348953, 'pct_cie10': 30.031949, 'pct_cie10_positivas': 30.77941, 'pct_cie10_negativas': 29.166667, 'auc_epoca_sola': 0.5081}
+
+drift por periodo de atención en el corpus (n / % positivas / % CIE-10 / mediana del largo):
+  2008-2010     16,939 /  54.35 /   0.00 /   8826.0
+  2011-2013     20,195 /  52.58 /   0.01 /   9967.0
+  2014-2016     18,440 /  54.33 /  32.29 /  10199.5
+  2017-2019     13,232 /  54.52 /  98.97 /  10988.5
+  2020-2022      1,194 /  53.18 / 100.00 /  11182.5
+
+modelo de contexto sin texto (ajustado en train, medido en test; IC 95 % por paciente):
+  al ingreso: ROC-AUC 0.6926 (0.683 a 0.701) · PR-AUC 0.7077 (0.696 a 0.720) · variables ['edad', 'sexo', 'raza', 'seguro', 'estado_civil', 'tipo_ingreso', 'servicio']
+  al alta:    ROC-AUC 0.7603 (0.752 a 0.769) · PR-AUC 0.7818 (0.771 a 0.792) · variables ['edad', 'estancia_dias', 'largo', 'sexo', 'raza', 'seguro', 'estado_civil', 'tipo_ingreso', 'servicio', 'destino_alta']
+  modelo de texto del baseline: {'roc_auc': 0.8637, 'pr_auc': 0.8787, 'roc_auc_ic95': [0.8581, 0.8691], 'fuente': 'reportes/baseline_resultados.json (src/baseline.py)'}
+
+ruido de la etiqueta:
+  negativas CIE-10 con código de las familias de causa explícita: 805 de 9345 (8.61 %; familia causal 451, efecto adverso de fármaco 368) · negativas CIE-9: 0 de 22963
+  códigos más frecuentes en esas negativas: T380X5A 102 (Adverse effect of glucocorticoids and synthetic analogues, i) · Y838 88 (Other surgical procedures as the cause of abnormal reaction ) · Y831 71 (Surgical operation with implant of artificial internal devic) · W010XXA 45 (Fall on same level from slipping, tripping and stumbling wit) · T82855A 24 (Stenosis of coronary artery stent, initial encounter) · T447X5A 24 (Adverse effect of beta-adrenoreceptor antagonists, initial e) · W1789XA 20 (Other fall from one level to another, initial encounter) · T502X5A 19 (Adverse effect of carbonic-anhydrase inhibitors, benzothiadi)
+  positivas solo por caída: 6296 (16.70 %) · CIE-10 {'n': 2010, 'con_codigo_de_lugar': 1706, 'en_hospital': 159, 'pct_en_hospital': 7.910448, 'en_residencia_privada': 884, 'titulos_en_mimic': {'Y92.23x': 'Hospital as the place of occurrence of the external cause', 'Y92.0x': 'Non-institutional (private) residence as the place of occurrence of the external cause'}} · CIE-9 {'n': 4286, 'con_codigo_de_lugar': 1630, 'en_el_hogar': 813, 'en_institucion_residencial': 240, 'titulos_en_mimic': {'E849.0': 'Home accidents', 'E849.7': 'Accidents occurring in residential institution'}, 'codigos_de_lugar_en_el_diccionario': {'E8490': 'Home accidents', 'E8491': 'Farm accidents', 'E8492': 'Mine and quarry accidents', 'E8493': 'Accidents occurring in industrial places and premises', 'E8494': 'Accidents occurring in place for recreation and sport', 'E8495': 'Street and highway accidents', 'E8496': 'Accidents occurring in public building', 'E8497': 'Accidents occurring in residential institution', 'E8498': 'Accidents occurring in other specified places', 'E8499': 'Accidents occurring in unspecified place'}, 'algun_codigo_de_lugar_menciona_el_hospital': False}
+  % de las positivas de cada servicio que lo son solo por caída: {'TRAUM': 74.242424, 'NSURG': 51.142132, 'ORTHO': 47.694335, 'NMED': 19.574845, 'MED': 15.875257}
+  familia CIE-9 de úlcera (707.x): {'positivas_de_la_familia': 2736, 'sin_codigo_707_0': 1739, 'pct_sin_codigo_707_0': 63.559942, 'de_ellas_con_codigo_707_1': 1652, 'titulos_en_mimic': {'707.0x': 'Pressure ulcer, unspecified site', '707.1x': 'Ulcer of lower limb, unspecified'}}
+
+eventos del Anexo 02:
+  catálogo: 231 eventos en 12 naturalezas · detectables 188 · por nivel de detección {'A': 94, 'B': 60, 'C': 11, 'D': 23, 'E': 43}
+  tabla de códigos: 272 filas · 223 códigos CIE-10 · por fuente {'CIE-10 OMS': 149, 'CIE-10-CM': 94, 'CIE-10-CM (proxy)': 29}
+  filas enlazadas al catálogo: 137 {'CIE-10-CM': 94, 'CIE-10-CM (proxy)': 29, 'CIE-10 OMS': 14} · sin enlace: 135 {'identificador_fuera_del_catalogo': 68, 'identificador_de_otra_naturaleza': 60, 'misma_naturaleza_y_otro_evento': 7}
+  eventos con código: 128 de 231 (por la tabla 124, solo por equivalencias 4) · tipo de código {'sin código': 103, 'código propio': 54, 'código compartido con otro evento': 41, 'código aproximado (proxy)': 29, 'equivalencia CIE-10-CM': 4}
+  con código por nivel de detección: {'A': {'eventos': 94, 'con_codigo': 62}, 'B': {'eventos': 60, 'con_codigo': 50}, 'C': {'eventos': 11, 'con_codigo': 8}, 'D': {'eventos': 23, 'con_codigo': 4}, 'E': {'eventos': 43, 'con_codigo': 4}} · del nivel A sin código 32, de ellos con su código en filas sin enlace 12
+  observado: 157 eventos en 76,118 hospitalizaciones (con o sin epicrisis) · del catálogo 78: con código de causa explícita 23, solo de condición 55 · 24 eventos concentran el 80 %
+  causa explícita (da la etiqueta): {'hospitalizaciones': 35034, 'con_evento_del_catalogo': 24993, 'solo_complicaciones_sin_enlace': 10041, 'eventos': 57, 'eventos_del_catalogo': 23, 'por_tabla': {'directa': 18989, 'equivalencia': 19151}}
+  condición (no da etiqueta): {'hospitalizaciones': 59110, 'con_evento_del_catalogo': 34228, 'solo_complicaciones_sin_enlace': 24882, 'eventos': 102, 'eventos_del_catalogo': 57, 'por_tabla': {'directa': 53375, 'equivalencia': 12217}}
+  por naturaleza (en el catálogo / con código / observados / con código de causa explícita / en las positivas del corpus):
+    INFECCIÓN ASOCIADA        49 /  31 /  27 /   3 /   2
+    PROCEDIMIENTO             34 /  24 /  20 /  10 /  10
+    MEDICACIÓN                33 /  17 /   6 /   2 /   2
+    HISTORIA CLÍNICA          23 /   0 /   0 /   0 /   0
+    GESTIÓN ORGANIZACIÓN      21 /  12 /   7 /   3 /   3
+    CUIDADO DEL PACIENTE      19 /  10 /   8 /   2 /   2
+    SANGRE/HEMODERIVADOS      19 /  13 /   2 /   2 /   2
+    COMPORTAMIENTO            14 /  10 /   5 /   0 /   0
+    DISPOSITIVO MÉDICO         9 /   4 /   3 /   1 /   1
+    NUTRICIÓN                  6 /   5 /   0 /   0 /   0
+    DIAGNÓSTICO                2 /   2 /   0 /   0 /   0
+    INSUMOS                    2 /   0 /   0 /   0 /   0
+  corpus: positivas 37,692 · con evento del catálogo 6,801 (18.04 %) · con complicación sin enlace 4,100 (10.88 %) · solo con familia CIE-9 26,791 (71.08 %) {'complicaciones_atencion': 11504, 'farmacos_uso_terapeutico': 6630, 'caidas': 4419, 'ulcera_presion': 2737, 'incidentes_asistenciales': 1501}
+  eventos del catálogo en las positivas del corpus: {'presentes': 22, 'con_100_epicrisis_o_mas': 8, 'con_30_epicrisis_o_mas_en_test': 7}
+  una fila por evento: reportes/eda_eventos_231.csv
+
+riesgos:
+  - desbalance: corpus de modelado con 53.8 % de positivas; prevalencia real de 27.6 % entre las hospitalizaciones con epicrisis (20.1 % sobre todas las hospitalizaciones)
+  - leakage_etiqueta: códigos de las familias de la etiqueta escritos en 44 notas (0.10 % de las positivas, 0.02 % de las negativas)
+  - leakage_paciente: 0 pacientes compartidos entre train y test
+  - drift_de_la_etiqueta: prevalencia real de 31.1 % en la época CIE-9 y de 21.6 % en la CIE-10; en el corpus el muestreo por época la iguala
+  - atajo_largo: AUC del largo solo 0.606; positivas por decil 44.0 % → 76.5 %
+  - clases_raras_etapa2: ['Sistema/Organizacion']
+  - naturalezas_solo_en_una_epoca: ['Dispositivo medico', 'Infeccion nosocomial', 'Sistema/Organizacion']
+  - etiqueta_debil: la etiqueta sale de códigos de diagnóstico de facturación, no de una lectura clínica de la nota
+  - ruido_en_negativas: 8.6 % de las negativas CIE-10 llevan un código de las familias de causa explícita que no está en la tabla
+  - ruido_en_positivas: 16.7 % de las positivas lo son solo por un código de caída; en CIE-10 el 7.9 % de ellas tiene el hospital como lugar de ocurrencia; 1739 positivas de la familia CIE-9 de úlcera no tienen un código de úlcera por presión (707.0x)
+  - variables_contaminadas: el número de diagnósticos (AUC 0.740) y la severidad APR-DRG (AUC 0.662) salen de la misma codificación que la etiqueta: no se usan como predictores
+  - faltantes_no_aleatorios: horas_emergencia falta en 33.2 % (55.3 % de positivas cuando falta, 53.1 % cuando no); destino_alta falta en 12.5 % (31.7 % de positivas cuando falta, 57.0 % cuando no); drg_severidad falta en 21.2 % (45.0 % de positivas cuando falta, 56.2 % cuando no)
+  - diferencias_por_subgrupo: V de Cramér de la etiqueta con el servicio 0.225 y con el tipo de ingreso 0.196
+  - mezcla_de_casos: un modelo sin texto alcanza ROC-AUC 0.693 con variables del ingreso y 0.760 con las del alta
+  - cobertura_del_catalogo: 128 de 231 eventos con código; 135 de 272 filas de la tabla sin enlace con el catálogo
+  - origen_de_la_etiqueta: de las positivas del corpus, el 18.0 % tiene un evento del catálogo, el 10.9 % una complicación sin enlace y el 71.1 % solo familia CIE-9
 
 decisiones accionables para el siguiente sprint:
-  1. Adoptar la PR-AUC como métrica central y reportar F1 (+) y Recall a su lado [Métrica] — porque el dummy que siempre dice «sí» obtiene F1 (+) = 0.698 porque el test tiene 53.7 % de positivas; el piso de la PR-AUC es la proporción de positivas (0.537) — control: tabla de métricas con PR-AUC e IC 95 % en logs/metrics_baseline.txt, comparada contra el piso
-  2. Separar la evaluación por deciles de largo y añadir el largo como variable de control [Split / features] — porque el largo solo separa las clases (AUC del largo, ver sección 4) y la proporción de positivas crece del decil más corto al más largo: riesgo de atajo — control: PR-AUC dentro de cada decil; si cae mucho frente a la global, el modelo se apoya en el largo
-  3. Enmascarar los patrones de código CIE en el texto antes de vectorizar [Preprocesado] — porque códigos con formato CIE-10 aparecen algo más en las positivas que en las negativas (sección 5): fuga posible, aunque pequeña — control: diferencia de PR-AUC con y sin máscara en la misma partición
+  1. Excluir de la clase negativa las hospitalizaciones que tengan cualquier código de las familias de causa explícita [Preprocesado] — porque 805 de las 9345 negativas de la época CIE-10 (8.6 %) llevan un código de esas familias (T80 a T88, Y63, Y65, Y83, Y84, W00 a W19, L89 o efecto adverso de medicamento) que no está en la tabla del proyecto; en la época CIE-9, donde se usan las familias completas, son 0 — control: porcentaje de negativas CIE-10 con código de esas familias: hoy 8.6 %, debe quedar en 0 % al regenerar el corpus; se reporta la PR-AUC antes y después
+  2. Dejar como positivas por caída solo las que tienen el hospital como lugar de ocurrencia y sacar las demás de las dos clases [Preprocesado] — porque 6296 positivas (16.7 %) lo son solo por un código de caída; en la época CIE-10, de 2010 solo 159 (7.9 %) tienen el hospital como lugar de ocurrencia y 884 una residencia privada; 2960 no tienen código de lugar y en la época CIE-9 ningún código de lugar corresponde al hospital — control: positivas solo por caída sin el hospital como lugar de ocurrencia: hoy 6137 de 6296 (97.5 %), deben quedar en 0; se reporta la PR-AUC antes y después
+  3. Evaluar el modelo dentro de cada servicio, grupo de edad y decil de largo, y compararlo con el modelo de contexto sin texto [Evaluación] — porque un modelo que no lee el texto alcanza un ROC-AUC de 0.693 con las variables del ingreso y de 0.760 con las del alta, frente a 0.864 del modelo de texto; el largo de la nota solo da 0.606 — control: ROC-AUC del modelo de texto mayor que el del modelo de contexto en cada estrato con 200 epicrisis o más en test, con un intervalo de confianza al 95 % por paciente para la diferencia que no incluya el cero
 
-duración: 55.2 s
+otras acciones registradas:
+  - Limitar la familia CIE-9 de úlcera por presión a los códigos 707.0x: 1739 de sus 2736 positivas no tienen ninguno.
+  - Usar como prevalencia real el 27.6 % de las hospitalizaciones con epicrisis, y no el 20.1 % sobre todas las hospitalizaciones, al calcular el valor predictivo positivo.
+  - Reportar las métricas por época de codificación, por periodo y por subgrupo (servicio, tipo de ingreso, sexo, grupo de edad, raza y seguro): la etiqueta se define con familias completas en CIE-9 y con los códigos de la tabla en CIE-10.
+  - Enlazar con el catálogo del Anexo 02 las 135 filas de la tabla de códigos cuyo identificador no es el del catálogo, o declararlas sin equivalente, antes de reportar cobertura o frecuencia por evento.
+  - No usar como predictores el número de diagnósticos ni la severidad APR-DRG: salen de la misma codificación que la etiqueta.
+  - Mantener la segunda etapa a nivel de naturaleza: la frecuencia por evento no alcanza para un clasificador por evento.
+  - Tratar como dato faltante la estancia de las 11 hospitalizaciones con estancia negativa al calcular el proxy de la dimensión Tiempo.
+  - No enmascarar códigos CIE en el texto: los códigos de las familias de la etiqueta aparecen escritos en 44 notas; el patrón general usado antes contaba sobre todo temperaturas.
+  - Mantener la PR-AUC como métrica central, adoptada en la semana 3.
+
+duración: 205.1 s
