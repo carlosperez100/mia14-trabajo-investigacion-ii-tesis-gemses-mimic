@@ -1,0 +1,232 @@
+id_evento,evento,naturaleza,nivel_de_deteccion,tipo_de_codigo,hospitalizaciones_con_codigo_de_causa_explicita,hospitalizaciones_con_codigo_de_condicion,epicrisis_positivas_en_el_corpus
+101,Acoso,Comportamiento,texto de las notas,código propio,0,<10,0
+102,Agresión a objeto inanimado,Comportamiento,texto de las notas,código aproximado (proxy),0,0,0
+103,Agresión física,Comportamiento,texto de las notas,código compartido con otro evento,0,0,0
+104,Agresión sexual,Comportamiento,texto de las notas,código propio,0,10,0
+105,Agresión verbal,Comportamiento,texto de las notas,código aproximado (proxy),0,0,0
+106,Amenaza de muerte,Comportamiento,texto de las notas,código aproximado (proxy),0,<10,0
+107,Arriesgado/imprudente/peligroso,Comportamiento,texto de las notas,código aproximado (proxy),0,0,0
+108,Autolesión deliberada/suicidio,Comportamiento,código CIE-10,sin código,0,0,0
+109,Desconsiderado/grosero/hostil/inapropiado,Comportamiento,texto de las notas,sin código,0,0,0
+1010,Discriminación/prejuicio,Comportamiento,no detectable en MIMIC-IV,código propio,0,0,0
+1011,Incumplidor/no colaborador/obstructivo,Comportamiento,texto de las notas,código aproximado (proxy),0,34,0
+1012,Problema de uso/abuso de sustancias,Comportamiento,código CIE-10,código propio,0,190,0
+1013,Vagabundeo/fugas,Comportamiento,texto de las notas,sin código,0,0,0
+1014,Abandono de puesto de trabajo,Comportamiento,no detectable en MIMIC-IV,sin código,0,0,0
+201,Autoextubación,Cuidado del paciente,texto de las notas,sin código,0,0,0
+202,Caída de paciente,Cuidado del paciente,código CIE-10,código propio,5551,5652,2318
+203,Desplazamiento de dispositivos invasivos,Cuidado del paciente,texto de las notas,código propio,99,0,40
+204,Eritema del pañal,Cuidado del paciente,texto de las notas,código propio,0,<10,0
+205,Extubación accidental,Cuidado del paciente,texto de las notas,sin código,0,0,0
+206,Flebitis,Cuidado del paciente,código CIE-10,sin código,0,0,0
+207,Incumplimiento de normas de bioseguridad,Cuidado del paciente,no detectable en MIMIC-IV,código aproximado (proxy),0,<10,0
+208,Lesión por esparadrapo o dispositivo autoadhesivo,Cuidado del paciente,texto de las notas,código propio,0,<10,0
+209,Lesión ocular,Cuidado del paciente,código CIE-10,código propio,0,<10,0
+2010,Lesión por oxímetro de pulso,Cuidado del paciente,texto de las notas,código aproximado (proxy),0,671,0
+2011,Lesiones de piel,Cuidado del paciente,código CIE-10,sin código,0,0,0
+2012,Lesiones por prong nasal,Cuidado del paciente,texto de las notas,código aproximado (proxy),0,0,0
+2014,Paciente sin brazalete de identificación,Cuidado del paciente,auditoría del registro,código aproximado (proxy),0,0,0
+2015,Quemaduras,Cuidado del paciente,código CIE-10,sin código,0,0,0
+2016,UPP I,Cuidado del paciente,código CIE-10,sin código,0,0,0
+2017,UPP II,Cuidado del paciente,código CIE-10,sin código,0,0,0
+2018,UPP III,Cuidado del paciente,código CIE-10,sin código,0,0,0
+2019,UPP IV,Cuidado del paciente,código CIE-10,sin código,0,0,0
+2020,Datos erróneos para la identificación del paciente,Cuidado del paciente,auditoría del registro,código aproximado (proxy),0,172,0
+301,Error en diagnóstico,Diagnóstico,texto de las notas,código compartido con otro evento,0,0,0
+302,Retraso en diagnóstico,Diagnóstico,texto de las notas,código aproximado (proxy),0,0,0
+401,Avería/mal funcionamiento (dispositivo),Dispositivo médico,texto de las notas,código propio,0,790,0
+402,Desplazamiento/conexión incorrecta/extravasación,Dispositivo médico,texto de las notas,código propio,132,0,54
+403,Error del usuario (dispositivo),Dispositivo médico,texto de las notas,código aproximado (proxy),0,0,0
+404,Falta de disponibilidad (dispositivo),Dispositivo médico,no detectable en MIMIC-IV,sin código,0,0,0
+405,Inadecuación a la tarea,Dispositivo médico,no detectable en MIMIC-IV,sin código,0,0,0
+406,Plaquetopenia severa por uso de prótesis intracardiaca,Dispositivo médico,código CIE-10,código aproximado (proxy),0,402,0
+407,Presentación/envasado deficiente,Dispositivo médico,no detectable en MIMIC-IV,sin código,0,0,0
+408,Sucio/no estéril,Dispositivo médico,no detectable en MIMIC-IV,sin código,0,0,0
+409,Uso de Muestra Médica,Dispositivo médico,no detectable en MIMIC-IV,sin código,0,0,0
+501,La historia clínica esta desordenada y/o sucia,Historia clínica,no detectable en MIMIC-IV,sin código,0,0,0
+502,La letra no es legible,Historia clínica,no detectable en MIMIC-IV,sin código,0,0,0
+503,Los exámenes auxiliares no corresponden al paciente,Historia clínica,auditoría del registro,sin código,0,0,0
+504,No constan los resultados de exámenes auxiliares,Historia clínica,auditoría del registro,sin código,0,0,0
+505,No cuenta con consentimiento informado,Historia clínica,auditoría del registro,sin código,0,0,0
+506,No cuenta con reporte quirúrgico,Historia clínica,auditoría del registro,sin código,0,0,0
+507,No se registra el examen físico completo,Historia clínica,auditoría del registro,sin código,0,0,0
+508,No se registra el nombre del paciente,Historia clínica,auditoría del registro,sin código,0,0,0
+509,No se registra el Plan de Trabajo,Historia clínica,auditoría del registro,sin código,0,0,0
+5010,No se registra el tratamiento,Historia clínica,auditoría del registro,sin código,0,0,0
+5011,No se registra evento adverso,Historia clínica,auditoría del registro,sin código,0,0,0
+5012,No se registra fecha y hora de atención,Historia clínica,auditoría del registro,sin código,0,0,0
+5014,No se registra fecha y hora del alta,Historia clínica,auditoría del registro,sin código,0,0,0
+5015,No se registra filiación completa,Historia clínica,auditoría del registro,sin código,0,0,0
+5016,No se registra la enfermedad actual,Historia clínica,auditoría del registro,sin código,0,0,0
+5017,No se registra la evolución diaria SOAP,Historia clínica,auditoría del registro,sin código,0,0,0
+5018,No se registran indicaciones al alta,Historia clínica,auditoría del registro,sin código,0,0,0
+5019,No se registran las interconsultas,Historia clínica,auditoría del registro,sin código,0,0,0
+5020,No se registran los antecedentes,Historia clínica,auditoría del registro,sin código,0,0,0
+5021,No se registran los diagnósticos,Historia clínica,auditoría del registro,sin código,0,0,0
+5022,No se registra hoja de consumo de dispositivos,Historia clínica,no detectable en MIMIC-IV,sin código,0,0,0
+5023,Historia clínica incompleta,Historia clínica,auditoría del registro,sin código,0,0,0
+5024,Sin Historia Clínica,Historia clínica,no detectable en MIMIC-IV,sin código,0,0,0
+601,Infección del torrente sanguíneo,Infección asociada,código CIE-10,equivalencia CIE-10-CM,105,11797,15
+602,Infección del tracto urinario,Infección asociada,código CIE-10,sin código,0,0,0
+603,Otras infecciones del trato urinario,Infección asociada,código CIE-10,código compartido con otro evento,0,9659,0
+604,Infección del sitio quirúrgico superficial,Infección asociada,código CIE-10,equivalencia CIE-10-CM,267,0,32
+605,Infección del sitio quirúrgico profunda,Infección asociada,código CIE-10,sin código,0,0,0
+606,Infección del sitio quirúrgico de órgano/espacio,Infección asociada,código CIE-10,sin código,0,0,0
+607,Neumonía definida clínicamente,Infección asociada,código CIE-10,sin código,0,0,0
+608,Neumonía con patógenos bacterianos,Infección asociada,código CIE-10,código compartido con otro evento,0,671,0
+609,Neumonía en pacientes inmunocomprometidos,Infección asociada,código CIE-10,código aproximado (proxy),0,81,0
+6010,Infecciones del tracto respiratorio superior,Infección asociada,código CIE-10,código propio,0,895,0
+6011,"Bronquitis, traqueobronquitis",Infección asociada,código CIE-10,código propio,0,158,0
+6012,Otras infecciones del tracto respiratorio inferior,Infección asociada,código CIE-10,código propio,0,15,0
+6013,Endometritis,Infección asociada,código CIE-10,código propio,0,71,0
+6014,Infección de episiotomía,Infección asociada,código CIE-10,código propio,0,27,0
+6015,Tapón vaginal,Infección asociada,texto de las notas,código aproximado (proxy),0,55,0
+6016,Otras infecciones del tracto reproductivo,Infección asociada,código CIE-10,código propio,0,<10,0
+6017,Gastroenteritis,Infección asociada,código CIE-10,sin código,0,0,0
+6018,Infección del tracto gastrointestinal,Infección asociada,código CIE-10,código propio,0,47,0
+6019,Hepatitis,Infección asociada,código CIE-10,sin código,0,0,0
+6020,Infección intrabdominal,Infección asociada,código CIE-10,sin código,0,0,0
+6021,Enteritis necrotizante,Infección asociada,código CIE-10,código propio,0,311,0
+6022,Infección de la piel,Infección asociada,código CIE-10,sin código,0,0,0
+6023,Infección del tejido blando,Infección asociada,código CIE-10,sin código,0,0,0
+6024,UPP infectada,Infección asociada,código CIE-10,código propio,<10,0,0
+6025,Infección de quemadura,Infección asociada,código CIE-10,código propio,0,0,0
+6026,Absceso de mama o mastitis,Infección asociada,código CIE-10,código propio,0,0,0
+6027,Onfalitis,Infección asociada,código CIE-10,código propio,0,0,0
+6028,Pustulosis del infante,Infección asociada,código CIE-10,código propio,0,16,0
+6029,Circuncisión en el recién nacido (infección),Infección asociada,código CIE-10,código propio,0,<10,0
+6030,Osteomielitis,Infección asociada,código CIE-10,sin código,0,0,0
+6031,Articulación o bursa,Infección asociada,código CIE-10,código propio,0,120,0
+6032,Infección de espacio discal,Infección asociada,código CIE-10,código propio,0,34,0
+6033,Infecciones del sistema nervioso central,Infección asociada,código CIE-10,sin código,0,0,0
+6034,Infección intracraneana,Infección asociada,código CIE-10,código propio,0,50,0
+6035,Meningitis o ventriculitis,Infección asociada,código CIE-10,sin código,0,0,0
+6036,Absceso de médula espinal,Infección asociada,código CIE-10,código propio,0,195,0
+6037,Endocarditis,Infección asociada,código CIE-10,sin código,0,0,0
+6038,Miocarditis o pericarditis,Infección asociada,código CIE-10,sin código,0,0,0
+6039,Mediastinitis,Infección asociada,código CIE-10,sin código,0,0,0
+6040,Infección arterial o venosa,Infección asociada,código CIE-10,código propio,0,0,0
+6041,Conjuntivitis,Infección asociada,código CIE-10,sin código,0,0,0
+6042,Otras infecciones oculares,Infección asociada,código CIE-10,sin código,0,0,0
+6043,Otitis externa,Infección asociada,código CIE-10,código propio,0,<10,0
+6044,Otitis media,Infección asociada,código CIE-10,código propio,0,106,0
+6045,Otitis interna,Infección asociada,código CIE-10,código propio,0,29,0
+6046,Mastoiditis,Infección asociada,código CIE-10,código propio,0,14,0
+6047,Infección de cavidad oral,Infección asociada,código CIE-10,código propio,0,109,0
+6048,Sinusitis,Infección asociada,código CIE-10,código propio,0,399,0
+6049,Sospecha de Infección,Infección asociada,texto de las notas,sin código,0,0,0
+701,Cantidad errónea (medicación),Medicación,texto de las notas,código compartido con otro evento,0,0,0
+702,Condiciones de conservación inadecuadas,Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+703,Contraindicación,Medicación,texto de las notas,código compartido con otro evento,0,0,0
+704,Falla en la distribución,Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+705,Dosis o frecuencia errónea,Medicación,texto de las notas,sin código,0,0,0
+706,Error de administración,Medicación,texto de las notas,sin código,0,0,0
+707,Forma galénica o presentación errónea,Medicación,texto de las notas,código compartido con otro evento,0,0,0
+708,Hemorragia digestiva por medicación,Medicación,código CIE-10,código propio,0,886,0
+709,Hemorragia/hematoma por antiagregación,Medicación,código CIE-10,código propio,0,197,0
+7010,Hemorragia/hematoma por anticoagulación,Medicación,código CIE-10,equivalencia CIE-10-CM,1198,0,198
+7011,Información/instrucciones de dispensación erróneas,Medicación,texto de las notas,sin código,0,0,0
+7012,Interacción de fármacos,Medicación,código CIE-10,código compartido con otro evento,0,0,0
+7013,Medicamento caducado,Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+7014,Medicamento erróneo,Medicación,texto de las notas,código compartido con otro evento,0,0,0
+7015,Medicamentos de alto riesgo y/o LASA mal etiquetado,Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+7016,Omisión de medicamento o de dosis,Medicación,texto de las notas,código compartido con otro evento,0,0,0
+7017,Paciente erróneo (medicación),Medicación,texto de las notas,código aproximado (proxy),0,0,0
+7018,Preparación/dispensación errónea,Medicación,texto de las notas,código compartido con otro evento,0,0,0
+7019,Prescripción errónea,Medicación,texto de las notas,código compartido con otro evento,0,0,0
+7020,Presentación/envasado,Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+7021,Reacción adversa al medicamento,Medicación,código CIE-10,código compartido con otro evento,14090,0,3240
+7022,Suministro/pedido inadecuado,Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+7023,Necrosis por vasoconstrictor,Medicación,código CIE-10,código aproximado (proxy),0,0,0
+7024,Vía errónea,Medicación,texto de las notas,código compartido con otro evento,0,0,0
+7025,Coche de paro no cuenta con cintillo de seguridad,Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+7026,Falta de prescripción,Medicación,auditoría del registro,código compartido con otro evento,0,226,0
+7027,Coche de paro sin medicamentos,Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+7028,Error en proceso de devolución de medicamentos,Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+7029,Demora en el recojo de recetas,Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+7030,Demora en la dispensación,Medicación,variables estructuradas,sin código,0,0,0
+7031,Diarrea asociada a antimicrobianos,Medicación,código CIE-10,código compartido con otro evento,0,2189,0
+7032,Medicamentos sin rótulos,Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+7033,Falta de disponibilidad (medicación),Medicación,no detectable en MIMIC-IV,sin código,0,0,0
+801,Adherencias y alteraciones funcionales post-Qx,Procedimiento,código CIE-10,código propio,0,792,0
+802,Cuerpo extraño tras cirugía,Procedimiento,código CIE-10,sin código,0,0,0
+803,Dehiscencia de sitio quirúrgico,Procedimiento,código CIE-10,sin código,0,0,0
+804,Desplazamiento de dispositivo intracardiaco,Procedimiento,código CIE-10,código propio,<10,0,<10
+805,Equimosis,Procedimiento,texto de las notas,sin código,0,0,0
+806,Extubación fallida,Procedimiento,texto de las notas,código propio,0,172,0
+807,Falla del procedimiento,Procedimiento,texto de las notas,código compartido con otro evento,0,0,0
+808,Hematoma por punción,Procedimiento,código CIE-10,código compartido con otro evento,223,0,41
+809,Hematoma post cateterismo cardiaco,Procedimiento,código CIE-10,código compartido con otro evento,92,0,16
+8010,Hematoma relacionado con intervención quirúrgica,Procedimiento,código CIE-10,código compartido con otro evento,380,0,79
+8011,Hematoma relacionado con procedimiento,Procedimiento,código CIE-10,código compartido con otro evento,1749,0,372
+8012,Hematuria post sondaje vesical,Procedimiento,código CIE-10,código propio,0,1204,0
+8013,Intervención quirúrgica ineficaz o incompleta,Procedimiento,texto de las notas,código compartido con otro evento,0,0,0
+8014,Lesión de órgano durante procedimiento,Procedimiento,código CIE-10,equivalencia CIE-10-CM,881,0,186
+8015,Lesiones secundarias a procedimientos,Procedimiento,código CIE-10,código compartido con otro evento,1780,0,468
+8016,Neumotórax,Procedimiento,código CIE-10,sin código,0,0,0
+8017,Reintervención quirúrgica,Procedimiento,variables estructuradas,sin código,0,0,0
+8018,Sangrado,Procedimiento,código CIE-10,sin código,0,0,0
+8019,Seroma,Procedimiento,código CIE-10,código compartido con otro evento,485,0,101
+8020,Tratamiento médico ineficiente o ineficaz,Procedimiento,texto de las notas,sin código,0,0,0
+8021,Trombosis arterial relacionada a procedimiento,Procedimiento,código CIE-10,sin código,0,0,0
+8022,Taponamiento cardiaco,Procedimiento,código CIE-10,código propio,0,301,0
+8023,Hemotórax,Procedimiento,código CIE-10,sin código,0,0,0
+8024,Guía retenida en vaso,Procedimiento,código CIE-10,código propio,29,0,11
+8025,Hemoglobinuria,Procedimiento,código CIE-10,código propio,0,<10,0
+8026,Pseudoaneurisma,Procedimiento,código CIE-10,código propio,0,<10,0
+8027,Fístula arteriovenosa,Procedimiento,código CIE-10,código propio,0,10,0
+8028,Derrame pericárdico,Procedimiento,código CIE-10,código propio,0,874,0
+8029,Quilotórax,Procedimiento,código CIE-10,código propio,0,19,0
+8030,Dispositivo en ubicación incorrecta,Procedimiento,código CIE-10,código propio,305,0,128
+8031,Lesión vascular,Procedimiento,código CIE-10,código propio,0,88,0
+8032,Trombosis venosa,Procedimiento,código CIE-10,sin código,0,0,0
+8033,Múltiples punciones,Procedimiento,variables estructuradas,código compartido con otro evento,0,0,0
+8034,Prolongación de la Circulación Extracorpórea,Procedimiento,variables estructuradas,código compartido con otro evento,0,0,0
+901,Administración (sangre),Sangre/hemoderivados,texto de las notas,código compartido con otro evento,<10,0,<10
+902,Cantidad errónea (sangre),Sangre/hemoderivados,texto de las notas,código compartido con otro evento,0,0,0
+903,Condiciones de conservación inadecuadas (sangre),Sangre/hemoderivados,no detectable en MIMIC-IV,sin código,0,0,0
+904,Conservación (sangre),Sangre/hemoderivados,no detectable en MIMIC-IV,sin código,0,0,0
+905,Contraindicación (sangre),Sangre/hemoderivados,texto de las notas,código compartido con otro evento,0,0,0
+906,Distribución (sangre),Sangre/hemoderivados,no detectable en MIMIC-IV,código compartido con otro evento,0,0,0
+907,Dosis o frecuencia errónea (sangre),Sangre/hemoderivados,texto de las notas,código compartido con otro evento,0,0,0
+908,Hemoderivado erróneo,Sangre/hemoderivados,texto de las notas,código aproximado (proxy),<10,0,<10
+909,Incompatibilidad de grupo o factor,Sangre/hemoderivados,código CIE-10,código propio,0,0,0
+9010,Información/instrucciones erróneas (sangre),Sangre/hemoderivados,texto de las notas,código compartido con otro evento,0,0,0
+9012,Paciente erróneo (sangre),Sangre/hemoderivados,texto de las notas,código compartido con otro evento,0,0,0
+9013,Preparación/dispensación (sangre),Sangre/hemoderivados,texto de las notas,código compartido con otro evento,0,0,0
+9014,Prescripción (sangre),Sangre/hemoderivados,texto de las notas,código compartido con otro evento,0,0,0
+9015,Presentación/envasado (sangre),Sangre/hemoderivados,no detectable en MIMIC-IV,sin código,0,0,0
+9016,Pruebas pretransfusionales,Sangre/hemoderivados,auditoría del registro,código compartido con otro evento,0,0,0
+9017,Reacción adversa (sangre),Sangre/hemoderivados,código CIE-10,código compartido con otro evento,0,0,0
+9018,Sangre/producto sanguíneo caducado,Sangre/hemoderivados,no detectable en MIMIC-IV,sin código,0,0,0
+9019,Suministro/pedido (sangre),Sangre/hemoderivados,no detectable en MIMIC-IV,sin código,0,0,0
+9020,Supervisión (sangre),Sangre/hemoderivados,no detectable en MIMIC-IV,sin código,0,0,0
+1001,Adaptación de la gestión de la carga de trabajo,Gestión organización,no detectable en MIMIC-IV,sin código,0,0,0
+1002,Disponibilidad/idoneidad de camas/servicios,Gestión organización,variables estructuradas,sin código,0,0,0
+1003,Brecha de personal,Gestión organización,no detectable en MIMIC-IV,sin código,0,0,0
+1004,Organización de equipos/Sistemas informáticos,Gestión organización,no detectable en MIMIC-IV,sin código,0,0,0
+1005,Disponibilidad/idoneidad de protocolos,Gestión organización,no detectable en MIMIC-IV,sin código,0,0,0
+1006,Camas desocupadas,Gestión organización,no detectable en MIMIC-IV,sin código,0,0,0
+1007,Estancia prolongada,Gestión organización,variables estructuradas,código propio,0,94,0
+1008,Falla en Planificación de la cirugía,Gestión organización,texto de las notas,código aproximado (proxy),99,0,49
+1009,Fallecimiento,Gestión organización,variables estructuradas,código propio,0,<10,0
+10010,Retraso o espera del paciente,Gestión organización,variables estructuradas,código compartido con otro evento,0,0,0
+10011,Retraso en la atención de interconsulta,Gestión organización,variables estructuradas,código compartido con otro evento,0,0,0
+10012,Acreditación incorrecta del paciente,Gestión organización,no detectable en MIMIC-IV,sin código,0,0,0
+10013,Suspensión de procedimiento con paciente invadido,Gestión organización,texto de las notas,código aproximado (proxy),0,0,0
+10014,Robo de niños,Gestión organización,no detectable en MIMIC-IV,código aproximado (proxy),0,46,0
+10015,Comunicación inefectiva,Gestión organización,texto de las notas,código aproximado (proxy),0,23,0
+10016,Error en procedimiento de toma de muestra,Gestión organización,texto de las notas,código aproximado (proxy),<10,0,<10
+10017,Falla en Planificación del Cateterismo,Gestión organización,texto de las notas,código aproximado (proxy),0,0,0
+10018,Retraso en toma de exámenes auxiliares,Gestión organización,variables estructuradas,código compartido con otro evento,0,0,0
+10019,Ausentismo del Recurso Humano,Gestión organización,no detectable en MIMIC-IV,sin código,0,0,0
+10020,Prolongación de la Cirugía,Gestión organización,variables estructuradas,código compartido con otro evento,188,0,80
+10021,Falla en Planificación de actividades asistenciales,Gestión organización,no detectable en MIMIC-IV,sin código,0,0,0
+1101,Cantidad errónea (nutrición),Nutrición,texto de las notas,código aproximado (proxy),0,0,0
+1102,Condiciones de conservación inadecuadas (nutrición),Nutrición,no detectable en MIMIC-IV,sin código,0,0,0
+1103,Consistencia errónea,Nutrición,texto de las notas,código aproximado (proxy),0,0,0
+1104,Dieta errónea,Nutrición,texto de las notas,código aproximado (proxy),0,0,0
+1105,Frecuencia errónea (nutrición),Nutrición,texto de las notas,código aproximado (proxy),0,0,0
+1106,Paciente erróneo (nutrición),Nutrición,texto de las notas,código aproximado (proxy),0,0,0
+1201,Falta de disponibilidad (insumos),Insumos,no detectable en MIMIC-IV,sin código,0,0,0
+1202,Avería/mal funcionamiento (insumos),Insumos,no detectable en MIMIC-IV,sin código,0,0,0
