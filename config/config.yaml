@@ -28,3 +28,20 @@ baseline:
   referencia_fase9:         # configuración del modelo final de la tesis
     palabra_max_features: 60000
     caracter_max_features: 20000
+
+feature_engineering:        # Sprint 2, semana 5: ablación A, A+B, A+C, A+B+C (src/features.py)
+  n_folds: 5                # StratifiedGroupKFold por paciente, solo en train
+  n_bootstrap: 200          # IC 95 % de la PR-AUC en test, remuestreando pacientes
+  logistica:                # mismo modelo del baseline; no se ajustan hiperparámetros en este avance
+    C: 1.0
+  A:                        # texto: palabras sueltas (idéntico al baseline)
+    max_features: 20000
+    min_df: 3
+  B:                        # transformación del texto: bigramas de palabras
+    max_features: 20000
+    min_df: 3
+  C:                        # dominio y contexto
+    winsor: [1, 99]         # percentiles de train para winsorizar log1p(largo)
+    min_frecuencia: 50      # categorías con menos casos en train -> «infrecuentes»
+    grupos: [nota, paciente, servicio, hospital, atencion]   # ver src/variables_dominio.py
+    grupos_escalera: [paciente, servicio, hospital, atencion, nota]   # análisis sin texto: se suma un grupo a la vez

@@ -1,0 +1,36 @@
+# metrics_fe.txt · 2026-10-15T21:33:52
+validación: StratifiedGroupKFold(5, shuffle=True, random_state=42) por subject_id, solo en train · test: holdout por paciente del Sprint 1 (n=14085), usado una vez
+semilla 42 · parámetros {"n_folds": 5, "n_bootstrap": 200, "logistica": {"C": 1.0}, "A": {"max_features": 20000, "min_df": 3}, "B": {"max_features": 20000, "min_df": 3}, "C": {"winsor": [1, 99], "min_frecuencia": 50, "grupos": ["nota", "paciente", "servicio", "hospital", "atencion"], "grupos_escalera": ["paciente", "servicio", "hospital", "atencion", "nota"]}}
+prevalencia real con epicrisis (VPP): 0.2759
+
+VALIDACIÓN CRUZADA (media ± std de 5 folds)
+config            PR-AUC            F1(+)           Recall          ROC-AUC   dif PR-AUC vs A   seg fit  atributos
+A        0.8667 ± 0.0035  0.7806 ± 0.0062  0.7585 ± 0.0101  0.8506 ± 0.0017    +0.0000 (0/5)       141      20000
+A+B      0.8688 ± 0.0034  0.7824 ± 0.0053  0.7618 ± 0.0082  0.8522 ± 0.0021    +0.0021 (5/5)       287      40000
+A+C      0.8714 ± 0.0021  0.7828 ± 0.0048  0.7621 ± 0.0091  0.8549 ± 0.0017    +0.0047 (5/5)        89      20092
+A+B+C    0.8732 ± 0.0025  0.7844 ± 0.0058  0.7651 ± 0.0092  0.8562 ± 0.0021    +0.0065 (5/5)       240      40092
+
+elegida por validación cruzada: A+B+C
+
+TEST (una sola medición)
+config    PR-AUC      IC95 pacientes   F1(+)  Recall  ROC-AUC     VPP  seg fit
+A         0.8787    [0.8709, 0.8861]  0.7911  0.7712   0.8637  0.5873       62
+A+B       0.8798    [0.8719, 0.8869]  0.7933  0.7736   0.8646  0.5904      208
+A+C       0.8822    [0.8747, 0.8892]  0.7946  0.7736   0.8676  0.5946      107
+A+B+C     0.8830    [0.8754, 0.8905]  0.7934  0.7754   0.8681  0.5873      306
+
+APORTE DE CADA GRUPO DE DOMINIO SIN TEXTO (validación cruzada, PR-AUC media ± std)
+  paciente: 0.6552 ± 0.0067
+  paciente + servicio: 0.7127 ± 0.0066
+  paciente + servicio + hospital: 0.7684 ± 0.0032
+  paciente + servicio + hospital + atencion: 0.7767 ± 0.0037
+  paciente + servicio + hospital + atencion + nota: 0.7771 ± 0.0040
+
+variables de dominio (18): ['edad', 'horas_emergencia', 'n_servicios', 'estancia_dias', 'n_traslados', 'n_unidades', 'dias_uci', 'n_medicamentos', 'n_cultivos', 'sexo', 'tipo_ingreso', 'procedencia', 'seguro', 'servicio', 'servicio_alta', 'destino_alta', 'servicio_quirurgico', 'uci']
+faltantes: {'edad': 0.0, 'horas_emergencia': 0.332, 'n_servicios': 0.0, 'estancia_dias': 0.0002, 'n_traslados': 0.0, 'n_unidades': 0.0, 'dias_uci': 0.0, 'n_medicamentos': 0.0, 'n_cultivos': 0.0, 'sexo': 0.0, 'tipo_ingreso': 0.0, 'procedencia': 0.0, 'seguro': 0.0107, 'servicio': 0.0, 'servicio_alta': 0.0, 'destino_alta': 0.1251, 'servicio_quirurgico': 0.0, 'uci': 0.0}
+
+control de reproducción del baseline: {'pr_auc_sprint1': 0.8787, 'pr_auc_A_test': 0.8787, 'diferencia': 0.0, 'reproduce': True}
+
+coeficientes del bloque de dominio (mayor |coef|):
+  A+C: cat__servicio_OBS -0.926; cat__seguro_infrequent_sklearn +0.583; cat__servicio_PSURG +0.556; cat__servicio_PSYCH -0.475; cat__servicio_alta_PSYCH -0.475; cat__destino_alta_None -0.466; cat__servicio_alta_CSURG +0.434; cat__servicio_TSURG +0.404; cat__servicio_TRAUM -0.380; cat__servicio_ORTHO +0.380; cat__destino_alta_ASSISTED LIVING +0.352; cat__servicio_alta_ENT -0.351
+  A+B+C: cat__servicio_OBS -0.957; cat__seguro_infrequent_sklearn +0.621; cat__servicio_PSURG +0.548; cat__servicio_alta_CSURG +0.514; cat__destino_alta_None -0.463; cat__servicio_TRAUM -0.437; cat__servicio_alta_ENT -0.428; cat__destino_alta_ASSISTED LIVING +0.384; cat__servicio_PSYCH -0.366; cat__servicio_alta_PSYCH -0.366; cat__servicio_TSURG +0.364; cat__servicio_ORTHO +0.345

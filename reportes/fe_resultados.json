@@ -1,0 +1,492 @@
+{
+  "etapa": "experimentos_fe",
+  "generado": "2026-10-15T21:33:52",
+  "semilla": 42,
+  "parametros": {
+    "n_folds": 5,
+    "n_bootstrap": 200,
+    "logistica": {
+      "C": 1.0
+    },
+    "A": {
+      "max_features": 20000,
+      "min_df": 3
+    },
+    "B": {
+      "max_features": 20000,
+      "min_df": 3
+    },
+    "C": {
+      "winsor": [
+        1,
+        99
+      ],
+      "min_frecuencia": 50,
+      "grupos": [
+        "nota",
+        "paciente",
+        "servicio",
+        "hospital",
+        "atencion"
+      ],
+      "grupos_escalera": [
+        "paciente",
+        "servicio",
+        "hospital",
+        "atencion",
+        "nota"
+      ]
+    }
+  },
+  "prevalencia_real_con_epicrisis": 0.27588,
+  "faltantes_dominio": {
+    "edad": 0.0,
+    "horas_emergencia": 0.332,
+    "n_servicios": 0.0,
+    "estancia_dias": 0.0002,
+    "n_traslados": 0.0,
+    "n_unidades": 0.0,
+    "dias_uci": 0.0,
+    "n_medicamentos": 0.0,
+    "n_cultivos": 0.0,
+    "sexo": 0.0,
+    "tipo_ingreso": 0.0,
+    "procedencia": 0.0,
+    "seguro": 0.0107,
+    "servicio": 0.0,
+    "servicio_alta": 0.0,
+    "destino_alta": 0.1251,
+    "servicio_quirurgico": 0.0,
+    "uci": 0.0
+  },
+  "validacion": "StratifiedGroupKFold(5, shuffle=True, random_state=42) por subject_id, solo en train",
+  "n_train": 55915,
+  "n_test": 14085,
+  "configuraciones": {
+    "A": "Baseline: TF-IDF de palabras (1-gramas)",
+    "A+B": "A + bigramas de palabras",
+    "A+C": "A + dominio (paciente, servicio, hospitalización, atención y largo de la nota)",
+    "A+B+C": "A + bigramas + dominio"
+  },
+  "cv": {
+    "A": {
+      "pr_auc": {
+        "media": 0.8667,
+        "std": 0.0035
+      },
+      "f1": {
+        "media": 0.7806,
+        "std": 0.0062
+      },
+      "recall": {
+        "media": 0.7585,
+        "std": 0.0101
+      },
+      "roc_auc": {
+        "media": 0.8506,
+        "std": 0.0017
+      },
+      "vpp_prevalencia_real": {
+        "media": 0.5722,
+        "std": 0.0063
+      },
+      "seg_entrenamiento": {
+        "media": 141.18,
+        "std": 78.7198
+      },
+      "seg_prediccion": {
+        "media": 40.58,
+        "std": 18.3449
+      },
+      "n_atributos": {
+        "media": 20000.0,
+        "std": 0.0
+      },
+      "dif_pr_auc_vs_A": {
+        "media": 0.0,
+        "std": 0.0,
+        "folds_mejor_que_A": 0
+      }
+    },
+    "A+B": {
+      "pr_auc": {
+        "media": 0.8688,
+        "std": 0.0034
+      },
+      "f1": {
+        "media": 0.7824,
+        "std": 0.0053
+      },
+      "recall": {
+        "media": 0.7618,
+        "std": 0.0082
+      },
+      "roc_auc": {
+        "media": 0.8522,
+        "std": 0.0021
+      },
+      "vpp_prevalencia_real": {
+        "media": 0.5724,
+        "std": 0.0045
+      },
+      "seg_entrenamiento": {
+        "media": 286.58,
+        "std": 72.786
+      },
+      "seg_prediccion": {
+        "media": 532.32,
+        "std": 1054.4315
+      },
+      "n_atributos": {
+        "media": 40000.0,
+        "std": 0.0
+      },
+      "dif_pr_auc_vs_A": {
+        "media": 0.0021,
+        "std": 0.0006,
+        "folds_mejor_que_A": 5
+      }
+    },
+    "A+C": {
+      "pr_auc": {
+        "media": 0.8714,
+        "std": 0.0021
+      },
+      "f1": {
+        "media": 0.7828,
+        "std": 0.0048
+      },
+      "recall": {
+        "media": 0.7621,
+        "std": 0.0091
+      },
+      "roc_auc": {
+        "media": 0.8549,
+        "std": 0.0017
+      },
+      "vpp_prevalencia_real": {
+        "media": 0.5732,
+        "std": 0.007
+      },
+      "seg_entrenamiento": {
+        "media": 89.0,
+        "std": 4.4289
+      },
+      "seg_prediccion": {
+        "media": 12.7,
+        "std": 1.6125
+      },
+      "n_atributos": {
+        "media": 20091.8,
+        "std": 0.4472
+      },
+      "dif_pr_auc_vs_A": {
+        "media": 0.0047,
+        "std": 0.0016,
+        "folds_mejor_que_A": 5
+      }
+    },
+    "A+B+C": {
+      "pr_auc": {
+        "media": 0.8732,
+        "std": 0.0025
+      },
+      "f1": {
+        "media": 0.7844,
+        "std": 0.0058
+      },
+      "recall": {
+        "media": 0.7651,
+        "std": 0.0092
+      },
+      "roc_auc": {
+        "media": 0.8562,
+        "std": 0.0021
+      },
+      "vpp_prevalencia_real": {
+        "media": 0.5732,
+        "std": 0.0067
+      },
+      "seg_entrenamiento": {
+        "media": 239.5,
+        "std": 6.7354
+      },
+      "seg_prediccion": {
+        "media": 31.74,
+        "std": 2.348
+      },
+      "n_atributos": {
+        "media": 40091.8,
+        "std": 0.4472
+      },
+      "dif_pr_auc_vs_A": {
+        "media": 0.0065,
+        "std": 0.0017,
+        "folds_mejor_que_A": 5
+      }
+    }
+  },
+  "elegida_por_cv": "A+B+C",
+  "test": {
+    "A": {
+      "pr_auc": 0.8787,
+      "f1": 0.7911,
+      "recall": 0.7712,
+      "especificidad": 0.7935,
+      "roc_auc": 0.8637,
+      "vpp_prevalencia_real": 0.5873,
+      "pr_auc_ic95_pacientes": [
+        0.8709,
+        0.8861
+      ],
+      "seg_entrenamiento": 61.6
+    },
+    "A+B": {
+      "pr_auc": 0.8798,
+      "f1": 0.7933,
+      "recall": 0.7736,
+      "especificidad": 0.7955,
+      "roc_auc": 0.8646,
+      "vpp_prevalencia_real": 0.5904,
+      "pr_auc_ic95_pacientes": [
+        0.8719,
+        0.8869
+      ],
+      "seg_entrenamiento": 207.5
+    },
+    "A+C": {
+      "pr_auc": 0.8822,
+      "f1": 0.7946,
+      "recall": 0.7736,
+      "especificidad": 0.799,
+      "roc_auc": 0.8676,
+      "vpp_prevalencia_real": 0.5946,
+      "pr_auc_ic95_pacientes": [
+        0.8747,
+        0.8892
+      ],
+      "seg_entrenamiento": 106.7
+    },
+    "A+B+C": {
+      "pr_auc": 0.883,
+      "f1": 0.7934,
+      "recall": 0.7754,
+      "especificidad": 0.7924,
+      "roc_auc": 0.8681,
+      "vpp_prevalencia_real": 0.5873,
+      "pr_auc_ic95_pacientes": [
+        0.8754,
+        0.8905
+      ],
+      "seg_entrenamiento": 306.3
+    }
+  },
+  "coeficientes_dominio": {
+    "A+C": [
+      [
+        "cat__servicio_OBS",
+        -0.9263
+      ],
+      [
+        "cat__seguro_infrequent_sklearn",
+        0.5832
+      ],
+      [
+        "cat__servicio_PSURG",
+        0.5561
+      ],
+      [
+        "cat__servicio_PSYCH",
+        -0.4752
+      ],
+      [
+        "cat__servicio_alta_PSYCH",
+        -0.4752
+      ],
+      [
+        "cat__destino_alta_None",
+        -0.4662
+      ],
+      [
+        "cat__servicio_alta_CSURG",
+        0.4344
+      ],
+      [
+        "cat__servicio_TSURG",
+        0.4044
+      ],
+      [
+        "cat__servicio_TRAUM",
+        -0.3803
+      ],
+      [
+        "cat__servicio_ORTHO",
+        0.3797
+      ],
+      [
+        "cat__destino_alta_ASSISTED LIVING",
+        0.3522
+      ],
+      [
+        "cat__servicio_alta_ENT",
+        -0.3506
+      ]
+    ],
+    "A+B+C": [
+      [
+        "cat__servicio_OBS",
+        -0.9572
+      ],
+      [
+        "cat__seguro_infrequent_sklearn",
+        0.6208
+      ],
+      [
+        "cat__servicio_PSURG",
+        0.5476
+      ],
+      [
+        "cat__servicio_alta_CSURG",
+        0.5144
+      ],
+      [
+        "cat__destino_alta_None",
+        -0.4634
+      ],
+      [
+        "cat__servicio_TRAUM",
+        -0.4373
+      ],
+      [
+        "cat__servicio_alta_ENT",
+        -0.4279
+      ],
+      [
+        "cat__destino_alta_ASSISTED LIVING",
+        0.3839
+      ],
+      [
+        "cat__servicio_PSYCH",
+        -0.3662
+      ],
+      [
+        "cat__servicio_alta_PSYCH",
+        -0.3662
+      ],
+      [
+        "cat__servicio_TSURG",
+        0.364
+      ],
+      [
+        "cat__servicio_ORTHO",
+        0.3451
+      ]
+    ]
+  },
+  "aporte_grupos_sin_texto": {
+    "paciente": {
+      "media": 0.6552,
+      "std": 0.0067
+    },
+    "paciente + servicio": {
+      "media": 0.7127,
+      "std": 0.0066
+    },
+    "paciente + servicio + hospital": {
+      "media": 0.7684,
+      "std": 0.0032
+    },
+    "paciente + servicio + hospital + atencion": {
+      "media": 0.7767,
+      "std": 0.0037
+    },
+    "paciente + servicio + hospital + atencion + nota": {
+      "media": 0.7771,
+      "std": 0.004
+    }
+  },
+  "variables_dominio": [
+    "edad",
+    "horas_emergencia",
+    "n_servicios",
+    "estancia_dias",
+    "n_traslados",
+    "n_unidades",
+    "dias_uci",
+    "n_medicamentos",
+    "n_cultivos",
+    "sexo",
+    "tipo_ingreso",
+    "procedencia",
+    "seguro",
+    "servicio",
+    "servicio_alta",
+    "destino_alta",
+    "servicio_quirurgico",
+    "uci"
+  ],
+  "fuentes_dominio": null,
+  "firma_datos_train": {
+    "edad": {
+      "media": 62.411,
+      "p50": 64.0,
+      "p90": 85.0
+    },
+    "horas_emergencia": {
+      "media": 7.671,
+      "p50": 6.333,
+      "p90": 12.9
+    },
+    "n_servicios": {
+      "media": 1.109,
+      "p50": 1.0,
+      "p90": 2.0
+    },
+    "estancia_dias": {
+      "media": 6.155,
+      "p50": 3.884,
+      "p90": 12.804
+    },
+    "n_traslados": {
+      "media": 1.191,
+      "p50": 1.0,
+      "p90": 3.0
+    },
+    "n_unidades": {
+      "media": 1.603,
+      "p50": 1.0,
+      "p90": 3.0
+    },
+    "dias_uci": {
+      "media": 0.959,
+      "p50": 0.0,
+      "p90": 2.34
+    },
+    "n_medicamentos": {
+      "media": 26.204,
+      "p50": 22.0,
+      "p90": 47.0
+    },
+    "n_cultivos": {
+      "media": 2.531,
+      "p50": 1.0,
+      "p90": 7.0
+    },
+    "servicio_quirurgico": {
+      "media": 0.346,
+      "p50": 0.0,
+      "p90": 1.0
+    },
+    "uci": {
+      "media": 0.217,
+      "p50": 0.0,
+      "p90": 1.0
+    }
+  },
+  "control_reproduccion_baseline": {
+    "pr_auc_sprint1": 0.8787,
+    "pr_auc_A_test": 0.8787,
+    "diferencia": 0.0,
+    "reproduce": true
+  }
+}

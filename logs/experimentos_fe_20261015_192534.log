@@ -1,0 +1,42 @@
+2026-10-15 19:25:34 | experimentos_fe | INFO | log -> logs\experimentos_fe_20261015_192534.log
+2026-10-15 19:25:34 | experimentos_fe | INFO | parámetros: {"n_folds": 5, "n_bootstrap": 200, "logistica": {"C": 1.0}, "A": {"max_features": 20000, "min_df": 3}, "B": {"max_features": 20000, "min_df": 3}, "C": {"winsor": [1, 99], "min_frecuencia": 50, "grupos": ["nota", "paciente", "servicio", "hospital", "atencion"], "grupos_escalera": ["paciente", "servicio", "hospital", "atencion", "nota"]}} · semilla 42 · prevalencia real con epicrisis 0.2759
+2026-10-15 19:25:37 | experimentos_fe | INFO | variables de dominio: se reutiliza dominio_hadm.parquet
+2026-10-15 19:25:37 | experimentos_fe | INFO | variables de dominio unidas · faltantes: {'edad': 0.0, 'horas_emergencia': 0.332, 'n_servicios': 0.0, 'estancia_dias': 0.0002, 'n_traslados': 0.0, 'n_unidades': 0.0, 'dias_uci': 0.0, 'n_medicamentos': 0.0, 'n_cultivos': 0.0, 'sexo': 0.0, 'tipo_ingreso': 0.0, 'procedencia': 0.0, 'seguro': 0.0107, 'servicio': 0.0, 'servicio_alta': 0.0, 'destino_alta': 0.1251, 'servicio_quirurgico': 0.0, 'uci': 0.0}
+2026-10-15 19:25:37 | experimentos_fe | INFO | train 55,915 · test 14,085 · 0 pacientes compartidos
+2026-10-15 19:25:50 | experimentos_fe | INFO | fold 1: entrenamiento 44,343 · validación 11,572 · positivas en validación 0.543 · 0 pacientes compartidos
+2026-10-15 19:25:50 | experimentos_fe | INFO | fold 2: entrenamiento 44,701 · validación 11,214 · positivas en validación 0.540 · 0 pacientes compartidos
+2026-10-15 19:25:50 | experimentos_fe | INFO | fold 3: entrenamiento 44,897 · validación 11,018 · positivas en validación 0.539 · 0 pacientes compartidos
+2026-10-15 19:25:50 | experimentos_fe | INFO | fold 4: entrenamiento 44,870 · validación 11,045 · positivas en validación 0.532 · 0 pacientes compartidos
+2026-10-15 19:25:50 | experimentos_fe | INFO | fold 5: entrenamiento 44,849 · validación 11,066 · positivas en validación 0.541 · 0 pacientes compartidos
+2026-10-15 19:27:41 | experimentos_fe | INFO | A      fold 1: PR-AUC 0.8712 · F1 0.7908 · recall 0.7754 · ROC-AUC 0.8535 · 20,000 atributos · 84 s
+2026-10-15 19:30:10 | experimentos_fe | INFO | A      fold 2: PR-AUC 0.8685 · F1 0.7788 · recall 0.7526 · ROC-AUC 0.8493 · 20,000 atributos · 116 s
+2026-10-15 19:32:39 | experimentos_fe | INFO | A      fold 3: PR-AUC 0.8630 · F1 0.7813 · recall 0.7602 · ROC-AUC 0.8496 · 20,000 atributos · 125 s
+2026-10-15 19:35:27 | experimentos_fe | INFO | A      fold 4: PR-AUC 0.8633 · F1 0.7770 · recall 0.7521 · ROC-AUC 0.8503 · 20,000 atributos · 102 s
+2026-10-15 19:40:59 | experimentos_fe | INFO | A      fold 5: PR-AUC 0.8676 · F1 0.7748 · recall 0.7521 · ROC-AUC 0.8502 · 20,000 atributos · 279 s
+2026-10-15 19:49:16 | experimentos_fe | INFO | A+B    fold 1: PR-AUC 0.8732 · F1 0.7916 · recall 0.7759 · ROC-AUC 0.8557 · 40,000 atributos · 379 s
+2026-10-15 20:34:26 | experimentos_fe | INFO | A+B    fold 2: PR-AUC 0.8700 · F1 0.7801 · recall 0.7559 · ROC-AUC 0.8504 · 40,000 atributos · 292 s
+2026-10-15 20:40:47 | experimentos_fe | INFO | A+B    fold 3: PR-AUC 0.8646 · F1 0.7789 · recall 0.7575 · ROC-AUC 0.8506 · 40,000 atributos · 334 s
+2026-10-15 20:45:07 | experimentos_fe | INFO | A+B    fold 4: PR-AUC 0.8663 · F1 0.7795 · recall 0.7574 · ROC-AUC 0.8523 · 40,000 atributos · 218 s
+2026-10-15 20:49:14 | experimentos_fe | INFO | A+B    fold 5: PR-AUC 0.8698 · F1 0.7818 · recall 0.7623 · ROC-AUC 0.8518 · 40,000 atributos · 211 s
+2026-10-15 20:51:00 | experimentos_fe | INFO | A+C    fold 1: PR-AUC 0.8742 · F1 0.7911 · recall 0.7759 · ROC-AUC 0.8570 · 20,092 atributos · 91 s
+2026-10-15 20:52:46 | experimentos_fe | INFO | A+C    fold 2: PR-AUC 0.8717 · F1 0.7790 · recall 0.7539 · ROC-AUC 0.8527 · 20,091 atributos · 93 s
+2026-10-15 20:54:30 | experimentos_fe | INFO | A+C    fold 3: PR-AUC 0.8689 · F1 0.7824 · recall 0.7639 · ROC-AUC 0.8547 · 20,092 atributos · 93 s
+2026-10-15 20:56:09 | experimentos_fe | INFO | A+C    fold 4: PR-AUC 0.8698 · F1 0.7797 · recall 0.7538 · ROC-AUC 0.8560 · 20,092 atributos · 87 s
+2026-10-15 20:57:43 | experimentos_fe | INFO | A+C    fold 5: PR-AUC 0.8722 · F1 0.7819 · recall 0.7631 · ROC-AUC 0.8543 · 20,092 atributos · 82 s
+2026-10-15 21:02:21 | experimentos_fe | INFO | A+B+C  fold 1: PR-AUC 0.8764 · F1 0.7943 · recall 0.7791 · ROC-AUC 0.8588 · 40,092 atributos · 243 s
+2026-10-15 21:07:00 | experimentos_fe | INFO | A+B+C  fold 2: PR-AUC 0.8731 · F1 0.7803 · recall 0.7579 · ROC-AUC 0.8536 · 40,091 atributos · 247 s
+2026-10-15 21:11:29 | experimentos_fe | INFO | A+B+C  fold 3: PR-AUC 0.8696 · F1 0.7829 · recall 0.7644 · ROC-AUC 0.8550 · 40,092 atributos · 239 s
+2026-10-15 21:15:49 | experimentos_fe | INFO | A+B+C  fold 4: PR-AUC 0.8723 · F1 0.7800 · recall 0.7560 · ROC-AUC 0.8577 · 40,092 atributos · 229 s
+2026-10-15 21:20:19 | experimentos_fe | INFO | A+B+C  fold 5: PR-AUC 0.8744 · F1 0.7844 · recall 0.7683 · ROC-AUC 0.8558 · 40,092 atributos · 240 s
+2026-10-15 21:20:21 | experimentos_fe | INFO | sin texto · paciente: PR-AUC 0.6552 ± 0.0067
+2026-10-15 21:20:24 | experimentos_fe | INFO | sin texto · paciente + servicio: PR-AUC 0.7127 ± 0.0066
+2026-10-15 21:20:27 | experimentos_fe | INFO | sin texto · paciente + servicio + hospital: PR-AUC 0.7684 ± 0.0032
+2026-10-15 21:20:30 | experimentos_fe | INFO | sin texto · paciente + servicio + hospital + atencion: PR-AUC 0.7767 ± 0.0037
+2026-10-15 21:20:34 | experimentos_fe | INFO | sin texto · paciente + servicio + hospital + atencion + nota: PR-AUC 0.7771 ± 0.0040
+2026-10-15 21:20:34 | experimentos_fe | INFO | configuración con mayor PR-AUC media en validación cruzada: A+B+C
+2026-10-15 21:21:52 | experimentos_fe | INFO | TEST A      PR-AUC 0.8787 [0.8709, 0.8861] · F1 0.7911 · recall 0.7712 · ROC-AUC 0.8637 · VPP 0.5873
+2026-10-15 21:26:00 | experimentos_fe | INFO | TEST A+B    PR-AUC 0.8798 [0.8719, 0.8869] · F1 0.7933 · recall 0.7736 · ROC-AUC 0.8646 · VPP 0.5904
+2026-10-15 21:28:03 | experimentos_fe | INFO | TEST A+C    PR-AUC 0.8822 [0.8747, 0.8892] · F1 0.7946 · recall 0.7736 · ROC-AUC 0.8676 · VPP 0.5946
+2026-10-15 21:33:52 | experimentos_fe | INFO | TEST A+B+C  PR-AUC 0.8830 [0.8754, 0.8905] · F1 0.7934 · recall 0.7754 · ROC-AUC 0.8681 · VPP 0.5873
+2026-10-15 21:33:52 | experimentos_fe | INFO | control: el baseline A en test reproduce la logística del Sprint 1: {'pr_auc_sprint1': 0.8787, 'pr_auc_A_test': 0.8787, 'diferencia': 0.0, 'reproduce': True}
+2026-10-15 21:33:52 | experimentos_fe | INFO | Salidas: logs/metrics_fe.txt · reportes/fe_resultados.json · reportes/fe_folds.csv · reportes/figuras/fig_fe_pr.png

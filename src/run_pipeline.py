@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Orquestador del pipeline: ingesta -> preprocesado -> eda -> baseline.
+Orquestador del pipeline: ingesta -> preprocesado -> eda -> baseline -> features.
 
 Uso:
   python src/run_pipeline.py                      # todo
   python src/run_pipeline.py --desde preprocesado
   python src/run_pipeline.py --hasta ingesta
+  python src/run_pipeline.py --desde features         # solo los experimentos de feature engineering
   python src/run_pipeline.py --sin-referencia     # baseline sin el modelo de la Fase 9
 """
 import argparse
@@ -14,10 +15,11 @@ import time
 
 import baseline
 import eda
+import experimentos_fe
 import ingesta
 import preprocesado
 
-ETAPAS = ["ingesta", "preprocesado", "eda", "baseline"]
+ETAPAS = ["ingesta", "preprocesado", "eda", "baseline", "features"]
 
 
 def main():
@@ -36,6 +38,8 @@ def main():
             preprocesado.main()
         elif etapa == "eda":
             eda.main()
+        elif etapa == "features":
+            experimentos_fe.main()
         else:
             sys.argv = [sys.argv[0]] + (["--sin-referencia"] if a.sin_referencia else [])
             baseline.main()
