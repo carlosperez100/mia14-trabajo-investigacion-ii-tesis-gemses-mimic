@@ -99,10 +99,10 @@ def analizar_texto(df, R, log, FIG, pie):
         a.set_yticks(y2, [x["termino"] for x in t], fontsize=8.5); a.set_xlabel("% de epicrisis de train que usan el término")
         a.set_xlim(0, 100); a.set_title(titulo, fontsize=10); a.legend(fontsize=8, loc="lower right")
     p1, n1 = Vc["mas_asociados_al_evento"][0], Vc["mas_asociados_a_sin_evento"][0]
-    pie(fig, f"Cómo leer: a la izquierda, el porcentaje de epicrisis que trae cada uno de los {len(SECCIONES)} encabezados habituales de la "
+    pie(fig, f"Interpretación: a la izquierda, el porcentaje de epicrisis que trae cada uno de los {len(SECCIONES)} encabezados habituales de la "
              "nota de alta, separado por clase. Al centro y a la derecha, los términos que más distinguen a las notas con evento y a "
              f"las notas sin evento, entre los {_mil(len(terminos))} términos que aparecen en al menos el 1 % de las notas de train; las "
-             "barras dicen en qué porcentaje de las notas de cada clase aparece el término. Lectura: "
+             "barras dicen en qué porcentaje de las notas de cada clase aparece el término. Análisis: "
              f"{S['presentes_en_mas_del_95_pct']} de las {len(SECCIONES)} secciones están en más del 95 % de las notas y el "
              f"{S['pct_notas_con_todas']:.1f} % de las notas trae las {len(SECCIONES)}; la que más falta es «{menos}» "
              f"({por_seccion[menos]['pct']:.1f} %) y la que más cambia entre clases es «{dif}» ({por_seccion[dif]['pct_positivas']:.1f} % "

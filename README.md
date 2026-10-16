@@ -152,13 +152,13 @@ EDA desplegada: [`notebooks/02_EDA_semana4.ipynb`](notebooks/02_EDA_semana4.ipyn
 ### Flujo del análisis
 ![Flujo del EDA y resultado de cada paso](reportes/figuras/fig_eda_flujo.png)
 
-Cada caja es un paso, con la pregunta que responde y su resultado. El color indica la lectura: **azul**, dato descriptivo; **verde**, riesgo revisado y controlado; **ámbar**, hallazgo que pide una acción. La figura la genera el propio script con los resultados de la corrida.
+Cada caja corresponde a un paso del análisis, con la pregunta que responde y su resultado. Código de color: **azul**, dato descriptivo; **verde**, riesgo revisado y controlado; **ámbar**, hallazgo que pide una acción. La figura la genera el propio script con los resultados de la corrida.
 
 ### Lo que cambia respecto de la versión anterior
-La primera versión de este EDA solo miraba el texto. Al añadir las variables de la hospitalización y revisar la etiqueta, tres lecturas anteriores resultaron equivocadas y se corrigen aquí:
+La primera versión de este EDA solo miraba el texto. Al incorporar las variables de la hospitalización y revisar la etiqueta, se corrigieron tres conclusiones de esa versión:
 
-- **La «fuga de códigos CIE» no existe.** El patrón que se usó (letra, dos dígitos, punto y decimales) contaba sobre todo cadenas como `T98.2`, que por su valor son temperaturas y no códigos. Ver el punto 3.3.
-- **La estabilidad en el tiempo era un efecto del muestreo.** En el corpus hay alrededor de 53.8 % de positivas en todos los periodos porque se toma una proporción fija de negativas por cada positiva. En la base, la proporción real de eventos baja de 31.1 % a 21.6 % al pasar de CIE-9 a CIE-10. Ver el punto 4.1.
+- **La «fuga de códigos CIE» no existe.** El patrón que se usó (letra, dos dígitos, punto y decimales) contaba sobre todo cadenas como `T98.2`, que por su valor son temperaturas y no códigos (punto 3.3).
+- **La estabilidad en el tiempo era un efecto del muestreo.** En el corpus hay alrededor de 53.8 % de positivas en todos los periodos porque se toma una proporción fija de negativas por cada positiva. En la base, la proporción real de eventos baja de 31.1 % a 21.6 % al pasar de CIE-9 a CIE-10 (punto 4.1).
 - **La prevalencia real no es 20.1 %.** Ese valor divide entre todas las hospitalizaciones, tengan o no epicrisis. Entre las que tienen epicrisis, que son las que el modelo puede leer, es 27.6 %.
 
 ### 1 · Los datos: calidad, balance y partición
@@ -254,7 +254,7 @@ Se ajustó en train una regresión logística que no lee el texto, sin buscar hi
 | Contexto al alta, sin texto | 0.760 | 0.752 a 0.769 | 0.782 |
 | Texto de la epicrisis (logística TF-IDF del baseline) | 0.864 | 0.858 a 0.869 | 0.879 |
 
-El intervalo de confianza de los modelos de contexto se obtuvo remuestreando pacientes del test; el del modelo de texto es el que reporta el baseline. Sin leer una sola palabra de la nota ya se separan las clases con un ROC-AUC de 0.693 al ingreso y de 0.760 al alta. El modelo de texto llega a 0.864, pero este resultado obliga a preguntarse cuánto de eso viene de reconocer el tipo de paciente y cuánto de reconocer el evento. De aquí sale la decisión 3.
+El intervalo de confianza de los modelos de contexto se obtuvo remuestreando pacientes del test; el del modelo de texto es el que reporta el baseline. Sin leer una sola palabra de la nota ya se separan las clases con un ROC-AUC de 0.693 al ingreso y de 0.760 al alta. El modelo de texto llega a 0.864, pero este resultado obliga a preguntarse cuánto de eso viene de reconocer el tipo de paciente y cuánto de reconocer el evento. Este hallazgo sustenta la decisión 3.
 
 ### 3 · El texto de la epicrisis
 
@@ -273,7 +273,7 @@ Para el vocabulario se contaron, solo en train, los 5 271 términos que aparecen
 - **Más propios de las notas con evento:** *facility* (63.8 % de las notas con evento y 38.2 % de las notas sin evento), *vancomycin*, *fracture*, *extended*, *wound*, *line*, *cefepime*, *placement*, *picc*, *culture*, *placed*, *cultures*, *rehab*, *fall* y *complicated*.
 - **Más propios de las notas sin evento:** *independent* (42.3 % y 58.2 %), *ambulatory*, *prosody*, *home*, *psychiatric*, *knowledge*, *psychiatrist*, *cocaine*, *behavior*, *mthdone*, *judgment*, *suicidal*, *factors*, *thoughts* y *legal*.
 
-El vocabulario confirma las dos lecturas del punto 2. Del lado del evento hay palabras ligadas a complicaciones (*wound*, *complicated*) y a infecciones y catéteres (*vancomycin*, *cefepime*, *picc*, *line*), que también describen a un paciente complejo; y hay palabras del destino del paciente (*facility*, *rehab*, *extended*) y de las caídas con fractura (*fall*, *fracture*), que se revisan en el punto 4.2. Del lado sin evento no hay palabras de «ausencia de evento»: son términos de notas psiquiátricas (*psychiatric*, *suicidal*, *prosody*) y de pacientes que se van a casa caminando (*home*, *ambulatory*, *independent*). El modelo puede reconocer la clase negativa por la especialidad y por el estado funcional.
+El vocabulario confirma los dos hallazgos del punto 2. Del lado del evento hay palabras ligadas a complicaciones (*wound*, *complicated*) y a infecciones y catéteres (*vancomycin*, *cefepime*, *picc*, *line*), que también describen a un paciente complejo; y hay palabras del destino del paciente (*facility*, *rehab*, *extended*) y de las caídas con fractura (*fall*, *fracture*), que se revisan en el punto 4.2. Del lado sin evento no hay palabras de «ausencia de evento»: son términos de notas psiquiátricas (*psychiatric*, *suicidal*, *prosody*) y de pacientes que se van a casa caminando (*home*, *ambulatory*, *independent*). El modelo puede reconocer la clase negativa por la especialidad y por el estado funcional.
 
 #### 3.3 · Fugas de información
 - **Códigos CIE en el texto.** La versión anterior reportó cadenas con forma de código CIE-10 en el 4.95 % de las positivas y el 4.45 % de las negativas, y propuso enmascararlas. Al revisar qué captura ese patrón, el 72.5 % de las 4 241 coincidencias son `T95` a `T99` con un decimal (las más frecuentes, `T98.2`, `T98.1` y `T98.3`): por su valor son temperaturas corporales en grados Fahrenheit, y en el diccionario de diagnósticos de MIMIC-IV no existe ningún código T95 a T99. Se repitió la búsqueda solo con los códigos de las familias de las que sale la etiqueta, escritos con punto: con la forma de CIE-10 aparecen en 20 notas, todas positivas, y con la forma de CIE-9 en 24 (17 positivas y 7 negativas). Son 44 notas en total: el 0.10 % de las positivas y el 0.02 % de las negativas. La búsqueda es por patrón, y un número con la misma forma también cuenta, así que es una cota superior. No hay fuga, y la decisión de enmascarar se retira.
@@ -301,18 +301,18 @@ El corpus de modelado tiene 53.8 % de positivas (53.9 % en train y 53.7 % en tes
 
 Las fechas de MIMIC-IV están desplazadas (los ingresos del corpus figuran entre los años 2110 y 2211), así que el año real de cada hospitalización se aproximó con el grupo de años que la base asigna a cada paciente, con una precisión de más o menos un año.
 
-Tres lecturas:
+De esta tabla se desprenden tres hallazgos:
 
 1. **La prevalencia que corresponde al modelo es 27.6 %, no 20.1 %.** El modelo solo puede leer hospitalizaciones con epicrisis. Además, las tres fuentes de positivas no tienen la misma cobertura de notas: tienen epicrisis el 100 % de las positivas por códigos de la tabla (esa tabla se armó a partir de las notas), el 87.0 % de las de familias CIE-9 y el 55.2 % de las de equivalencias CIE-10-CM. El valor predictivo positivo «a prevalencia real» del baseline se calculó con 20.1 % y hay que recalcularlo.
 2. **La etiqueta no es estable en el tiempo.** La proporción real de eventos baja de 31.1 % en 2008-2010 a 21.6 % en 2020-2022. La caída está en el cambio de codificación: dentro del mismo periodo 2014-2016, las hospitalizaciones codificadas en CIE-9 tienen 32.2 % de eventos y las codificadas en CIE-10, 21.2 %. La diferencia aparece con el cambio de codificación y no con el paso del tiempo, y la explica la definición de la etiqueta: familias completas en CIE-9 y una lista de códigos en CIE-10. Si en CIE-10 dieran etiqueta todos los códigos de esas familias, la proporción de eventos entre las hospitalizaciones con epicrisis sería 31.8 %, prácticamente la de CIE-9 (31.1 %).
 3. **El muestreo por época iguala la proporción, no la definición.** En el corpus la época no separa las clases (AUC de la época sola = 0.500; 71.1 % CIE-9 y 28.9 % CIE-10 en ambas), y eso evita que el modelo aprenda la época en lugar del evento. Pero una positiva de CIE-9 y una de CIE-10 no significan lo mismo, y por eso las métricas se reportarán también por época.
 
-Lo que sí cambia en el corpus con los años es la forma de documentar: la mediana del largo de la nota sube de 8 826 caracteres en 2008-2010 a 11 182 en 2020-2022. El último periodo tiene solo 1 194 notas, así que sus métricas tendrán intervalos anchos.
+En el corpus, lo que varía con los años es la forma de documentar: la mediana del largo de la nota sube de 8 826 caracteres en 2008-2010 a 11 182 en 2020-2022. El último periodo tiene solo 1 194 notas, así que sus métricas tendrán intervalos anchos.
 
 #### 4.2 · Ruido de la etiqueta
 Se revisó cada clase buscando casos que, por los códigos de la propia base, podrían estar mal puestos.
 
-**Negativas con códigos de causa explícita.** De las 9 345 negativas de la época CIE-10, 805 (8.6 %) llevan un código de las mismas familias que dan la etiqueta, pero que no está en la tabla del proyecto: 451 un código de las familias T80 a T88, Y63, Y65, Y83, Y84, W00 a W19 o L89, y 368 un efecto adverso de medicamento (T36 a T50 con el carácter de efecto adverso). Los más frecuentes son el efecto adverso de glucocorticoides (T38.0X5A, 102 notas) y dos procedimientos quirúrgicos como causa de una reacción (Y83.8, 88 notas; Y83.1, 71 notas). En la época CIE-9, donde se usan las familias completas, no hay ninguna (0 de 22 963). Esas 805 notas se le están enseñando al modelo como «sin evento». De aquí sale la decisión 1.
+**Negativas con códigos de causa explícita.** De las 9 345 negativas de la época CIE-10, 805 (8.6 %) llevan un código de las mismas familias que dan la etiqueta, pero que no está en la tabla del proyecto: 451 un código de las familias T80 a T88, Y63, Y65, Y83, Y84, W00 a W19 o L89, y 368 un efecto adverso de medicamento (T36 a T50 con el carácter de efecto adverso). Los más frecuentes son el efecto adverso de glucocorticoides (T38.0X5A, 102 notas) y dos procedimientos quirúrgicos como causa de una reacción (Y83.8, 88 notas; Y83.1, 71 notas). En la época CIE-9, donde se usan las familias completas, no hay ninguna (0 de 22 963). Esas 805 notas ingresan al entrenamiento como negativas. Este hallazgo sustenta la decisión 1.
 
 **Positivas que lo son solo por una caída.** 6 296 positivas (16.7 %) tienen como única evidencia un código de caída. Los códigos de caída son de causa externa: dicen que hubo una caída, no dónde ocurrió; el lugar va en otro código.
 
@@ -321,7 +321,7 @@ Se revisó cada clase buscando casos que, por los códigos de la propia base, po
 | Época CIE-10 | 2 010 | 1 706 | 159 (7.9 %) | 884 |
 | Época CIE-9 | 4 286 | 1 630 | — | 813 |
 
-Los códigos de lugar se tomaron con el título que tienen en el diccionario de MIMIC-IV: en CIE-10, Y92.23 (hospital) e Y92.0 (residencia privada); en CIE-9, E849.0 (accidentes en el hogar). Ninguno de los diez códigos de lugar de CIE-9 que trae el diccionario corresponde al hospital; el más cercano es E849.7 (accidentes en institución residencial), con 240 casos. En total, solo 159 de las 6 296 tienen el hospital como lugar de ocurrencia, y 2 960 no tienen código de lugar. Donde se conoce el lugar, lo más frecuente es la casa, es decir, una caída anterior al ingreso: no es un evento adverso de la atención. Explican buena parte de las diferencias por servicio del punto 2.3: son solo por caída el 74.2 % de las positivas de `TRAUM`, el 51.1 % de las de `NSURG` y el 47.7 % de las de `ORTHO`. De aquí sale la decisión 2.
+Los códigos de lugar se tomaron con el título que tienen en el diccionario de MIMIC-IV: en CIE-10, Y92.23 (hospital) e Y92.0 (residencia privada); en CIE-9, E849.0 (accidentes en el hogar). Ninguno de los diez códigos de lugar de CIE-9 que trae el diccionario corresponde al hospital; el más cercano es E849.7 (accidentes en institución residencial), con 240 casos. En total, solo 159 de las 6 296 tienen el hospital como lugar de ocurrencia, y 2 960 no tienen código de lugar. Donde se conoce el lugar, lo más frecuente es la casa, es decir, una caída anterior al ingreso: no es un evento adverso de la atención. Explican buena parte de las diferencias por servicio del punto 2.3: son solo por caída el 74.2 % de las positivas de `TRAUM`, el 51.1 % de las de `NSURG` y el 47.7 % de las de `ORTHO`. Este hallazgo sustenta la decisión 2.
 
 **Positivas de la familia de úlcera en CIE-9.** La familia que el proyecto llama «úlcera por presión» se define en CIE-9 como 707.x. De sus 2 736 positivas, 1 739 (63.6 %) no tienen ningún código 707.0x, que es el de úlcera por presión, y 1 652 de ellas tienen un código 707.1x, úlcera de miembro inferior. Es otra fuente de positivas que no corresponden al evento, y queda registrada como acción.
 
@@ -382,7 +382,7 @@ Se siguió a cada evento del catálogo hasta los datos, en cinco etapas que se c
 
 En el corpus, de las 37 692 epicrisis positivas, 6 801 (18.0 %) tienen un evento del catálogo, 4 100 (10.9 %) una complicación sin enlace con el catálogo y 26 791 (71.1 %) vienen de la época CIE-9, donde la etiqueta solo distingue cinco familias: complicaciones de la atención (11 504), fármacos en uso terapéutico (6 630), caídas (4 419), úlcera de piel, 707.x (2 737) e incidentes asistenciales (1 501). De los 22 eventos del catálogo presentes en el corpus, solo 8 tienen 100 epicrisis o más y 7 tienen 30 o más en test.
 
-La respuesta a «dónde están los 231 eventos» es esta: algo más de la mitad tiene código, un tercio se llega a observar, y solo uno de cada diez participa en la etiqueta con la que se entrena el modelo. Los eventos de historia clínica y de insumos no tienen código de diagnóstico, y los de comportamiento, nutrición y diagnóstico no aparecen con código de causa explícita: para ellos haría falta el texto de las notas u otras tablas. Con estos datos no se puede entrenar un clasificador por evento, y por eso el modelo trabaja en dos etapas: primero detección binaria y después naturaleza del evento.
+En cuanto a la presencia de los 231 eventos en los datos, algo más de la mitad tiene código, un tercio se llega a observar, y solo uno de cada diez participa en la etiqueta con la que se entrena el modelo. Los eventos de historia clínica y de insumos no tienen código de diagnóstico, y los de comportamiento, nutrición y diagnóstico no aparecen con código de causa explícita: para ellos haría falta el texto de las notas u otras tablas. Con estos datos no se puede entrenar un clasificador por evento, y por eso el modelo trabaja en dos etapas: primero detección binaria y después naturaleza del evento.
 
 ### 6 · Correlaciones
 ![Correlaciones de Spearman](reportes/figuras/fig_eda_correlaciones.png)
@@ -415,6 +415,100 @@ Ninguna variable aislada explica la etiqueta, pero varias empujan en la misma di
 3. **Evaluar el modelo dentro de cada servicio, grupo de edad y decil de largo, y compararlo con el modelo de contexto sin texto** [evaluación]. Un modelo que no lee la nota llega a ROC-AUC 0.693 y 0.760. Control: ROC-AUC del modelo de texto mayor que el del modelo de contexto en cada estrato con 200 epicrisis o más en test, con un intervalo de confianza al 95 % por paciente para la diferencia que no incluya el cero.
 
 En `logs/metrics_eda.txt` quedan registradas las demás acciones que salen del análisis: recalcular el valor predictivo positivo con la prevalencia de 27.6 %, reportar las métricas por época, periodo y subgrupo, enlazar con el catálogo las 135 filas de la tabla de códigos, limitar la familia CIE-9 de úlcera a los códigos 707.0x, no usar como predictores el número de diagnósticos ni la severidad APR-DRG, mantener la segunda etapa a nivel de naturaleza, tratar como faltante la estancia de las 11 hospitalizaciones con estancia negativa y no enmascarar códigos CIE. La PR-AUC, adoptada en la semana 3, sigue como métrica central.
+
+---
+
+## 🧪 Feature engineering (Semana 5 · rama `sprint2-feature-engineering`)
+
+Sigue la guía «Iteración guiada por EDA + Feature Engineering básico» de la semana 4. Hay un baseline y tres variantes; cada variante agrega **un solo bloque de atributos** respecto del baseline (diseño de ablación A, A+B, A+C, A+B+C). El modelo no cambia: es la misma regresión logística del baseline, sin ajuste de hiperparámetros.
+
+### Configuraciones
+| Config | Qué agrega al baseline | Tipo de feature engineering (guía) |
+|---|---|---|
+| **A** (baseline) | TF-IDF de palabras sueltas, 20 000 términos: el modelo de la semana 3 sin cambios | — |
+| **A+B** | Bigramas de palabras, 20 000 términos (p. ej., *pressure ulcer*) | Creación y transformación del texto |
+| **A+C** | 18 variables de la hospitalización y el largo de la nota | Dominio, transformación y codificación |
+| **A+B+C** | Los dos bloques | Combinación |
+
+### Features añadidas (bloque C) y sus transformaciones
+| Grupo | Variables | Tabla de MIMIC-IV | Transformación (ajustada solo en train) |
+|---|---|---|---|
+| Paciente | edad, horas en emergencia, sexo, tipo de ingreso, procedencia, seguro | patients, admissions | edad: mediana y escalado; horas: log1p, winsorización p1–p99 y escalado; categóricas: one-hot |
+| Servicio | servicio al ingreso, servicio al alta, n.º de servicios distintos, paso por servicio quirúrgico | services | conteo: log1p, winsorización y escalado; categóricas: one-hot; binaria |
+| Hospitalización | estancia (días), n.º de traslados, n.º de unidades distintas, días en UCI, paso por UCI, destino al alta | admissions, transfers, icustays | conteos: log1p, winsorización y escalado; categórica: one-hot; binaria |
+| Atención | n.º de medicamentos distintos prescritos, n.º de muestras para cultivo | prescriptions, microbiologyevents | log1p, winsorización y escalado |
+| Nota | largo de la epicrisis | discharge | log1p, winsorización p1–p99, escalado y marca de nota atípica (> p99) |
+
+- **Categóricas:** las categorías con menos de 50 casos en train se agrupan en una sola, y el faltante es una categoría propia.
+- **Numéricas:** llevan además una columna que marca el faltante. Las horas en emergencia faltan en el 33.2 % de las notas, que son las de los pacientes que no pasaron por emergencia, y el destino al alta en el 12.5 %.
+- **Servicio quirúrgico:** SURG, CSURG, NSURG, VSURG, TSURG, PSURG, ORTHO y TRAUM. La agrupación es un *criterio del autor* a partir del nombre del código.
+- **Features que quedaron fuera a propósito:** el n.º de diagnósticos, la severidad APR-DRG y los procedimientos CIE, porque salen de la codificación de facturación (decisión del EDA de la semana 4). También el fallecimiento y el reingreso, porque son desenlaces y no predictores.
+- **Ventana:** todas las variables cubren la hospitalización completa, igual que la epicrisis. Sirven para detectar el evento al alta, no para predecirlo durante la estancia.
+
+### Validación y control de fuga
+- **Split:** el mismo de las semanas 3 y 4. Train tiene 55 915 notas y test 14 085, separados por paciente.
+- **Validación cruzada:** `StratifiedGroupKFold` de 5 folds dentro de train, estratificada por la etiqueta y agrupada por paciente, con semilla 42.
+- **Cero fuga:**
+  - Todas las transformaciones (TF-IDF, imputación, log1p, winsorización, escalado y one-hot) están dentro de un `sklearn.pipeline` y se ajustan solo con la parte de entrenamiento de cada fold.
+  - El script comprueba con una aserción que ningún paciente esté en dos partes: ni entre los folds ni entre train y test.
+  - El test se usó **una sola vez**, al final; la elección de la configuración se hizo solo con la validación cruzada.
+- **Control:** la configuración A medida en test reproduce la logística de la semana 3 (PR-AUC 0.8787, diferencia 0.0000).
+
+### Resultados
+**Validación cruzada** (media ± desviación estándar de 5 folds). La métrica principal es la PR-AUC. El F1 y el recall son de la clase positiva con umbral 0.5. El tiempo es el de entrenamiento por fold.
+
+| Config | **PR-AUC** | Diferencia con A (folds mejores) | F1 (+) | Recall | ROC-AUC | Atributos | Tiempo (s) |
+|---|---|---|---|---|---|---|---|
+| A (baseline) | 0.8667 ± 0.0035 | — | 0.7806 ± 0.0062 | 0.7585 ± 0.0101 | 0.8506 ± 0.0017 | 20 000 | 141 |
+| A+B | 0.8688 ± 0.0034 | +0.0021 ± 0.0006 (5/5) | 0.7824 ± 0.0053 | 0.7618 ± 0.0082 | 0.8522 ± 0.0021 | 40 000 | 287 |
+| A+C | 0.8714 ± 0.0021 | +0.0047 ± 0.0016 (5/5) | 0.7828 ± 0.0048 | 0.7621 ± 0.0091 | 0.8549 ± 0.0017 | 20 092 | 89 |
+| **A+B+C** | **0.8732 ± 0.0025** | **+0.0065 ± 0.0017 (5/5)** | 0.7844 ± 0.0058 | 0.7651 ± 0.0092 | 0.8562 ± 0.0021 | 40 092 | 240 |
+
+**Test** (una sola medición). El intervalo de confianza al 95 % de la PR-AUC se obtuvo remuestreando pacientes 200 veces. El valor predictivo positivo está calculado con la prevalencia real de las hospitalizaciones con epicrisis (27.59 %, EDA de la semana 4).
+
+| Config | **PR-AUC** | IC 95 % | F1 (+) | Recall | ROC-AUC | VPP real |
+|---|---|---|---|---|---|---|
+| A (baseline) | 0.8787 | 0.8709–0.8861 | 0.7911 | 0.7712 | 0.8637 | 0.5873 |
+| A+B | 0.8798 | 0.8719–0.8869 | 0.7933 | 0.7736 | 0.8646 | 0.5904 |
+| A+C | 0.8822 | 0.8747–0.8892 | 0.7946 | 0.7736 | 0.8676 | 0.5946 |
+| **A+B+C** | **0.8830** | 0.8754–0.8905 | 0.7934 | 0.7754 | 0.8681 | 0.5873 |
+
+![Curva precisión-sensibilidad y PR-AUC por fold](reportes/figuras/fig_fe_pr.png)
+
+**Interpretación.** A la izquierda, la curva precisión-sensibilidad de cada configuración, calculada con las predicciones de validación cruzada: cada nota se predice con el modelo del fold en el que no participó. Más arriba es mejor; la línea punteada es la proporción de positivas de train (0.539). A la derecha, la PR-AUC de cada fold (puntos), con su media y su desviación estándar.
+
+**Análisis.** Las cuatro curvas casi se superponen: la diferencia entre configuraciones es pequeña frente a la distancia que las separa del piso de 0.539. El orden, en cambio, es consistente. Las tres variantes superan al baseline en **los 5 folds**, y A+B+C es la mejor de las cuatro en los 5 folds. La mejora de A+B+C (+0.0065) es casi cuatro veces su propia variabilidad entre folds (± 0.0017). En test se mantiene el mismo orden (0.8787 → 0.8830), pero los intervalos de las cuatro configuraciones se solapan.
+
+**Conclusión.** El feature engineering mejora al baseline de forma pequeña pero sistemática. El bloque de dominio aporta más que los bigramas (+0.0047 frente a +0.0021), y los dos suman. Las tres variantes valen la pena, aunque ninguna cambia el orden de magnitud del resultado.
+
+### ¿Qué feature aportó más?
+Se entrenaron modelos **sin texto**, sumando un grupo de variables de dominio a la vez (validación cruzada, PR-AUC):
+
+| Grupos | PR-AUC sin texto | Aporte del grupo |
+|---|---|---|
+| Paciente | 0.6552 ± 0.0067 | — |
+| + Servicio | 0.7127 ± 0.0066 | +0.0575 |
+| + Hospitalización | 0.7684 ± 0.0032 | +0.0557 |
+| + Atención | 0.7767 ± 0.0037 | +0.0083 |
+| + Nota (largo) | 0.7771 ± 0.0040 | +0.0004 |
+
+**Interpretación.** La tabla muestra cuánto se puede detectar el evento sin leer la nota y cuánto agrega cada grupo, en el orden en que se suman.
+
+**Análisis.**
+- **Servicio y hospitalización aportan casi todo:** +0.058 y +0.056.
+- **El largo de la nota ya no agrega nada** (+0.0004) una vez que se conocen la estancia y los traslados. Es lo que anticipaba el EDA: el largo se mueve con la estancia (Spearman 0.468).
+- **El dominio solo llega a 0.777, frente a 0.867 del texto solo.** La mayor parte de la señal está en la nota.
+- **Coeficientes del modelo A+C:** los de mayor peso son categorías de servicio. El servicio de obstetricia (OBS) baja la probabilidad de evento y la cirugía plástica (PSURG) la sube. Los coeficientes de un one-hot se leen frente a las demás categorías, así que se toman solo como orientación (`logs/metrics_fe.txt`).
+
+**Conclusión.** El dominio aporta información que el texto no tiene completa: qué servicio atendió al paciente y cómo fue su paso por el hospital. Es la misma «mezcla de casos» que advirtió el EDA de la semana 4. Parte de la mejora puede venir de reconocer el *tipo de paciente* y no el evento, y eso hay que verificarlo antes de adoptar el bloque de forma definitiva.
+
+### Decisión y siguiente sprint
+- **Se adopta A+B+C** como nueva referencia del Sprint 2. Es la regla fijada antes de correr: la mayor PR-AUC media en validación cruzada. Mejora en los 5 folds, aunque cuesta 1.7 veces más tiempo de entrenamiento que el baseline. Si el costo importa, A+C conserva el 72 % de la mejora (0.0047 de 0.0065) con el menor tiempo.
+- **Falta validar** que el bloque de dominio no sea un atajo por tipo de paciente. Se hará con la decisión 3 del EDA: comparar el modelo dentro de cada servicio, grupo de edad y decil de largo.
+- **Próximo experimento (un solo cambio):** depurar la clase negativa (decisión 1 del EDA). Hay que excluir las hospitalizaciones con códigos de causa explícita que no están en la tabla de la etiqueta, y medir la PR-AUC de A+B+C antes y después. El riesgo a controlar es que, al cambiar el corpus, el test cambia, así que la comparación se hace con los mismos pacientes.
+- **Ajuste ligero pendiente:** el parámetro `C` de la regresión logística en A+B+C, con tres valores como máximo (guía de la semana 4).
+
+Las cifras de esta sección salen de [`logs/metrics_fe.txt`](logs/metrics_fe.txt), [`reportes/fe_resultados.json`](reportes/fe_resultados.json) y [`reportes/fe_folds.csv`](reportes/fe_folds.csv). La firma de los datos de train (media, p50 y p90 de cada variable numérica) está en `fe_resultados.json`.
 
 ---
 

@@ -333,9 +333,9 @@ def main():
     ax[1].axhline(100 * df.y.mean(), ls="--", c="gray", label=f"promedio {100 * df.y.mean():.1f} %")
     ax[1].set(xlabel="decil de largo (1 = más corto)", ylabel="% de notas con evento", ylim=(0, 100))
     ax[1].set_title("Notas con evento por decil de largo", fontsize=10); ax[1].legend()
-    pie(fig, "Cómo leer: a la izquierda, la distribución del largo de las epicrisis en escala logarítmica; en gris las notas sin "
+    pie(fig, "Interpretación: a la izquierda, la distribución del largo de las epicrisis en escala logarítmica; en gris las notas sin "
              "evento y en rojo las notas con evento. A la derecha, el porcentaje de notas con evento en cada decil de largo, con "
-             "el promedio en línea punteada. Lectura: las notas con evento son más largas (mediana de "
+             "el promedio en línea punteada. Análisis: las notas con evento son más largas (mediana de "
              f"{_mil(med['positiva'])} frente a {_mil(med['negativa'])} caracteres; AUC del largo solo = {auc_largo:.3f}) y el "
              f"porcentaje de positivas sube de {pct_decil[0]:.1f} % en el decil más corto a {pct_decil[-1]:.1f} % en el más largo: riesgo "
              "moderado de que el modelo use el largo como atajo.", 175, 0.17)
@@ -355,7 +355,7 @@ def main():
     menor = R["naturaleza"]["clases_menores_de_200"]
     txt_menor = (f"{NOMBRE_NAT.get(menor[0], menor[0])} ({_mil(R['naturaleza']['conteo'][menor[0]])} notas) es demasiado pequeña para evaluarse."
                  if menor else "todas las naturalezas tienen 200 notas o más.")
-    pie(fig, "Cómo leer: arriba a la izquierda, cuántas palabras tiene cada epicrisis (mediana de "
+    pie(fig, "Interpretación: arriba a la izquierda, cuántas palabras tiene cada epicrisis (mediana de "
              f"{_mil(R['descriptivas']['palabras']['50%'])}). Arriba a la derecha, cuántas notas aporta cada paciente: el "
              f"{100 * float((npp == 1).mean()):.0f} % aporta una sola. Abajo a la izquierda, la proporción de notas con y sin evento "
              f"en train y en test ({R['balance']['train']['pct_positivas']:.1f} % y {R['balance']['test']['pct_positivas']:.1f} % "
@@ -379,10 +379,10 @@ def main():
     ax[1].set_xticks(xx, epocas); ax[1].set(ylabel="% con evento", ylim=(0, 80)); ax[1].set_title("Hospitalizaciones con evento por época", fontsize=10)
     ax[1].legend(fontsize=8, loc="upper right")
     pc = R["epoca"]["pct_por_clase"]["positiva"]
-    pie(fig, "Cómo leer: a la izquierda, qué parte de cada clase del corpus se codificó en CIE-9 y qué parte en CIE-10; las dos barras "
+    pie(fig, "Interpretación: a la izquierda, qué parte de cada clase del corpus se codificó en CIE-9 y qué parte en CIE-10; las dos barras "
              f"son iguales ({pc['CIE-9']:.1f} % y {pc['CIE-10']:.1f} %) porque las negativas se muestrean por época. A la derecha, el "
              "porcentaje de hospitalizaciones con evento en cada época: en gris, en el corpus; en rojo, en todas las hospitalizaciones de "
-             f"MIMIC-IV con epicrisis. Lectura: en el corpus la época no separa las clases (AUC de la época sola = {auc_epoca:.3f}), pero "
+             f"MIMIC-IV con epicrisis. Análisis: en el corpus la época no separa las clases (AUC de la época sola = {auc_epoca:.3f}), pero "
              f"en la base la proporción real de eventos es de {v_r[0]:.1f} % en CIE-9 y de {v_r[-1]:.1f} % en CIE-10: la etiqueta no se "
              "define igual en las dos épocas, y el muestreo iguala la proporción, no la definición.", 165, 0.2)
     fig.savefig(FIG / "fig_eda_balance_epoca.png", dpi=130); plt.close(fig)
@@ -400,9 +400,9 @@ def main():
     cy = R["correlaciones_spearman"]["con_y"]
     top = sorted(cy, key=lambda k: -abs(cy[k]))[:3]
     _, a0, b0, r0 = pares[0]
-    pie(fig, "Cómo leer: cada celda es la correlación de Spearman entre dos variables, de -1 a 1 (rojo, positiva; azul, negativa; "
+    pie(fig, "Interpretación: cada celda es la correlación de Spearman entre dos variables, de -1 a 1 (rojo, positiva; azul, negativa; "
              "blanco, sin relación), calculada con las epicrisis que tienen los dos datos. La última fila es la variable objetivo. "
-             "Lectura: las variables más asociadas con el evento son " + ", ".join(f"{k} ({cy[k]:.3f})" for k in top) + ". El número "
+             "Análisis: las variables más asociadas con el evento son " + ", ".join(f"{k} ({cy[k]:.3f})" for k in top) + ". El número "
              "de diagnósticos y la severidad APR-DRG se calculan con los mismos códigos de los que sale la etiqueta, así que su "
              f"correlación es en parte por construcción. Entre variables, la correlación más alta es la de {a0} con {b0} ({r0:.3f}), y "
              f"la estancia y el largo de la nota se mueven juntos ({corr.loc['estancia (días)', 'largo (caracteres)']:.3f}): una "
