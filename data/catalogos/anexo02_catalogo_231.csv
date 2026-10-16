@@ -1,0 +1,232 @@
+id_ev,nombre,nat,tier_a,tier_b,razon,patron
+101,Acoso,COMPORTAMIENTO,B,-,Lenguaje en notas sociales/psiquiátricas,"harassment, harassing behavior"
+102,Agresión a objeto inanimado,COMPORTAMIENTO,B,-,Notas de enfermería describen comportamiento,"threw object, broke equipment"
+103,Agresión física,COMPORTAMIENTO,B,-,Documentado en notas psiquiátricas,"physically aggressive, assault staff"
+104,Agresión sexual,COMPORTAMIENTO,B,-,Notas sociales/legales,"sexual assault, inappropriate touching"
+105,Agresión verbal,COMPORTAMIENTO,B,-,Frecuente en notas psiquiátricas,"verbally aggressive, yelling"
+106,Amenaza de muerte,COMPORTAMIENTO,B,-,Notas de seguridad,"death threat, threatening"
+107,Arriesgado/imprudente/peligroso,COMPORTAMIENTO,B,-,Notas describen conducta de riesgo,"risk-taking behavior, impulsive"
+108,Autolesión deliberada/suicidio,COMPORTAMIENTO,A,B,ICD-10 X60-X84 y notas,"self-harm, suicide attempt"
+109,Desconsiderado/grosero/hostil/inapropiado,COMPORTAMIENTO,B,-,Notas conductuales,"hostile, inappropriate behavior"
+1010,Discriminación/prejuicio,COMPORTAMIENTO,E,-,Proceso administrativo sin equivalente clínico,N/A
+1011,Incumplidor/no colaborador/obstructivo,COMPORTAMIENTO,B,-,Frecuente en notas enfermería,"noncompliant, uncooperative"
+1012,Problema de uso/abuso de sustancias,COMPORTAMIENTO,A,B,ICD-10 F10-F19,"substance abuse, drug use"
+1013,Vagabundeo/fugas,COMPORTAMIENTO,B,-,Notas sociales/enfermería,"wandering, eloped, AMA"
+1014,Abandono de puesto de trabajo,COMPORTAMIENTO,E,-,Proceso administrativo del personal,N/A
+201,Autoextubación,CUIDADO DEL PACIENTE,B,C,NLP + procedures_icd,"self-extubation, self extubated"
+202,Caída de paciente,CUIDADO DEL PACIENTE,A,B,ICD-10 W19 y notas,"fall, found on floor"
+203,Desplazamiento de dispositivos invasivos,CUIDADO DEL PACIENTE,B,C,NLP + procedures,"line dislodged, catheter displaced"
+204,Eritema del pañal,CUIDADO DEL PACIENTE,B,-,Notas pediátricas,"diaper rash, perineal erythema"
+205,Extubación accidental,CUIDADO DEL PACIENTE,B,C,NLP + procedures_icd reintubación,"accidental extubation, unplanned extubation"
+206,Flebitis,CUIDADO DEL PACIENTE,A,B,ICD-10 I80 y notas,"phlebitis, IV site inflammation"
+207,Incumplimiento de normas de bioseguridad,CUIDADO DEL PACIENTE,E,-,Proceso administrativo del personal,N/A
+208,Lesión por esparadrapo o dispositivo autoadhesivo,CUIDADO DEL PACIENTE,B,-,Notas enfermería,"tape injury, skin tear adhesive"
+209,Lesión ocular,CUIDADO DEL PACIENTE,A,B,ICD-10 S05 y notas,"eye injury, corneal abrasion"
+2010,Lesión por oxímetro de pulso,CUIDADO DEL PACIENTE,B,-,Notas enfermería,"pulse ox burn, sensor injury"
+2011,Lesiones de piel,CUIDADO DEL PACIENTE,A,B,ICD-10 L98 y notas,"skin tear, skin injury"
+2012,Lesiones por prong nasal,CUIDADO DEL PACIENTE,B,-,Notas pediatricas/neonatales,"nasal prong injury, nasal pressure"
+2014,Paciente sin brazalete de identificación,CUIDADO DEL PACIENTE,D,E,"Auditoría registro, raro en MIMIC","wristband, ID band missing"
+2015,Quemaduras,CUIDADO DEL PACIENTE,A,B,ICD-10 T20-T32,"burn, thermal injury"
+2016,UPP I,CUIDADO DEL PACIENTE,A,B,ICD-10 L89.0,stage 1 pressure ulcer
+2017,UPP II,CUIDADO DEL PACIENTE,A,B,ICD-10 L89.1,stage 2 pressure ulcer
+2018,UPP III,CUIDADO DEL PACIENTE,A,B,ICD-10 L89.2,stage 3 pressure ulcer
+2019,UPP IV,CUIDADO DEL PACIENTE,A,B,ICD-10 L89.3,stage 4 pressure ulcer
+2020,Datos erróneos para la identificación del paciente,CUIDADO DEL PACIENTE,D,-,Auditoría de campos demográficos,"wrong patient, ID error"
+301,Error en diagnóstico,DIAGNÓSTICO,B,-,NLP en notas,"misdiagnosed, wrong diagnosis"
+302,Retraso en diagnóstico,DIAGNÓSTICO,B,C,NLP + tiempo admisión-dx,"delayed diagnosis, missed diagnosis"
+401,Avería/mal funcionamiento (dispositivo),DISPOSITIVO MÉDICO,B,-,Notas técnicas,"device malfunction, equipment failure"
+402,Desplazamiento/conexión incorrecta/extravasación,DISPOSITIVO MÉDICO,B,C,NLP + procedures,"extravasation, line displaced"
+403,Error del usuario (dispositivo),DISPOSITIVO MÉDICO,B,-,Notas describen error,"user error, improper use"
+404,Falta de disponibilidad (dispositivo),DISPOSITIVO MÉDICO,E,-,Logística administrativa,N/A
+405,Inadecuación a la tarea,DISPOSITIVO MÉDICO,E,-,Evaluación administrativa,N/A
+406,Plaquetopenia severa por uso de prótesis intracardiaca,DISPOSITIVO MÉDICO,A,B,ICD-10 D69 + lab platelets,"thrombocytopenia prosthesis, HIT"
+407,Presentación/envasado deficiente,DISPOSITIVO MÉDICO,E,-,Cadena logística,N/A
+408,Sucio/no estéril,DISPOSITIVO MÉDICO,E,B,Raro pero podría aparecer,"nonsterile, contaminated device"
+409,Uso de Muestra Médica,DISPOSITIVO MÉDICO,E,-,Proceso administrativo peruano,N/A
+501,La historia clínica esta desordenada y/o sucia,HISTORIA CLÍNICA,E,-,HC física no aplica a EHR,N/A
+502,La letra no es legible,HISTORIA CLÍNICA,E,-,EHR es texto digital,N/A
+503,Los exámenes auxiliares no corresponden al paciente,HISTORIA CLÍNICA,D,-,Auditoría cruce subject_id,"labs mismatch, wrong patient labs"
+504,No constan los resultados de exámenes auxiliares,HISTORIA CLÍNICA,D,-,Auditoría campos labevents vacíos,"missing labs, no results"
+505,No cuenta con consentimiento informado,HISTORIA CLÍNICA,D,B,"NLP ""consent"" + auditoría","consent missing, no consent"
+506,No cuenta con reporte quirúrgico,HISTORIA CLÍNICA,D,-,Auditoría notas tipo OR,"no operative note, missing op report"
+507,No se registra el examen físico completo,HISTORIA CLÍNICA,D,-,Auditoría completitud admission note,incomplete physical exam
+508,No se registra el nombre del paciente,HISTORIA CLÍNICA,D,-,Campo nunca vacío en MIMIC,N/A subject_id
+509,No se registra el Plan de Trabajo,HISTORIA CLÍNICA,D,-,Ausencia discharge plan,"no plan, missing assessment plan"
+5010,No se registra el tratamiento,HISTORIA CLÍNICA,D,-,Auditoría prescriptions vacías,"no treatment, missing meds"
+5011,No se registra evento adverso,HISTORIA CLÍNICA,D,-,Auditoría meta-registro,incident not documented
+5012,No se registra fecha y hora de atención,HISTORIA CLÍNICA,D,-,Auditoría charttime,missing timestamp
+5014,No se registra fecha y hora del alta,HISTORIA CLÍNICA,D,-,Auditoría dischtime,missing discharge time
+5015,No se registra filiación completa,HISTORIA CLÍNICA,D,-,Auditoría demographics,missing demographics
+5016,No se registra la enfermedad actual,HISTORIA CLÍNICA,D,-,Auditoría HPI section,"missing HPI, no history present"
+5017,No se registra la evolución diaria SOAP,HISTORIA CLÍNICA,D,-,Auditoría progress notes,"no progress note, missing SOAP"
+5018,No se registran indicaciones al alta,HISTORIA CLÍNICA,D,-,Auditoría discharge instructions,no discharge instructions
+5019,No se registran las interconsultas,HISTORIA CLÍNICA,D,-,Auditoría consult notes,no consult note
+5020,No se registran los antecedentes,HISTORIA CLÍNICA,D,-,Auditoría PMH section,"no PMH, missing past medical"
+5021,No se registran los diagnósticos,HISTORIA CLÍNICA,D,-,Auditoría diagnoses_icd,missing diagnosis
+5022,No se registra hoja de consumo de dispositivos,HISTORIA CLÍNICA,E,-,Proceso administrativo peruano,N/A
+5023,Historia clínica incompleta,HISTORIA CLÍNICA,D,-,Auditoría agregada de completitud,incomplete record
+5024,Sin Historia Clínica,HISTORIA CLÍNICA,E,-,"No aplica, todos tienen EHR",N/A
+601,Infección del torrente sanguíneo,INFECCIÓN ASOCIADA,A,B,"ICD-10 A40-A41, R65","bacteremia, sepsis, CLABSI"
+602,Infección del tracto urinario,INFECCIÓN ASOCIADA,A,B,ICD-10 N39.0,"UTI, urinary tract infection, CAUTI"
+603,Otras infecciones del trato urinario,INFECCIÓN ASOCIADA,A,B,ICD-10 N30-N39,"cystitis, pyelonephritis"
+604,Infección del sitio quirúrgico superficial,INFECCIÓN ASOCIADA,A,B,ICD-10 T81.4,"superficial SSI, wound infection"
+605,Infección del sitio quirúrgico profunda,INFECCIÓN ASOCIADA,A,B,ICD-10 T81.4,"deep SSI, deep wound infection"
+606,Infección del sitio quirúrgico de órgano/espacio,INFECCIÓN ASOCIADA,A,B,ICD-10 T81.4,"organ space SSI, deep space infection"
+607,Neumonía definida clínicamente,INFECCIÓN ASOCIADA,A,B,ICD-10 J18 + microbiology,"pneumonia, HAP, VAP"
+608,Neumonía con patógenos bacterianos,INFECCIÓN ASOCIADA,A,B,ICD-10 J15 + microbio,"bacterial pneumonia, fungal pneumonia"
+609,Neumonía en pacientes inmunocomprometidos,INFECCIÓN ASOCIADA,A,B,ICD-10 J17 + comorbid,immunocompromised pneumonia
+6010,Infecciones del tracto respiratorio superior,INFECCIÓN ASOCIADA,A,B,ICD-10 J00-J06,"pharyngitis, laryngitis"
+6011,"Bronquitis, traqueobronquitis",INFECCIÓN ASOCIADA,A,B,"ICD-10 J20, J40-J42","bronchitis, tracheobronchitis"
+6012,Otras infecciones del tracto respiratorio inferior,INFECCIÓN ASOCIADA,A,B,ICD-10 J22,lower respiratory infection
+6013,Endometritis,INFECCIÓN ASOCIADA,A,B,ICD-10 N71,endometritis
+6014,Infección de episiotomía,INFECCIÓN ASOCIADA,A,B,ICD-10 O86.0,episiotomy infection
+6015,Tapón vaginal,INFECCIÓN ASOCIADA,B,-,Notas gineco,vaginal cuff infection
+6016,Otras infecciones del tracto reproductivo,INFECCIÓN ASOCIADA,A,B,ICD-10 N70-N77,"pelvic infection, reproductive infection"
+6017,Gastroenteritis,INFECCIÓN ASOCIADA,A,B,ICD-10 A09,"gastroenteritis, C difficile"
+6018,Infección del tracto gastrointestinal,INFECCIÓN ASOCIADA,A,B,ICD-10 K52,"GI infection, colitis"
+6019,Hepatitis,INFECCIÓN ASOCIADA,A,B,ICD-10 B15-B19,"hepatitis, viral hepatitis"
+6020,Infección intrabdominal,INFECCIÓN ASOCIADA,A,B,ICD-10 K65,"intraabdominal infection, peritonitis"
+6021,Enteritis necrotizante,INFECCIÓN ASOCIADA,A,B,"ICD-10 K55.0, P77","necrotizing enterocolitis, NEC"
+6022,Infección de la piel,INFECCIÓN ASOCIADA,A,B,ICD-10 L08,"skin infection, cellulitis"
+6023,Infección del tejido blando,INFECCIÓN ASOCIADA,A,B,ICD-10 L03,"soft tissue infection, cellulitis"
+6024,UPP infectada,INFECCIÓN ASOCIADA,A,B,ICD-10 L89 + L08,infected pressure ulcer
+6025,Infección de quemadura,INFECCIÓN ASOCIADA,A,B,ICD-10 T20-T32 + infection,"burn infection, infected burn"
+6026,Absceso de mama o mastitis,INFECCIÓN ASOCIADA,A,B,ICD-10 N61,"mastitis, breast abscess"
+6027,Onfalitis,INFECCIÓN ASOCIADA,A,B,ICD-10 P38,omphalitis
+6028,Pustulosis del infante,INFECCIÓN ASOCIADA,A,B,ICD-10 L08.0,infant pustulosis
+6029,Circuncisión en el recién nacido (infección),INFECCIÓN ASOCIADA,A,B,ICD-10 + procedures,circumcision infection
+6030,Osteomielitis,INFECCIÓN ASOCIADA,A,B,ICD-10 M86,osteomyelitis
+6031,Articulación o bursa,INFECCIÓN ASOCIADA,A,B,"ICD-10 M00, M71","septic arthritis, bursitis"
+6032,Infección de espacio discal,INFECCIÓN ASOCIADA,A,B,ICD-10 M46.4,"discitis, disc space infection"
+6033,Infecciones del sistema nervioso central,INFECCIÓN ASOCIADA,A,B,ICD-10 G00-G09,"CNS infection, encephalitis"
+6034,Infección intracraneana,INFECCIÓN ASOCIADA,A,B,ICD-10 G06,"intracranial infection, brain abscess"
+6035,Meningitis o ventriculitis,INFECCIÓN ASOCIADA,A,B,ICD-10 G00-G03,"meningitis, ventriculitis"
+6036,Absceso de médula espinal,INFECCIÓN ASOCIADA,A,B,ICD-10 G06.1,spinal abscess
+6037,Endocarditis,INFECCIÓN ASOCIADA,A,B,ICD-10 I33,endocarditis
+6038,Miocarditis o pericarditis,INFECCIÓN ASOCIADA,A,B,"ICD-10 I30, I40","myocarditis, pericarditis"
+6039,Mediastinitis,INFECCIÓN ASOCIADA,A,B,ICD-10 J98.5,mediastinitis
+6040,Infección arterial o venosa,INFECCIÓN ASOCIADA,A,B,"ICD-10 I80, I82","vascular infection, septic thrombophlebitis"
+6041,Conjuntivitis,INFECCIÓN ASOCIADA,A,B,ICD-10 H10,conjunctivitis
+6042,Otras infecciones oculares,INFECCIÓN ASOCIADA,A,B,ICD-10 H00-H05,"eye infection, keratitis"
+6043,Otitis externa,INFECCIÓN ASOCIADA,A,B,ICD-10 H60,otitis externa
+6044,Otitis media,INFECCIÓN ASOCIADA,A,B,ICD-10 H66,otitis media
+6045,Otitis interna,INFECCIÓN ASOCIADA,A,B,ICD-10 H83,"labyrinthitis, inner ear infection"
+6046,Mastoiditis,INFECCIÓN ASOCIADA,A,B,ICD-10 H70,mastoiditis
+6047,Infección de cavidad oral,INFECCIÓN ASOCIADA,A,B,ICD-10 K12,"oral infection, stomatitis"
+6048,Sinusitis,INFECCIÓN ASOCIADA,A,B,"ICD-10 J01, J32",sinusitis
+6049,Sospecha de Infección,INFECCIÓN ASOCIADA,B,C,NLP + microbiology cultures,"suspected infection, rule out sepsis"
+701,Cantidad errónea (medicación),MEDICACIÓN,B,C,NLP + prescriptions audit,"wrong amount, wrong quantity"
+702,Condiciones de conservación inadecuadas,MEDICACIÓN,E,-,Proceso de farmacia,N/A
+703,Contraindicación,MEDICACIÓN,B,C,NLP + drug-allergy cross,"contraindicated, allergy noted"
+704,Falla en la distribución,MEDICACIÓN,E,-,Logística farmacia,N/A
+705,Dosis o frecuencia errónea,MEDICACIÓN,B,C,NLP + prescriptions,"wrong dose, dosing error"
+706,Error de administración,MEDICACIÓN,B,-,Notas enfermería,"medication error, admin error"
+707,Forma galénica o presentación errónea,MEDICACIÓN,B,-,Notas farmacia,"wrong formulation, wrong form"
+708,Hemorragia digestiva por medicación,MEDICACIÓN,A,B,ICD-10 K92 + drug,"GI bleed NSAID, drug-induced bleed"
+709,Hemorragia/hematoma por antiagregación,MEDICACIÓN,A,B,ICD-10 D68 + antiplatelet,"antiplatelet bleeding, aspirin bleed"
+7010,Hemorragia/hematoma por anticoagulación,MEDICACIÓN,A,B,ICD-10 D68.32,"anticoagulant bleed, warfarin bleed"
+7011,Información/instrucciones de dispensación erróneas,MEDICACIÓN,B,-,Notas farmacia,"wrong instructions, incorrect dispensing"
+7012,Interacción de fármacos,MEDICACIÓN,A,B,ICD-10 T88.7 + drug list,"drug interaction, drug-drug interaction"
+7013,Medicamento caducado,MEDICACIÓN,E,-,Proceso de farmacia,N/A
+7014,Medicamento erróneo,MEDICACIÓN,B,-,Notas error,"wrong medication, wrong drug"
+7015,Medicamentos de alto riesgo y/o LASA mal etiquetado,MEDICACIÓN,E,-,Etiquetado farmacia,N/A
+7016,Omisión de medicamento o de dosis,MEDICACIÓN,B,C,NLP + prescriptions gap,"missed dose, dose omitted"
+7017,Paciente erróneo (medicación),MEDICACIÓN,B,-,Notas error,wrong patient medication
+7018,Preparación/dispensación errónea,MEDICACIÓN,B,-,Notas farmacia,"preparation error, dispensing error"
+7019,Prescripción errónea,MEDICACIÓN,B,-,Notas error,"prescription error, wrong prescription"
+7020,Presentación/envasado,MEDICACIÓN,E,-,Empaque farmacia,N/A
+7021,Reacción adversa al medicamento,MEDICACIÓN,A,B,"ICD-10 T88.7, Y40-Y59","adverse drug reaction, ADR"
+7022,Suministro/pedido inadecuado,MEDICACIÓN,E,-,Logística,N/A
+7023,Necrosis por vasoconstrictor,MEDICACIÓN,A,B,"ICD-10 T80, I74 + vasopressor","vasopressor necrosis, extravasation necrosis"
+7024,Vía errónea,MEDICACIÓN,B,-,Notas error,"wrong route, IV instead of PO"
+7025,Coche de paro no cuenta con cintillo de seguridad,MEDICACIÓN,E,-,Proceso administrativo,N/A
+7026,Falta de prescripción,MEDICACIÓN,D,-,Auditoría prescriptions vacía,"no prescription, missing order"
+7027,Coche de paro sin medicamentos,MEDICACIÓN,E,-,Proceso administrativo,N/A
+7028,Error en proceso de devolución de medicamentos,MEDICACIÓN,E,-,Proceso farmacia,N/A
+7029,Demora en el recojo de recetas,MEDICACIÓN,E,-,Proceso ambulatorio,N/A
+7030,Demora en la dispensación,MEDICACIÓN,C,-,Tiempo prescripción-administración,dispensing delay
+7031,Diarrea asociada a antimicrobianos,MEDICACIÓN,A,B,ICD-10 A04.7 C diff,"C difficile, antibiotic diarrhea"
+7032,Medicamentos sin rótulos,MEDICACIÓN,E,-,Proceso farmacia,N/A
+7033,Falta de disponibilidad (medicación),MEDICACIÓN,E,-,Logística,N/A
+801,Adherencias y alteraciones funcionales post-Qx,PROCEDIMIENTO,A,B,"ICD-10 K66, N99","adhesions, postsurgical"
+802,Cuerpo extraño tras cirugía,PROCEDIMIENTO,A,B,ICD-10 T81.5,"retained foreign body, gossypiboma"
+803,Dehiscencia de sitio quirúrgico,PROCEDIMIENTO,A,B,ICD-10 T81.3,wound dehiscence
+804,Desplazamiento de dispositivo intracardiaco,PROCEDIMIENTO,A,B,ICD-10 T82.5,"device migration, lead displacement"
+805,Equimosis,PROCEDIMIENTO,B,-,Notas enfermería,"ecchymosis, bruising"
+806,Extubación fallida,PROCEDIMIENTO,B,C,NLP + reintubation procedure,"failed extubation, reintubated"
+807,Falla del procedimiento,PROCEDIMIENTO,B,-,Notas operatorias,"procedure failure, unsuccessful"
+808,Hematoma por punción,PROCEDIMIENTO,A,B,ICD-10 T81.0,puncture hematoma
+809,Hematoma post cateterismo cardiaco,PROCEDIMIENTO,A,B,ICD-10 I97 + cath,"cath site hematoma, groin hematoma"
+8010,Hematoma relacionado con intervención quirúrgica,PROCEDIMIENTO,A,B,ICD-10 T81.0,postoperative hematoma
+8011,Hematoma relacionado con procedimiento,PROCEDIMIENTO,A,B,ICD-10 T81.0,procedural hematoma
+8012,Hematuria post sondaje vesical,PROCEDIMIENTO,A,B,ICD-10 N02 + Foley,"hematuria foley, catheter hematuria"
+8013,Intervención quirúrgica ineficaz o incompleta,PROCEDIMIENTO,B,C,NLP + reoperation flag,"incomplete surgery, residual"
+8014,Lesión de órgano durante procedimiento,PROCEDIMIENTO,A,B,ICD-10 S/T accidental puncture,"accidental laceration, iatrogenic injury"
+8015,Lesiones secundarias a procedimientos,PROCEDIMIENTO,A,B,ICD-10 T81,procedure-related injury
+8016,Neumotórax,PROCEDIMIENTO,A,B,"ICD-10 J93, J95.811","pneumothorax, iatrogenic pneumothorax"
+8017,Reintervención quirúrgica,PROCEDIMIENTO,C,B,procedures_icd múltiples,"reoperation, return to OR"
+8018,Sangrado,PROCEDIMIENTO,A,B,ICD-10 R58,"bleeding, hemorrhage"
+8019,Seroma,PROCEDIMIENTO,A,B,ICD-10 T81.8,seroma
+8020,Tratamiento médico ineficiente o ineficaz,PROCEDIMIENTO,B,-,NLP en notas,"treatment failure, ineffective therapy"
+8021,Trombosis arterial relacionada a procedimiento,PROCEDIMIENTO,A,B,ICD-10 I74 + procedure,arterial thrombosis post procedure
+8022,Taponamiento cardiaco,PROCEDIMIENTO,A,B,ICD-10 I31.4,cardiac tamponade
+8023,Hemotórax,PROCEDIMIENTO,A,B,ICD-10 J94.2,hemothorax
+8024,Guía retenida en vaso,PROCEDIMIENTO,A,B,ICD-10 T81.5,retained guidewire
+8025,Hemoglobinuria,PROCEDIMIENTO,A,B,ICD-10 R82.3,hemoglobinuria
+8026,Pseudoaneurisma,PROCEDIMIENTO,A,B,ICD-10 I72,pseudoaneurysm
+8027,Fístula arteriovenosa,PROCEDIMIENTO,A,B,ICD-10 I77.0,"AV fistula, arteriovenous fistula"
+8028,Derrame pericárdico,PROCEDIMIENTO,A,B,ICD-10 I31.3,pericardial effusion
+8029,Quilotórax,PROCEDIMIENTO,A,B,ICD-10 J94.0,chylothorax
+8030,Dispositivo en ubicación incorrecta,PROCEDIMIENTO,A,B,ICD-10 T82-T85,"malpositioned device, line malposition"
+8031,Lesión vascular,PROCEDIMIENTO,A,B,"ICD-10 S25, T81","vascular injury, vessel laceration"
+8032,Trombosis venosa,PROCEDIMIENTO,A,B,ICD-10 I82,"DVT, venous thrombosis"
+8033,Múltiples punciones,PROCEDIMIENTO,C,B,procedures_icd count,"multiple attempts, multiple sticks"
+8034,Prolongación de la Circulación Extracorpórea,PROCEDIMIENTO,C,B,chartevents CPB time,"prolonged bypass, CPB time"
+901,Administración (sangre),SANGRE/HEMODERIVADOS,B,C,NLP + transfusion records,"transfusion error, blood admin error"
+902,Cantidad errónea (sangre),SANGRE/HEMODERIVADOS,B,-,Notas transfusión,wrong blood volume
+903,Condiciones de conservación inadecuadas (sangre),SANGRE/HEMODERIVADOS,E,-,Banco de sangre,N/A
+904,Conservación (sangre),SANGRE/HEMODERIVADOS,E,-,Banco de sangre,N/A
+905,Contraindicación (sangre),SANGRE/HEMODERIVADOS,B,-,Notas,transfusion contraindication
+906,Distribución (sangre),SANGRE/HEMODERIVADOS,E,-,Logística,N/A
+907,Dosis o frecuencia errónea (sangre),SANGRE/HEMODERIVADOS,B,-,Notas transfusión,wrong transfusion dose
+908,Hemoderivado erróneo,SANGRE/HEMODERIVADOS,B,-,Notas,wrong blood product
+909,Incompatibilidad de grupo o factor,SANGRE/HEMODERIVADOS,A,B,ICD-10 T80.3,"ABO incompatibility, hemolytic reaction"
+9010,Información/instrucciones erróneas (sangre),SANGRE/HEMODERIVADOS,B,-,Notas,wrong transfusion instructions
+9012,Paciente erróneo (sangre),SANGRE/HEMODERIVADOS,B,-,Notas,wrong patient transfusion
+9013,Preparación/dispensación (sangre),SANGRE/HEMODERIVADOS,B,-,Notas banco,preparation error blood
+9014,Prescripción (sangre),SANGRE/HEMODERIVADOS,B,-,Notas,transfusion order error
+9015,Presentación/envasado (sangre),SANGRE/HEMODERIVADOS,E,-,Banco de sangre,N/A
+9016,Pruebas pretransfusionales,SANGRE/HEMODERIVADOS,D,-,Auditoría labs typing,"missing type and screen, crossmatch"
+9017,Reacción adversa (sangre),SANGRE/HEMODERIVADOS,A,B,ICD-10 T80,transfusion reaction
+9018,Sangre/producto sanguíneo caducado,SANGRE/HEMODERIVADOS,E,-,Banco de sangre,N/A
+9019,Suministro/pedido (sangre),SANGRE/HEMODERIVADOS,E,-,Logística,N/A
+9020,Supervisión (sangre),SANGRE/HEMODERIVADOS,E,-,Proceso administrativo,N/A
+1001,Adaptación de la gestión de la carga de trabajo,GESTIÓN ORGANIZACIÓN,E,-,Proceso administrativo,N/A
+1002,Disponibilidad/idoneidad de camas/servicios,GESTIÓN ORGANIZACIÓN,C,-,admissions transfer events,"bed unavailable, boarding"
+1003,Brecha de personal,GESTIÓN ORGANIZACIÓN,E,-,Proceso RRHH,N/A
+1004,Organización de equipos/Sistemas informáticos,GESTIÓN ORGANIZACIÓN,E,-,Proceso administrativo,N/A
+1005,Disponibilidad/idoneidad de protocolos,GESTIÓN ORGANIZACIÓN,E,-,Proceso administrativo,N/A
+1006,Camas desocupadas,GESTIÓN ORGANIZACIÓN,E,-,Indicador administrativo,N/A
+1007,Estancia prolongada,GESTIÓN ORGANIZACIÓN,C,-,admissions LOS vs DRG,"prolonged LOS, length of stay"
+1008,Falla en Planificación de la cirugía,GESTIÓN ORGANIZACIÓN,B,-,NLP,"surgery cancelled, replanned surgery"
+1009,Fallecimiento,GESTIÓN ORGANIZACIÓN,C,A,hospital_expire_flag=1,"death, expired, deceased"
+10010,Retraso o espera del paciente,GESTIÓN ORGANIZACIÓN,C,B,ED-bed time gap,"ED boarding, waiting"
+10011,Retraso en la atención de interconsulta,GESTIÓN ORGANIZACIÓN,C,B,consult request-response time,delayed consult
+10012,Acreditación incorrecta del paciente,GESTIÓN ORGANIZACIÓN,E,-,Proceso administrativo EsSalud,N/A
+10013,Suspensión de procedimiento con paciente invadido,GESTIÓN ORGANIZACIÓN,B,C,NLP + cancelled proc,"case cancelled, procedure aborted"
+10014,Robo de niños,GESTIÓN ORGANIZACIÓN,E,-,Evento de seguridad,N/A
+10015,Comunicación inefectiva,GESTIÓN ORGANIZACIÓN,B,-,NLP en notas,"communication failure, handoff error"
+10016,Error en procedimiento de toma de muestra,GESTIÓN ORGANIZACIÓN,B,D,NLP + labs hemolyzed flag,"hemolyzed sample, contaminated specimen"
+10017,Falla en Planificación del Cateterismo,GESTIÓN ORGANIZACIÓN,B,-,NLP,"cath cancelled, replanned cath"
+10018,Retraso en toma de exámenes auxiliares,GESTIÓN ORGANIZACIÓN,C,-,labs order-result time,"delayed labs, lab delay"
+10019,Ausentismo del Recurso Humano,GESTIÓN ORGANIZACIÓN,E,-,Proceso RRHH,N/A
+10020,Prolongación de la Cirugía,GESTIÓN ORGANIZACIÓN,C,B,procedure duration,"prolonged surgery, long OR time"
+10021,Falla en Planificación de actividades asistenciales,GESTIÓN ORGANIZACIÓN,E,-,Proceso administrativo,N/A
+1101,Cantidad errónea (nutrición),NUTRICIÓN,B,-,Notas dieta,wrong diet amount
+1102,Condiciones de conservación inadecuadas (nutrición),NUTRICIÓN,E,-,Proceso cocina,N/A
+1103,Consistencia errónea,NUTRICIÓN,B,C,Notas + diet orders,"wrong diet consistency, pureed"
+1104,Dieta errónea,NUTRICIÓN,B,C,Notas + diet orders,"wrong diet, NPO violation"
+1105,Frecuencia errónea (nutrición),NUTRICIÓN,B,-,Notas,wrong feeding frequency
+1106,Paciente erróneo (nutrición),NUTRICIÓN,B,-,Notas,wrong patient diet
+1201,Falta de disponibilidad (insumos),INSUMOS,E,-,Logística,N/A
+1202,Avería/mal funcionamiento (insumos),INSUMOS,E,-,Logística,N/A

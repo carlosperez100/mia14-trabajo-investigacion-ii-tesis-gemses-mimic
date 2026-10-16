@@ -40,6 +40,8 @@ def logger(etapa):
     log = logging.getLogger(etapa)
     log.setLevel(logging.INFO)
     log.handlers.clear()
+    if hasattr(sys.stdout, "reconfigure"):          # la consola de Windows no siempre es UTF-8
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     fmt = logging.Formatter("%(asctime)s | %(name)s | %(levelname)s | %(message)s",
                             "%Y-%m-%d %H:%M:%S")
     for h in (logging.StreamHandler(sys.stdout), logging.FileHandler(archivo, encoding="utf-8")):
