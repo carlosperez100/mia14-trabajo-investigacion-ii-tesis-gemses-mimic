@@ -437,8 +437,8 @@ def analizar_variables(df, R, log, FIG, pie):
         partes.append(f"{d['etiqueta'].split(' (')[0]}: sin dato en el {d['pct_faltantes']:.1f} % de las epicrisis "
                       f"({d['pct_faltantes_positivas']:.1f} % de las positivas y {d['pct_faltantes_negativas']:.1f} % de las negativas); "
                       f"según el tipo de ingreso, de {t[tmin]:.1f} % ({tmin}) a {t[tmax]:.1f} % ({tmax})")
-    pie(fig, "Cómo leer: cada barra es el porcentaje de epicrisis del corpus que no tiene el dato de esa variable; en rojo, las que "
-             "superan el 5 %. " + ". ".join(partes) + ". Lectura: el faltante depende del tipo de ingreso y no se reparte igual "
+    pie(fig, "Interpretación: cada barra es el porcentaje de epicrisis del corpus que no tiene el dato de esa variable; en rojo, las que "
+             "superan el 5 %. " + ". ".join(partes) + ". Análisis: el faltante depende del tipo de ingreso y no se reparte igual "
              "entre las clases, así que no es aleatorio; en las variables categóricas se conserva como categoría «Sin dato» en lugar "
              "de imputarse.", 150, 0.2)
     fig.savefig(FIG / "fig_eda_faltantes.png", dpi=130); plt.close(fig)
@@ -466,8 +466,8 @@ def analizar_variables(df, R, log, FIG, pie):
     a.axvline(0.5, ls="--", c="gray"); a.set_title("Separación de las clases\ncon cada variable sola", fontsize=10)
     a.set(xlabel="AUC (la línea punteada, 0.5, es no separar)", xlim=(0, 1)); a.tick_params(axis="y", labelsize=8)
     nd, es = V["numericas"]["n_diagnosticos"], V["numericas"]["estancia_dias"]
-    pie(fig, "Cómo leer: cada panel compara la distribución de una variable en las epicrisis sin evento (gris) y con evento (rojo); "
-             "el último ordena las variables por cuánto separan las clases solas (AUC). Lectura: las hospitalizaciones con evento "
+    pie(fig, "Interpretación: cada panel compara la distribución de una variable en las epicrisis sin evento (gris) y con evento (rojo); "
+             "el último ordena las variables por cuánto separan las clases solas (AUC). Análisis: las hospitalizaciones con evento "
              f"tienen más diagnósticos codificados (mediana de {nd['positiva']['mediana']:.0f} frente a {nd['negativa']['mediana']:.0f}) "
              f"y estancias más largas (mediana de {es['positiva']['mediana']:.1f} frente a {es['negativa']['mediana']:.1f} días). "
              "El número de diagnósticos y la severidad APR-DRG se calculan con los mismos códigos de los que sale la etiqueta, así que "
@@ -500,11 +500,11 @@ def analizar_variables(df, R, log, FIG, pie):
     sv = {k: v for k, v in V["categoricas"]["servicio"]["categorias"].items() if k not in ("Otros", "Sin dato")}
     smax, smin = max(sv, key=lambda k: sv[k]["pct_positivas"]), min(sv, key=lambda k: sv[k]["pct_positivas"])
     sx, ge = V["categoricas"]["sexo"]["categorias"], V["categoricas"]["grupo_edad"]["categorias"]
-    pie(fig, f"Cómo leer: cada barra es el porcentaje de epicrisis con evento dentro de esa categoría; la línea punteada es el promedio "
+    pie(fig, f"Interpretación: cada barra es el porcentaje de epicrisis con evento dentro de esa categoría; la línea punteada es el promedio "
              f"del corpus ({media:.1f} %) y entre paréntesis va el número de epicrisis. Los tipos de ingreso, los servicios y los destinos "
              "al alta llevan el código con que figuran en MIMIC-IV; la barra gris es la categoría «Sin dato». La V de Cramér resume la "
              "asociación con la etiqueta (0 = ninguna, 1 = total). "
-             f"Lectura: el evento varía poco por sexo ({sx['Mujer']['pct_positivas']:.1f} % en mujeres y "
+             f"Análisis: el evento varía poco por sexo ({sx['Mujer']['pct_positivas']:.1f} % en mujeres y "
              f"{sx['Hombre']['pct_positivas']:.1f} % en hombres), sube con la edad (de {ge['18 a 44']['pct_positivas']:.1f} % en 18 a 44 "
              f"años a {ge['80 o más']['pct_positivas']:.1f} % en 80 o más) y cambia mucho según el servicio (de "
              f"{sv[smin]['pct_positivas']:.1f} % en {smin} a {sv[smax]['pct_positivas']:.1f} % en {smax}): las epicrisis con y sin "
@@ -522,8 +522,8 @@ def analizar_variables(df, R, log, FIG, pie):
     ax.set_title("V de Cramér entre variables categóricas (variable objetivo en la última fila)", fontsize=11)
     fig.colorbar(im, ax=ax, shrink=0.8)
     v0, a0, b0 = pares[0]
-    pie(fig, "Cómo leer: cada celda es la V de Cramér entre dos variables categóricas, de 0 (ninguna asociación) a 1 (asociación "
-             "total); el dato faltante cuenta como una categoría. La última fila es la variable objetivo. Lectura: aparte de las "
+    pie(fig, "Interpretación: cada celda es la V de Cramér entre dos variables categóricas, de 0 (ninguna asociación) a 1 (asociación "
+             "total); el dato faltante cuenta como una categoría. La última fila es la variable objetivo. Análisis: aparte de las "
              "variables que se definen una a partir de otra (fallecimiento y destino al alta; época y periodo), las más asociadas "
              f"entre sí son {_min1(CORTA[a0])} y {_min1(CORTA[b0])} ({v0:.2f}); con la etiqueta, las más asociadas son "
              + ", ".join(f"{_min1(CORTA[k])} ({mat.loc['y', k]:.2f})" for k in mat.loc["y"].drop("y").sort_values(ascending=False).index[:3])
@@ -547,10 +547,10 @@ def analizar_variables(df, R, log, FIG, pie):
                 ax.text(i + dx_, v + 0.02, _f3(v), ha="center", fontsize=8)
         ax.set_xticks(xx, nombres_m, fontsize=8.5); ax.set(ylim=(0, 1.05), ylabel="valor en test")
         ax.set_title("¿Cuánto se acierta sin leer la nota?", fontsize=11); ax.legend(fontsize=8, loc="upper left")
-        pie(fig, "Cómo leer: cada par de barras es un modelo medido en el mismo conjunto de test. «Contexto al ingreso» es una regresión "
+        pie(fig, "Interpretación: cada par de barras es un modelo medido en el mismo conjunto de test. «Contexto al ingreso» es una regresión "
                  "logística con edad, sexo, raza, seguro, estado civil, tipo de ingreso y servicio; «contexto al alta» añade estancia, "
                  "largo de la nota y destino al alta; ninguno de los dos lee el texto. La última barra es el modelo de texto del "
-                 "baseline. La línea sobre una barra es su intervalo de confianza al 95 %. Lectura: solo con el contexto se llega a un "
+                 "baseline. La línea sobre una barra es su intervalo de confianza al 95 %. Análisis: solo con el contexto se llega a un "
                  f"ROC-AUC de {_f3(C['al_ingreso']['roc_auc'])} al ingreso y de {_f3(C['al_alta']['roc_auc'])} al alta, frente a "
                  f"{_f3(C['modelo_de_texto']['roc_auc'])} del modelo que lee la epicrisis. Las dos clases ya se distinguen en parte por "
                  "el tipo de paciente, así que el modelo de texto se evaluará también dentro de cada servicio y grupo de edad.", 135, 0.24)
@@ -645,11 +645,11 @@ def prevalencia_real(df, R, log, FIG, pie):
     ax[2].tick_params(axis="x", rotation=25)
     f = V["fechas"]["anio_de_ingreso_registrado"]
     e9, e10 = P["por_epoca"]["CIE-9"]["pct_positivas_con_epicrisis"], P["por_epoca"]["CIE-10"]["pct_positivas_con_epicrisis"]
-    pie(fig, f"Cómo leer: las fechas de MIMIC-IV están desplazadas (los ingresos del corpus figuran entre los años {f[0]} y {f[1]}), "
+    pie(fig, f"Interpretación: las fechas de MIMIC-IV están desplazadas (los ingresos del corpus figuran entre los años {f[0]} y {f[1]}), "
              "así que el año real de cada hospitalización se aproxima con el grupo de años que la base asigna al paciente, con una "
              "precisión de más o menos un año. A la izquierda, el porcentaje de hospitalizaciones con evento en cada periodo: en rojo, "
              "en todas las hospitalizaciones de MIMIC-IV que tienen epicrisis; en gris, en el corpus de modelado. Al centro, el "
-             "porcentaje del corpus codificado en CIE-10; a la derecha, la mediana del largo de la nota. Lectura: en el corpus el "
+             "porcentaje del corpus codificado en CIE-10; a la derecha, la mediana del largo de la nota. Análisis: en el corpus el "
              f"porcentaje con evento se mantiene entre {min(pp):.1f} % y {max(pp):.1f} % porque el muestreo toma una proporción fija "
              f"de negativas por cada positiva; en la base, la prevalencia baja de {pr[0]:.1f} % a {pr[-1]:.1f} %. La caída coincide con "
              f"el paso de CIE-9 a CIE-10 ({e9:.1f} % de las hospitalizaciones con epicrisis en CIE-9 y {e10:.1f} % en CIE-10), y la "
@@ -949,10 +949,10 @@ def analizar_eventos(df, R, log, FIG, pie):
     ax[1].set_yticks(yy, [n.capitalize() for n in nats], fontsize=8.5); ax[1].set_title("Por naturaleza del Anexo 02", fontsize=10)
     ax[1].set_xlabel("eventos"); ax[1].legend(fontsize=8, loc="lower right")
     niv, det, tp = M["con_codigo_por_nivel_de_deteccion"], M["filas_sin_enlace_detalle"], M["eventos_por_tipo_de_codigo"]
-    pie(fig, f"Cómo leer: a la izquierda, cuántos de los {len(cat)} eventos del Anexo 02 llegan a cada etapa: tienen un código CIE-10 en "
+    pie(fig, f"Interpretación: a la izquierda, cuántos de los {len(cat)} eventos del Anexo 02 llegan a cada etapa: tienen un código CIE-10 en "
              "las tablas del proyecto, aparecen en alguna hospitalización de MIMIC-IV codificada en CIE-10, aparecen con un código de causa "
              "explícita (el único que da la etiqueta positiva) y están entre las epicrisis positivas del corpus de modelado. A la derecha, "
-             f"cuatro de esos conteos por naturaleza. Lectura: {len(ids_cod)} eventos tienen código, {len(ids_obs)} se observan, "
+             f"cuatro de esos conteos por naturaleza. Análisis: {len(ids_cod)} eventos tienen código, {len(ids_obs)} se observan, "
              f"{len(ids_causal)} con código de causa explícita, y {len(ids_corpus)} están en el corpus. De los que tienen código, "
              f"{tp.get('código propio', 0)} tienen un código propio, {tp.get('código compartido con otro evento', 0)} solo códigos que "
              f"comparten con otro evento, {tp.get('código aproximado (proxy)', 0)} solo un código aproximado y "
@@ -983,11 +983,11 @@ def analizar_eventos(df, R, log, FIG, pie):
     ax[1].set_title("Epicrisis positivas del corpus\nsegún lo que se sabe del evento", fontsize=10); ax[1].set_ylabel("epicrisis")
     ax[1].set_ylim(0, max(vals) * 1.2); ax[1].tick_params(axis="x", labelsize=7.5)
     ec = C["eventos_del_catalogo"]
-    pie(fig, f"Cómo leer: a la izquierda, los 15 eventos con más hospitalizaciones entre las {_mil(O['hospitalizaciones_con_codigo_de_evento'])} "
+    pie(fig, f"Interpretación: a la izquierda, los 15 eventos con más hospitalizaciones entre las {_mil(O['hospitalizaciones_con_codigo_de_evento'])} "
              "que tienen algún código de evento en la época CIE-10, tengan o no epicrisis; en rojo, la parte con código de causa "
              "explícita, que es la única que se usa como etiqueta positiva; el cuadro ■ marca los eventos del catálogo del Anexo 02 y los "
              "demás son complicaciones de la CIE-10 sin enlace con el catálogo, con el nombre que tienen en la tabla. A la derecha, qué "
-             f"se sabe del evento en las {_mil(C['positivas'])} epicrisis positivas del corpus. Lectura: los eventos más frecuentes son "
+             f"se sabe del evento en las {_mil(C['positivas'])} epicrisis positivas del corpus. Análisis: los eventos más frecuentes son "
              "condiciones que no dan etiqueta. En el corpus, "
              f"{_mil(C['con_evento_del_catalogo'])} positivas ({C['pct_con_evento_del_catalogo']:.1f} %) tienen un evento del catálogo, "
              f"{_mil(C['solo_complicacion_sin_enlace'])} ({C['pct_solo_complicacion_sin_enlace']:.1f} %) una complicación sin enlace y "
@@ -1107,7 +1107,7 @@ def figura_flujo(R, ruta, fuentes_decision):
                 ha="left", va="top", fontsize=8.2, color="#111", linespacing=1.33)
     xc = cajas[12][0] + W / 2
     ax.add_patch(FancyArrowPatch((xc, cajas[12][1] - 0.4), (xc, 10.4), arrowstyle="-|>", mutation_scale=13, color=AZUL, lw=1.5))
-    ax.text(1.5, -1.3, "Cómo leer: cada caja es un paso del análisis; en cursiva, la pregunta que responde, y en negrita, el resultado de "
+    ax.text(1.5, -1.3, "Interpretación: cada caja es un paso del análisis; en cursiva, la pregunta que responde, y en negrita, el resultado de "
             "esta corrida. Las flechas marcan el orden, y cada decisión de abajo indica de qué paso sale.", ha="left", va="top",
             fontsize=9.5, color="#333")
     fig.savefig(ruta, dpi=150, bbox_inches="tight", facecolor="white")

@@ -1,6 +1,6 @@
 {
   "etapa": "eda",
-  "fecha": "2026-10-10T19:06:25",
+  "fecha": "2026-10-16T09:51:14",
   "semilla": 42,
   "entrada": {
     "dataset": "data/processed/dataset.parquet",
@@ -3084,5 +3084,5 @@
     "No enmascarar códigos CIE en el texto: los códigos de las familias de la etiqueta aparecen escritos en 44 notas; el patrón general usado antes contaba sobre todo temperaturas.",
     "Mantener la PR-AUC como métrica central, adoptada en la semana 3."
   ],
-  "duracion_s": 205.1
+  "duracion_s": 159.6
 }

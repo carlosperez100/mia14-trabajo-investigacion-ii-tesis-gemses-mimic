@@ -1,4 +1,4 @@
-# metrics_eda.txt · generado 2026-10-10 19:09:50 por src/eda.py (fuente: reportes/eda_resumen.json)
+# metrics_eda.txt · generado 2026-10-16 09:53:54 por src/eda.py (fuente: reportes/eda_resumen.json)
 entrada: 70,000 notas · 48,669 pacientes · 418 MB · semilla 42 · split por paciente (sha256 splits.csv a252913516c7fe62…)
 alcance: las cifras describen el corpus completo (train y test); el vocabulario y el modelo de contexto se ajustan solo con train
 
@@ -210,4 +210,4 @@ otras acciones registradas:
   - No enmascarar códigos CIE en el texto: los códigos de las familias de la etiqueta aparecen escritos en 44 notas; el patrón general usado antes contaba sobre todo temperaturas.
   - Mantener la PR-AUC como métrica central, adoptada en la semana 3.
 
-duración: 205.1 s
+duración: 159.6 s
