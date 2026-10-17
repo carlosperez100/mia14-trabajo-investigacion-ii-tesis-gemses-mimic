@@ -45,7 +45,7 @@ data/
  └── bitacora_datos.csv       # versionado de datos: fuente, fecha, SHA-256 y tamaño
 notebooks/
  ├── 01_EDA_sprint1.ipynb     # primera versión del EDA (semana 3)
- └── 02_EDA_semana4.ipynb     # EDA desplegada: tablas y figuras de la última corrida de src/eda.py
+ └── 02_EDA_semana4.ipynb     # EDA desplegada (src/eda.py) y, en la sección 7, el feature engineering (src/experimentos_fe.py)
 src/
  ├── run_pipeline.py          # orquestador: ingesta → preprocesado → eda → baseline → features
  ├── ingesta.py               # script de ingesta (idempotente, con hash)
@@ -157,7 +157,7 @@ Lee el corpus que deja el preprocesado (70 000 epicrisis de 48 669 pacientes, pa
 
 En cada corrida escribe un log con hora (`logs/eda_*.log`), el resumen [`logs/metrics_eda.txt`](logs/metrics_eda.txt), todas las cifras en [`reportes/eda_resumen.json`](reportes/eda_resumen.json), una fila por evento del catálogo en [`reportes/eda_eventos_231.csv`](reportes/eda_eventos_231.csv) y las figuras de esta sección. Solo produce agregados: ningún texto clínico sale del equipo. Las cifras son de la ejecución del 09/10/2026 y describen el corpus completo, train y test; lo que se ajusta con los datos (el vocabulario y el modelo de contexto) se ajusta solo con train.
 
-EDA desplegada: [`notebooks/02_EDA_semana4.ipynb`](notebooks/02_EDA_semana4.ipynb), con las tablas y las figuras de esta corrida. El cuaderno `01_EDA_sprint1.ipynb` conserva la primera versión, la de la semana 3.
+EDA desplegada: [`notebooks/02_EDA_semana4.ipynb`](notebooks/02_EDA_semana4.ipynb), con las tablas y las figuras de esta corrida y, en su sección 7, el feature engineering de la semana 5. El cuaderno `01_EDA_sprint1.ipynb` conserva la primera versión, la de la semana 3.
 
 ### Flujo del análisis
 ![Flujo del EDA y resultado de cada paso](reportes/figuras/fig_eda_flujo.png)
@@ -429,6 +429,8 @@ En `logs/metrics_eda.txt` quedan registradas las demás acciones que salen del a
 ---
 
 ## 🧪 Feature engineering (Semana 5 · rama `sprint2-feature-engineering`)
+
+Las tablas y la figura de esta sección también están en la sección 7 del cuaderno [`notebooks/02_EDA_semana4.ipynb`](notebooks/02_EDA_semana4.ipynb), debajo del EDA.
 
 Sigue la guía «Iteración guiada por EDA + Feature Engineering básico» de la semana 4. Hay un baseline y tres variantes; cada variante agrega **un solo bloque de atributos** respecto del baseline (diseño de ablación A, A+B, A+C, A+B+C). El modelo no cambia: es la misma regresión logística del baseline, sin ajuste de hiperparámetros.
 
