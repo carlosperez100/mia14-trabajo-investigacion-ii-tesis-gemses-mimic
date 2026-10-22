@@ -542,7 +542,9 @@ De las 6 300 positivas dudosas de train, 4 930 son caídas sin lugar hospitalari
 1 370 úlceras sin código de presión. Las marcas se calculan en [`src/variantes_datos.py`](src/variantes_datos.py).
 
 ### Cómo se comparó
-- **Mismo modelo y protocolo que la semana 5:** A+B+C, `StratifiedGroupKFold` de 5 folds por paciente, semilla 42, todo dentro del `pipeline`.
+- **Mismo modelo y protocolo que la semana 5:** A+B+C, `StratifiedGroupKFold` de 5 folds por paciente (un fold es cada una de las 5 partes
+  en que se divide el train: el modelo se entrena con 4 y se evalúa con la que queda, cinco veces, y un paciente nunca está en dos partes),
+  semilla 42, todo dentro del `pipeline`.
 - **Las variantes solo cambian las filas con que se entrena.** Si cada variante se evaluara con sus propias filas, compararía casos distintos.
   Por eso las tres se evalúan sobre **las mismas filas**: las de validación (y de test) que ninguna variante quita, con la etiqueta original.
   En train son 48 998 filas y en test 12 321.

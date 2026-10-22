@@ -60,23 +60,25 @@ def dibujar(R, folds_df):
     F = folds_df.pivot(index="fold", columns="variante", values="pr_auc_comun")[list(vd.VARIANTES)]
     D = F[["D1", "D2"]].sub(F["D0"], axis=0)
     m, arriba = F.mean(), int((D[el] > 0).sum())
-    izq = (f"Gráfico izquierdo. Eje x: fold de la validación cruzada (1 a {len(F)}). Eje y: PR-AUC de cada variante, medida sobre las "
+    izq = (f"Gráfico izquierdo. Eje x: fold (cada una de las 5 partes en que se divide el train; el modelo se entrena con 4 y se evalúa con la que queda), del 1 al {len(F)}. Eje y: PR-AUC de cada variante, medida sobre las "
            f"mismas filas de validación. {el} queda por encima de D0 {veces(arriba, len(F))} (media {m[el]:.4f} frente a {m['D0']:.4f}); "
-           f"D1 casi coincide con D0 (media {m['D1']:.4f}).")
-    der = (f"Gráfico derecho. Eje x: fold. Eje y: PR-AUC de la variante menos la de D0 en el mismo fold; sobre cero, la variante "
+           f"D1 casi coincide con D0 (media {m['D1']:.4f}). Esto implica que la ventaja de {el} no depende de cómo se partieron los datos: "
+           f"se repite en cada partición.")
+    der = (f"Gráfico derecho. Eje x: fold, del 1 al {len(F)}. Eje y: PR-AUC de la variante menos la de D0 en el mismo fold; sobre cero, la variante "
            f"mejora. Las barras de D2 van de {D['D2'].min():+.4f} a {D['D2'].max():+.4f} y las de D1 de {D['D1'].min():+.4f} a "
-           f"{D['D1'].max():+.4f}: quitar solo las negativas dudosas casi no cambia el resultado; quitar además las positivas dudosas, sí.")
+           f"{D['D1'].max():+.4f}: quitar solo las negativas dudosas casi no cambia el resultado; quitar además las positivas dudosas, sí. "
+           f"Esto implica que la limpieza que importa es la de las positivas dudosas.")
     fig, ax, pie, fr = con_pie(12.5, 4.4, [izq, der], 175, 2)
     for v in F:
         ax[0].plot(F.index, F[v], "o-", color=COLOR[v], label=f"{v}: {vd.VARIANTES[v]}")
-    ax[0].set(xlabel="fold", ylabel="PR-AUC (mismas filas de validación)", xticks=list(F.index))
+    ax[0].set(xlabel="fold (parte de la validación cruzada)", ylabel="PR-AUC (mismas filas de validación)", xticks=list(F.index))
     lo, hi = F.min().min(), F.max().max()
     ax[0].set_ylim(lo - 0.1 * (hi - lo), hi + 0.45 * (hi - lo))
     ax[0].set_title("PR-AUC de cada fold por variante de datos", fontsize=10); ax[0].legend(fontsize=8, loc="upper center")
     xx = np.arange(len(D))
     ax[1].bar(xx - 0.2, D["D1"], 0.4, color=COLOR["D1"], label="D1 − D0"); ax[1].bar(xx + 0.2, D["D2"], 0.4, color=COLOR["D2"], label="D2 − D0")
     ax[1].axhline(0, c="gray", lw=0.8); ax[1].set_xticks(xx, D.index)
-    ax[1].set(xlabel="fold", ylabel="diferencia de PR-AUC con D0"); ax[1].set_title("Diferencia con los datos actuales en el mismo fold", fontsize=10)
+    ax[1].set(xlabel="fold (parte de la validación cruzada)", ylabel="diferencia de PR-AUC con D0"); ax[1].set_title("Diferencia con los datos actuales en el mismo fold", fontsize=10)
     ax[1].legend(fontsize=8)
     cerrar(fig, pie, fr, "fig_datos_folds.png")
 
@@ -88,8 +90,10 @@ def dibujar(R, folds_df):
            f"a {c.pr_auc_train.iloc[-1]:.4f} y la de validación sube de {c.pr_auc_validacion.iloc[0]:.4f} a {c.pr_auc_validacion.iloc[-1]:.4f}: "
            f"el modelo se pega menos a los casos de entrenamiento y generaliza mejor. Al final quedan {brecha:.3f} entre las dos curvas "
            f"({'una brecha grande, señal de varianza' if brecha > 0.08 else 'una brecha moderada'}) y la validación "
-           + (f"todavía sube (+{sube:.4f} en el último tramo), así que más datos aún ayudarían." if sube > 0.002
-              else f"ya casi no sube (+{sube:.4f} en el último tramo), así que más filas del mismo tipo ayudarían poco."))
+           + (f"todavía sube (+{sube:.4f} en el último tramo). Esto implica que el modelo aún no llega a su techo: conviene ajustar C y, "
+                 "si se puede, entrenar con más datos." if sube > 0.002
+              else f"ya casi no sube (+{sube:.4f} en el último tramo). Esto implica que el margen de mejora está en los atributos y "
+                   "en la etiqueta, no en más filas del mismo tipo."))
     cal = R["calibracion"]
     dist = {v: np.abs(np.array(k["frecuencia_real"]) - np.array(k["prob_media"])) for v, k in cal.items()}
     vmax = max(dist, key=lambda v: dist[v].max())
@@ -98,7 +102,8 @@ def dibujar(R, folds_df):
            f"notas que de verdad tenían evento. Los puntos de {' y '.join(cal)} quedan sobre la diagonal (la mayor distancia es "
            f"{dist[vmax].max():.3f}, en {vmax}): por ejemplo, donde {el} da en promedio {cal[el]['prob_media'][i]:.2f}, tuvo evento el "
            f"{cal[el]['frecuencia_real'][i] * 100:.0f} % de las notas. Brier: " + ", ".join(f"{k['brier']:.4f} con {v}" for v, k in cal.items())
-           + " (más bajo es mejor). Esto vale para la proporción de eventos del corpus de estudio; para la prevalencia real hay que recalibrar.")
+           + " (más bajo es mejor). Esto implica que la probabilidad sirve como riesgo dentro del corpus de estudio, pero para usarla con la "
+           f"prevalencia real ({100 * R['prevalencia_real_con_epicrisis']:.1f} %) hay que recalibrarla.")
     fig, ax, pie, fr = con_pie(12.5, 4.4, [izq, der], 175, 2)
     ax[0].plot(c.filas, c.pr_auc_train, "o-", color="#1F4E79", label="train")
     ax[0].plot(c.filas, c.pr_auc_validacion, "s-", color="#9B2226", label="validación")
@@ -124,7 +129,8 @@ def dibujar(R, folds_df):
            + " y ".join(f"{NOMBRE.get(k, k).replace(' (días)', ' en días')} ({imp[k]['media']:.4f})" for k in hosp)
            + ". Al lado de cada barra, en cuántos de los 5 folds el grupo quedó entre los cinco primeros: "
            + ("los cinco primeros, en todos" if fijos == 5 else f"los {fijos} primeros, en todos; {NOMBRE.get(orden[4], orden[4])}, en {est.get(orden[4], 0)}")
-           + ", así que el orden es estable entre folds.")
+           + ", así que el orden es estable entre folds. Esto implica que el modelo detecta sobre todo por lo que dice la epicrisis; el peso "
+           "de la estancia y del servicio obliga a evaluarlo por subgrupo para descartar que reconozca el tipo de paciente y no el evento.")
     fig, ax, pie, fr = con_pie(9.5, 5.0, [txt], 125)
     ax.barh([NOMBRE.get(k, k) for k in I.index], I.media, xerr=I["std"], color="#1F4E79", capsize=3)
     for j, k in enumerate(I.index):
