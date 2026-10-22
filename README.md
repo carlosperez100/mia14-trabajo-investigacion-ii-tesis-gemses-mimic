@@ -487,11 +487,11 @@ Sigue la guía «Iteración guiada por EDA + Feature Engineering básico» de la
 
 ![Curva precisión-sensibilidad y PR-AUC por fold](reportes/figuras/fig_fe_pr.png)
 
-**Interpretación.** A la izquierda, la curva precisión-sensibilidad de cada configuración, calculada con las predicciones de validación cruzada: cada nota se predice con el modelo del fold en el que no participó. Más arriba es mejor; la línea punteada es la proporción de positivas de train (0.539). A la derecha, la PR-AUC de cada fold (puntos), con su media y su desviación estándar.
+En el gráfico de la izquierda, el eje x es la sensibilidad y el eje y la precisión de cada configuración, calculadas con las predicciones de validación cruzada: cada nota se predice con el modelo del fold en el que no participó. Más arriba es mejor, y la línea punteada es la proporción de positivas de train (0.539). En el de la derecha, el eje x son las cuatro configuraciones y el eje y la PR-AUC de cada fold (puntos), con su media y su desviación estándar.
 
-**Análisis.** Las cuatro curvas casi se superponen: la diferencia entre configuraciones es pequeña frente a la distancia que las separa del piso de 0.539. El orden, en cambio, es consistente. Las tres variantes superan al baseline en **los 5 folds**, y A+B+C es la mejor de las cuatro en los 5 folds. La mejora de A+B+C (+0.0065) es casi cuatro veces su propia variabilidad entre folds (± 0.0017). En test se mantiene el mismo orden (0.8787 → 0.8830), pero los intervalos de las cuatro configuraciones se solapan.
+Las cuatro curvas casi se superponen: la diferencia entre configuraciones es pequeña frente a la distancia que las separa del piso de 0.539. El orden, en cambio, es consistente: las tres variantes superan al baseline en los 5 folds, y A+B+C es la mejor de las cuatro en los 5 folds. Su mejora (+0.0065) es casi cuatro veces su propia variabilidad entre folds (± 0.0017). En test se mantiene el mismo orden (0.8787 → 0.8830), aunque los intervalos de las cuatro configuraciones se solapan.
 
-**Conclusión.** El feature engineering mejora al baseline de forma pequeña pero sistemática. El bloque de dominio aporta más que los bigramas (+0.0047 frente a +0.0021), y los dos suman. Las tres variantes valen la pena, aunque ninguna cambia el orden de magnitud del resultado.
+El feature engineering mejora al baseline de forma pequeña pero sistemática. El bloque de dominio aporta más que los bigramas (+0.0047 frente a +0.0021), y juntos aportan casi lo mismo que la suma de los dos por separado (+0.0065 frente a +0.0068). Ninguna variante cambia el orden de magnitud del resultado.
 
 ### ¿Qué feature aportó más?
 Se entrenaron modelos **sin texto**, sumando un grupo de variables de dominio a la vez (validación cruzada, PR-AUC):
@@ -504,15 +504,9 @@ Se entrenaron modelos **sin texto**, sumando un grupo de variables de dominio a 
 | + Atención | 0.7767 ± 0.0037 | +0.0083 |
 | + Nota (largo) | 0.7771 ± 0.0040 | +0.0004 |
 
-**Interpretación.** La tabla muestra cuánto se puede detectar el evento sin leer la nota y cuánto agrega cada grupo, en el orden en que se suman.
+La tabla muestra cuánto se puede detectar el evento sin leer la nota y cuánto agrega cada grupo, en el orden en que se suman. El servicio y el paso por el hospital aportan casi todo (+0.058 y +0.056). El largo de la nota ya no agrega nada (+0.0004) una vez que se conocen la estancia y los traslados, que es lo que anticipaba el EDA: el largo se mueve con la estancia (Spearman 0.468). Aun así, el dominio solo llega a 0.777, frente a 0.867 del texto solo, así que la mayor parte de la señal está en la nota. En el modelo A+C, los coeficientes de mayor peso son categorías de servicio: obstetricia (OBS) baja la probabilidad de evento y cirugía plástica (PSURG) la sube. Como los coeficientes de un one-hot se leen frente a las demás categorías, los tomo solo como orientación (`logs/metrics_fe.txt`).
 
-**Análisis.**
-- **Servicio y hospitalización aportan casi todo:** +0.058 y +0.056.
-- **El largo de la nota ya no agrega nada** (+0.0004) una vez que se conocen la estancia y los traslados. Es lo que anticipaba el EDA: el largo se mueve con la estancia (Spearman 0.468).
-- **El dominio solo llega a 0.777, frente a 0.867 del texto solo.** La mayor parte de la señal está en la nota.
-- **Coeficientes del modelo A+C:** los de mayor peso son categorías de servicio. El servicio de obstetricia (OBS) baja la probabilidad de evento y la cirugía plástica (PSURG) la sube. Los coeficientes de un one-hot se leen frente a las demás categorías, así que se toman solo como orientación (`logs/metrics_fe.txt`).
-
-**Conclusión.** El dominio aporta información que el texto no tiene completa: qué servicio atendió al paciente y cómo fue su paso por el hospital. Es la misma «mezcla de casos» que advirtió el EDA de la semana 4. Parte de la mejora puede venir de reconocer el *tipo de paciente* y no el evento, y eso hay que verificarlo antes de adoptar el bloque de forma definitiva.
+El dominio aporta información que el texto no tiene completa: qué servicio atendió al paciente y cómo fue su paso por el hospital. Es la misma «mezcla de casos» que advirtió el EDA de la semana 4, así que parte de la mejora puede venir de reconocer el *tipo de paciente* y no el evento; eso hay que verificarlo antes de adoptar el bloque de forma definitiva.
 
 ### Decisión y siguiente sprint
 - **Se adopta A+B+C** como nueva referencia del Sprint 2. Es la regla fijada antes de correr: la mayor PR-AUC media en validación cruzada. Mejora en los 5 folds, aunque cuesta 1.7 veces más tiempo de entrenamiento que el baseline. Si el costo importa, A+C conserva el 72 % de la mejora (0.0047 de 0.0065) con el menor tiempo.
