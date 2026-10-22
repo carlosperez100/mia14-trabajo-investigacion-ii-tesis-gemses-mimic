@@ -605,6 +605,23 @@ pérdida de capacidad sino un cambio en lo que el modelo considera evento, y por
 - **Colinealidad y coherencia:** VIF máximo 3.05 (n unidades), sin colinealidad preocupante. Los tipos y rangos son los
   esperados; solo la categoría DENT del servicio al alta aparece en test sin estar en train, y el modelo la trata como infrecuente.
 
+### Qué significan esos decimales en eventos adversos
+Para traducir la PR-AUC a eventos, apliqué la sensibilidad y la especificidad medidas en test (umbral 0.5) a 10 000 hospitalizaciones con
+epicrisis con la prevalencia real de 27.6 %: 2 759 con evento según los códigos y 7 241 sin evento.
+
+| Modelo | PR-AUC en test | Sensibilidad | Especificidad | Eventos detectados | Eventos que se escapan | Falsas alarmas | De cada 100 alertas, con evento |
+|---|---|---|---|---|---|---|---|
+| A, baseline de la semana 3 | 0.8787 | 77.1 % | 79.3 % | 2 128 | 631 | 1 495 | 59 |
+| A+B+C, semana 5 | 0.8830 | 77.5 % | 79.2 % | 2 139 | 620 | 1 503 | 59 |
+| D0, mismas epicrisis | 0.8562 | 74.7 % | 80.1 % | 2 061 | 698 | 1 438 | 59 |
+| D2, mismas epicrisis | 0.8671 | 76.9 % | 80.4 % | 2 121 | 638 | 1 421 | 60 |
+
+El feature engineering (+0.0043 de PR-AUC) suma 11 eventos
+detectados por cada 10 000 hospitalizaciones, con 8 falsas alarmas más: casi nada. La limpieza de los datos
+(+0.0109) suma 60 eventos detectados y quita
+17 falsas alarmas. Los «eventos» son los que marcan los códigos CIE, y las filas de D0 y D2 son las epicrisis
+que ninguna variante quita, así que las dos comparaciones no se suman.
+
 ### Decisión y siguiente sprint
 - **Se adopta D2 con A+B+C** como referencia al cierre del Sprint 2.
 - **Sprint 3, primer experimento:** evaluar el modelo por servicio, grupo de edad y decil de largo, frente al modelo de contexto sin texto.
