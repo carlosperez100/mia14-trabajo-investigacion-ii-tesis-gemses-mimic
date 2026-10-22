@@ -524,6 +524,96 @@ Las cifras de esta sección salen de [`logs/metrics_fe.txt`](logs/metrics_fe.txt
 
 ---
 
+## 🧹 Variantes de los datos y diagnósticos (Semana 6 · cierre del Sprint 2)
+
+Con la configuración A+B+C de la semana 5 fija, esta semana el cambio está en **los datos**, no en el modelo. El EDA de la semana 4 dejó dos
+dudas sobre la etiqueta débil: negativas que tienen códigos de causa explícita que no están en la tabla de la etiqueta, y positivas que lo son
+solo por una caída o una úlcera cuyo código no asegura que haya ocurrido en la hospitalización. Probé si limpiar esas filas del
+entrenamiento mejora la detección.
+
+### Las tres versiones de los datos
+| Variante | Qué filas se quitan del entrenamiento | Train | Test |
+|---|---|---|---|
+| D0 · datos actuales | ninguna (baseline de esta semana: A+B+C de la semana 5) | 0 | 0 |
+| D1 · sin negativas dudosas | negativas con un código de las familias de causa explícita (T80–T88, Y63, Y65, Y83, Y84, W00–W19, L89) o de efecto adverso de medicamento (T36–T50 con 5 en el sexto carácter) que no está en la tabla de la etiqueta; en CIE-9, con un código de las cinco familias | 617 | 188 |
+| D2 · sin negativas ni positivas dudosas | lo de D1 y además las positivas cuya única evidencia es una caída sin el hospital como lugar de ocurrencia (en CIE-10, sin Y92.23; en CIE-9 no hay código de lugar para el hospital) o una úlcera CIE-9 (707.x) sin código de úlcera por presión (707.0x) | 6 917 | 1 764 |
+
+De las 6 300 positivas dudosas de train, 4 930 son caídas sin lugar hospitalario y
+1 370 úlceras sin código de presión. Las marcas se calculan en [`src/variantes_datos.py`](src/variantes_datos.py).
+
+### Cómo se comparó
+- **Mismo modelo y protocolo que la semana 5:** A+B+C, `StratifiedGroupKFold` de 5 folds por paciente, semilla 42, todo dentro del `pipeline`.
+- **Las variantes solo cambian las filas con que se entrena.** Si cada variante se evaluara con sus propias filas, compararía casos distintos.
+  Por eso las tres se evalúan sobre **las mismas filas**: las de validación (y de test) que ninguna variante quita, con la etiqueta original.
+  En train son 48 998 filas y en test 12 321.
+- **Criterio de adopción** (guía de la semana 6): mejora consistente de la métrica central. Lo apliqué como la mayor PR-AUC media en validación
+  cruzada, revisando además en cuántos folds la variante supera a D0.
+- El test se usó una sola vez, al final.
+
+### Resultados
+**Validación cruzada** (media ± desviación estándar de 5 folds, sobre las mismas filas). La última columna es la PR-AUC con todas las filas y la etiqueta original.
+
+| Variante | Filas de entrenamiento por fold | **PR-AUC** | Diferencia con D0 (folds mejores) | ROC-AUC | F1 (+) | Brier | PR-AUC con todas las filas |
+|---|---|---|---|---|---|---|---|
+| D0 · datos actuales | 44 732 | 0.8431 ± 0.0028 | — | 0.8480 | 0.7544 | 0.1588 | 0.8732 |
+| D1 · sin negativas dudosas | 44 238 | 0.8440 ± 0.0029 | +0.0009 ± 0.0004 (5/5) | 0.8486 | 0.7563 | 0.1586 | 0.8731 |
+| **D2 · sin negativas ni positivas dudosas** | 39 198 | **0.8534 ± 0.0041** | +0.0103 ± 0.0023 (5/5) | 0.8582 | 0.7677 | 0.1533 | 0.8477 |
+
+**Test** (una sola medición; IC 95 % remuestreando pacientes; VPP con la prevalencia real de 27.6 %).
+
+| Variante | **PR-AUC** | IC 95 % | F1 (+) | VPP real | PR-AUC con todas las filas |
+|---|---|---|---|---|---|
+| D0 · datos actuales | 0.8562 | 0.8475–0.8651 | 0.7631 | 0.5890 | 0.8830 |
+| D1 · sin negativas dudosas | 0.8575 | 0.8487–0.8662 | 0.7656 | 0.5901 | 0.8828 |
+| **D2 · sin negativas ni positivas dudosas** | **0.8671** | 0.8589–0.8749 | 0.7779 | 0.5989 | 0.8580 |
+
+![PR-AUC por fold y diferencia con D0](reportes/figuras/fig_datos_folds.png)
+
+La mejora de D2 aparece en los 5 folds, entre +0.0079 y +0.0136, y la más chica es casi el triple de lo que varía D0 de un fold a
+otro. Casi toda viene de quitar las positivas dudosas: D1, que solo quita las negativas, sube apenas +0.0009. Mi lectura es que el
+ruido de la etiqueta está sobre todo en las positivas, y que con ellas el modelo aprendía a llamar evento a caídas y úlceras que no se puede
+asegurar que hayan ocurrido en la hospitalización. En test D2 también queda arriba (0.8671 frente a
+0.8562), pero los intervalos se solapan, así que la decisión se apoya en la comparación por fold.
+
+Con todas las filas y la etiqueta original, D2 baja (0.8732 → 0.8477).
+Es lo esperable: deja de marcar como evento justo las caídas y úlceras que la etiqueta original cuenta como positivas. A mi juicio no es una
+pérdida de capacidad sino un cambio en lo que el modelo considera evento, y por eso la comparación justa es la de las mismas filas.
+
+### Diagnósticos del modelo (D2)
+| Grupo de atributos | Caída de la PR-AUC al barajarlo | En el top 5 |
+|---|---|---|
+| palabras del texto | 0.1259 | 5/5 |
+| bigramas del texto | 0.0333 | 5/5 |
+| estancia (días) | 0.0136 | 5/5 |
+| servicio al ingreso | 0.0061 | 5/5 |
+| largo de la nota | 0.0053 | 4/5 |
+
+![Curva de aprendizaje y calibración](reportes/figuras/fig_datos_diagnosticos.png)
+
+![Importancia por permutación](reportes/figuras/fig_datos_importancia.png)
+
+- **Importancia por permutación:** el texto es lo que más pesa, y el orden de los primeros grupos se repite en los 5 folds. Entre las variables
+  de la hospitalización pesan la estancia y el servicio, lo que deja la duda de si el modelo reconoce en parte el *tipo de paciente*; se
+  revisará con la evaluación por subgrupo.
+- **Curva de aprendizaje (fold 1):** train 0.9351 y validación 0.8567 con todas las filas,
+  una brecha de 0.078; la validación todavía sube en el último tramo (+0.0039), así que más datos ayudarían y conviene ajustar `C`.
+- **Calibración:** las probabilidades siguen la diagonal en el corpus del estudio (Brier 0.1588 con D0 y 0.1533
+  con D2). Con la prevalencia real, de cada 10 alertas de D2 unas 6 serían eventos
+  (VPP 0.58); para usar la probabilidad como riesgo hay que recalibrar.
+- **Colinealidad y coherencia:** VIF máximo 3.05 (n unidades), sin colinealidad preocupante. Los tipos y rangos son los
+  esperados; solo la categoría DENT del servicio al alta aparece en test sin estar en train, y el modelo la trata como infrecuente.
+
+### Decisión y siguiente sprint
+- **Se adopta D2 con A+B+C** como referencia al cierre del Sprint 2.
+- **Sprint 3, primer experimento:** evaluar el modelo por servicio, grupo de edad y decil de largo, frente al modelo de contexto sin texto.
+- **Ajuste ligero:** el parámetro `C` con pocos valores y la recalibración de las probabilidades a la prevalencia real.
+
+Para reproducir: `python src/experimentos_datos.py` (las figuras se pueden redibujar sin entrenar con `python src/figuras_datos.py`). Las cifras
+salen de [`logs/metrics_datos.txt`](logs/metrics_datos.txt), [`reportes/datos_resultados.json`](reportes/datos_resultados.json) y
+[`reportes/datos_folds.csv`](reportes/datos_folds.csv).
+
+---
+
 ## 📌 Roadmap
 Las tareas, con responsable y plazo, están en los [issues](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/issues) y [milestones](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/milestones).
 - [x] Semana 1 → Diagnóstico, estructura del repositorio y plan del Sprint 1.
@@ -531,7 +621,8 @@ Las tareas, con responsable y plazo, están en los [issues](https://github.com/c
 - [x] Semana 3 → EDA + baseline + demo interna (entregable del repositorio: 20/20).
 - [x] Semana 4 → EDA reproducible con log automático (`src/eda.py`) en la rama `sprint1-eda`: variables de la hospitalización, texto y eventos del Anexo 02.
 - [x] Semana 5 → Feature engineering en la rama `sprint2-feature-engineering`: ablación A, A+B, A+C y A+B+C con validación cruzada por paciente; se adopta A+B+C (PR-AUC 0.8732 en validación cruzada y 0.8830 en test).
-- [ ] Semanas 4–6 (Sprint 2) → Regenerar las etiquetas dentro del pipeline con las tres decisiones del EDA (negativas sin códigos de causa explícita, caídas solo con el hospital como lugar de ocurrencia y evaluación por estrato frente al modelo de contexto), GroupKFold por paciente, valor predictivo positivo con la prevalencia de 27.6 % y explicación de logística frente a LinearSVC.
+- [x] Semana 6 → Cierre del Sprint 2: variantes de los datos (D0, D1, D2) y diagnósticos; se adopta D2 con A+B+C (PR-AUC 0.8534 frente a 0.8431 de D0 en validación cruzada, sobre las mismas filas).
+- [ ] Sprint 3 → Evaluación por servicio, grupo de edad y decil de largo frente al modelo de contexto, ajuste de `C`, recalibración a la prevalencia de 27.6 % y explicación de logística frente a LinearSVC.
 
 ---
 

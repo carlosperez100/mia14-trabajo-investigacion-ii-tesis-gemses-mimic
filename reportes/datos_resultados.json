@@ -1,0 +1,859 @@
+{
+  "etapa": "experimentos_datos",
+  "generado": "2026-10-22T17:32:15",
+  "semilla": 42,
+  "modelo": "A+B+C",
+  "parametros": {
+    "n_folds": 5,
+    "n_bootstrap": 200,
+    "logistica": {
+      "C": 1.0
+    },
+    "A": {
+      "max_features": 20000,
+      "min_df": 3
+    },
+    "B": {
+      "max_features": 20000,
+      "min_df": 3
+    },
+    "C": {
+      "winsor": [
+        1,
+        99
+      ],
+      "min_frecuencia": 50,
+      "grupos": [
+        "nota",
+        "paciente",
+        "servicio",
+        "hospital",
+        "atencion"
+      ],
+      "grupos_escalera": [
+        "paciente",
+        "servicio",
+        "hospital",
+        "atencion",
+        "nota"
+      ]
+    }
+  },
+  "prevalencia_real_con_epicrisis": 0.27588,
+  "protocolo": "StratifiedGroupKFold(5, shuffle=True, random_state=42) por subject_id en train; las variantes cambian solo las filas de entrenamiento; evaluación común = filas que ninguna variante quita",
+  "variantes": {
+    "D0": "datos actuales",
+    "D1": "sin negativas dudosas",
+    "D2": "sin negativas ni positivas dudosas"
+  },
+  "marcas": {
+    "train": {
+      "negativas_dudosas": 617,
+      "positivas_dudosas": 6300,
+      "por_motivo": {
+        "caída sin lugar hospital": 4930,
+        "úlcera sin 707.0x": 1370,
+        "negativa con código causal": 617
+      },
+      "filas": 55915,
+      "filas_de_evaluacion_comun": 48998,
+      "pct_positivas_evaluacion_comun": 48.6448
+    },
+    "test": {
+      "negativas_dudosas": 188,
+      "positivas_dudosas": 1576,
+      "por_motivo": {
+        "caída sin lugar hospital": 1207,
+        "úlcera sin 707.0x": 369,
+        "negativa con código causal": 188
+      },
+      "filas": 14085,
+      "filas_de_evaluacion_comun": 12321,
+      "pct_positivas_evaluacion_comun": 48.5431
+    }
+  },
+  "filas_de_entrenamiento_train_completo": {
+    "D0": 55915,
+    "D1": 55298,
+    "D2": 48998
+  },
+  "cv": {
+    "D0": {
+      "comun": {
+        "pr_auc": {
+          "media": 0.8431,
+          "std": 0.0028
+        },
+        "roc_auc": {
+          "media": 0.848,
+          "std": 0.0016
+        },
+        "f1": {
+          "media": 0.7544,
+          "std": 0.0044
+        },
+        "recall": {
+          "media": 0.7398,
+          "std": 0.0075
+        },
+        "especificidad": {
+          "media": 0.79,
+          "std": 0.0067
+        },
+        "brier": {
+          "media": 0.1588,
+          "std": 0.0009
+        }
+      },
+      "completa": {
+        "pr_auc": {
+          "media": 0.8732,
+          "std": 0.0025
+        },
+        "roc_auc": {
+          "media": 0.8562,
+          "std": 0.0021
+        },
+        "f1": {
+          "media": 0.7844,
+          "std": 0.0058
+        },
+        "recall": {
+          "media": 0.7651,
+          "std": 0.0092
+        },
+        "especificidad": {
+          "media": 0.7829,
+          "std": 0.0066
+        }
+      },
+      "dif_pr_auc_comun_vs_D0": {
+        "media": 0.0,
+        "std": 0.0,
+        "folds_mejor_que_D0": 0
+      },
+      "dif_pr_auc_completa_vs_D0": {
+        "media": 0.0,
+        "std": 0.0,
+        "folds_mejor_que_D0": 0
+      },
+      "filas_entrenamiento_media": 44732,
+      "seg_entrenamiento": {
+        "media": 1109.14,
+        "std": 1901.5239
+      }
+    },
+    "D1": {
+      "comun": {
+        "pr_auc": {
+          "media": 0.844,
+          "std": 0.0029
+        },
+        "roc_auc": {
+          "media": 0.8486,
+          "std": 0.0014
+        },
+        "f1": {
+          "media": 0.7563,
+          "std": 0.0041
+        },
+        "recall": {
+          "media": 0.7441,
+          "std": 0.0065
+        },
+        "especificidad": {
+          "media": 0.7881,
+          "std": 0.0043
+        },
+        "brier": {
+          "media": 0.1586,
+          "std": 0.0008
+        }
+      },
+      "completa": {
+        "pr_auc": {
+          "media": 0.8731,
+          "std": 0.0026
+        },
+        "roc_auc": {
+          "media": 0.8563,
+          "std": 0.0022
+        },
+        "f1": {
+          "media": 0.7862,
+          "std": 0.0055
+        },
+        "recall": {
+          "media": 0.7697,
+          "std": 0.0084
+        },
+        "especificidad": {
+          "media": 0.7799,
+          "std": 0.0039
+        }
+      },
+      "dif_pr_auc_comun_vs_D0": {
+        "media": 0.0009,
+        "std": 0.0004,
+        "folds_mejor_que_D0": 5
+      },
+      "dif_pr_auc_completa_vs_D0": {
+        "media": -0.0,
+        "std": 0.0004,
+        "folds_mejor_que_D0": 3
+      },
+      "filas_entrenamiento_media": 44238,
+      "seg_entrenamiento": {
+        "media": 281.14,
+        "std": 34.6998
+      }
+    },
+    "D2": {
+      "comun": {
+        "pr_auc": {
+          "media": 0.8534,
+          "std": 0.0041
+        },
+        "roc_auc": {
+          "media": 0.8582,
+          "std": 0.0026
+        },
+        "f1": {
+          "media": 0.7677,
+          "std": 0.0044
+        },
+        "recall": {
+          "media": 0.7592,
+          "std": 0.0068
+        },
+        "especificidad": {
+          "media": 0.793,
+          "std": 0.0038
+        },
+        "brier": {
+          "media": 0.1533,
+          "std": 0.0015
+        }
+      },
+      "completa": {
+        "pr_auc": {
+          "media": 0.8477,
+          "std": 0.0043
+        },
+        "roc_auc": {
+          "media": 0.8271,
+          "std": 0.0037
+        },
+        "f1": {
+          "media": 0.7497,
+          "std": 0.005
+        },
+        "recall": {
+          "media": 0.7095,
+          "std": 0.0069
+        },
+        "especificidad": {
+          "media": 0.7858,
+          "std": 0.0035
+        }
+      },
+      "dif_pr_auc_comun_vs_D0": {
+        "media": 0.0103,
+        "std": 0.0023,
+        "folds_mejor_que_D0": 5
+      },
+      "dif_pr_auc_completa_vs_D0": {
+        "media": -0.0255,
+        "std": 0.002,
+        "folds_mejor_que_D0": 0
+      },
+      "filas_entrenamiento_media": 39198,
+      "seg_entrenamiento": {
+        "media": 222.92,
+        "std": 24.383
+      }
+    }
+  },
+  "elegida_por_cv": "D2",
+  "test": {
+    "D0": {
+      "comun": {
+        "pr_auc": 0.8562,
+        "f1": 0.7631,
+        "recall": 0.7469,
+        "especificidad": 0.8014,
+        "roc_auc": 0.8603,
+        "vpp_prevalencia_real": 0.589,
+        "pr_auc_ic95_pacientes": [
+          0.8475,
+          0.8651
+        ],
+        "brier": 0.1522
+      },
+      "completa": {
+        "pr_auc": 0.883,
+        "f1": 0.7934,
+        "recall": 0.7754,
+        "especificidad": 0.7924,
+        "roc_auc": 0.8681,
+        "vpp_prevalencia_real": 0.5873,
+        "pr_auc_ic95_pacientes": [
+          0.8754,
+          0.8905
+        ]
+      }
+    },
+    "D1": {
+      "comun": {
+        "pr_auc": 0.8575,
+        "f1": 0.7656,
+        "recall": 0.7509,
+        "especificidad": 0.8013,
+        "roc_auc": 0.861,
+        "vpp_prevalencia_real": 0.5901,
+        "pr_auc_ic95_pacientes": [
+          0.8487,
+          0.8662
+        ],
+        "brier": 0.1517
+      },
+      "completa": {
+        "pr_auc": 0.8828,
+        "f1": 0.7959,
+        "recall": 0.7803,
+        "especificidad": 0.7911,
+        "roc_auc": 0.868,
+        "vpp_prevalencia_real": 0.5873,
+        "pr_auc_ic95_pacientes": [
+          0.8751,
+          0.8902
+        ]
+      }
+    },
+    "D2": {
+      "comun": {
+        "pr_auc": 0.8671,
+        "f1": 0.7779,
+        "recall": 0.7689,
+        "especificidad": 0.8038,
+        "roc_auc": 0.8706,
+        "vpp_prevalencia_real": 0.5989,
+        "pr_auc_ic95_pacientes": [
+          0.8589,
+          0.8749
+        ],
+        "brier": 0.1462
+      },
+      "completa": {
+        "pr_auc": 0.858,
+        "f1": 0.7584,
+        "recall": 0.7189,
+        "especificidad": 0.795,
+        "roc_auc": 0.8398,
+        "vpp_prevalencia_real": 0.572,
+        "pr_auc_ic95_pacientes": [
+          0.8493,
+          0.8664
+        ]
+      }
+    }
+  },
+  "importancia": {
+    "D0": {
+      "texto: palabras": {
+        "media": 0.1344,
+        "std": 0.0072
+      },
+      "texto: bigramas": {
+        "media": 0.0332,
+        "std": 0.0008
+      },
+      "largo de la nota": {
+        "media": 0.0051,
+        "std": 0.0005
+      },
+      "horas_emergencia": {
+        "media": 0.0002,
+        "std": 0.0003
+      },
+      "n_servicios": {
+        "media": -0.0,
+        "std": 0.0
+      },
+      "estancia_dias": {
+        "media": 0.0136,
+        "std": 0.0011
+      },
+      "n_traslados": {
+        "media": -0.0,
+        "std": 0.0
+      },
+      "n_unidades": {
+        "media": -0.0,
+        "std": 0.0002
+      },
+      "dias_uci": {
+        "media": -0.0,
+        "std": 0.0
+      },
+      "n_medicamentos": {
+        "media": 0.0029,
+        "std": 0.0007
+      },
+      "n_cultivos": {
+        "media": 0.0056,
+        "std": 0.0013
+      },
+      "edad": {
+        "media": 0.0002,
+        "std": 0.0003
+      },
+      "sexo": {
+        "media": 0.0,
+        "std": 0.0
+      },
+      "tipo_ingreso": {
+        "media": 0.0002,
+        "std": 0.0002
+      },
+      "procedencia": {
+        "media": 0.0015,
+        "std": 0.0003
+      },
+      "seguro": {
+        "media": 0.0001,
+        "std": 0.0001
+      },
+      "servicio": {
+        "media": 0.0054,
+        "std": 0.001
+      },
+      "servicio_alta": {
+        "media": 0.0039,
+        "std": 0.0011
+      },
+      "destino_alta": {
+        "media": 0.0036,
+        "std": 0.0015
+      },
+      "servicio_quirurgico": {
+        "media": 0.0005,
+        "std": 0.0005
+      },
+      "uci": {
+        "media": 0.0001,
+        "std": 0.0001
+      }
+    },
+    "D1": {
+      "texto: palabras": {
+        "media": 0.1313,
+        "std": 0.0047
+      },
+      "texto: bigramas": {
+        "media": 0.0324,
+        "std": 0.0016
+      },
+      "largo de la nota": {
+        "media": 0.006,
+        "std": 0.0006
+      },
+      "horas_emergencia": {
+        "media": 0.0002,
+        "std": 0.0002
+      },
+      "n_servicios": {
+        "media": 0.0,
+        "std": 0.0
+      },
+      "estancia_dias": {
+        "media": 0.0137,
+        "std": 0.0009
+      },
+      "n_traslados": {
+        "media": -0.0,
+        "std": 0.0
+      },
+      "n_unidades": {
+        "media": -0.0001,
+        "std": 0.0002
+      },
+      "dias_uci": {
+        "media": -0.0001,
+        "std": 0.0001
+      },
+      "n_medicamentos": {
+        "media": 0.0032,
+        "std": 0.001
+      },
+      "n_cultivos": {
+        "media": 0.0053,
+        "std": 0.001
+      },
+      "edad": {
+        "media": 0.0001,
+        "std": 0.0003
+      },
+      "sexo": {
+        "media": 0.0,
+        "std": 0.0
+      },
+      "tipo_ingreso": {
+        "media": 0.0003,
+        "std": 0.0005
+      },
+      "procedencia": {
+        "media": 0.0013,
+        "std": 0.0002
+      },
+      "seguro": {
+        "media": 0.0001,
+        "std": 0.0001
+      },
+      "servicio": {
+        "media": 0.0051,
+        "std": 0.0012
+      },
+      "servicio_alta": {
+        "media": 0.0038,
+        "std": 0.0007
+      },
+      "destino_alta": {
+        "media": 0.0033,
+        "std": 0.001
+      },
+      "servicio_quirurgico": {
+        "media": 0.0006,
+        "std": 0.0005
+      },
+      "uci": {
+        "media": 0.0003,
+        "std": 0.0001
+      }
+    },
+    "D2": {
+      "texto: palabras": {
+        "media": 0.1259,
+        "std": 0.0028
+      },
+      "texto: bigramas": {
+        "media": 0.0333,
+        "std": 0.0014
+      },
+      "largo de la nota": {
+        "media": 0.0053,
+        "std": 0.0007
+      },
+      "horas_emergencia": {
+        "media": 0.0003,
+        "std": 0.0002
+      },
+      "n_servicios": {
+        "media": 0.0,
+        "std": 0.0001
+      },
+      "estancia_dias": {
+        "media": 0.0136,
+        "std": 0.0019
+      },
+      "n_traslados": {
+        "media": 0.0,
+        "std": 0.0
+      },
+      "n_unidades": {
+        "media": 0.0002,
+        "std": 0.0002
+      },
+      "dias_uci": {
+        "media": 0.0001,
+        "std": 0.0001
+      },
+      "n_medicamentos": {
+        "media": 0.0012,
+        "std": 0.0006
+      },
+      "n_cultivos": {
+        "media": 0.0037,
+        "std": 0.0003
+      },
+      "edad": {
+        "media": 0.0001,
+        "std": 0.0001
+      },
+      "sexo": {
+        "media": -0.0,
+        "std": 0.0001
+      },
+      "tipo_ingreso": {
+        "media": 0.0008,
+        "std": 0.0004
+      },
+      "procedencia": {
+        "media": 0.0007,
+        "std": 0.0003
+      },
+      "seguro": {
+        "media": 0.0,
+        "std": 0.0001
+      },
+      "servicio": {
+        "media": 0.0061,
+        "std": 0.0009
+      },
+      "servicio_alta": {
+        "media": 0.0044,
+        "std": 0.0007
+      },
+      "destino_alta": {
+        "media": 0.0038,
+        "std": 0.001
+      },
+      "servicio_quirurgico": {
+        "media": 0.0001,
+        "std": 0.0003
+      },
+      "uci": {
+        "media": 0.0,
+        "std": 0.0002
+      }
+    }
+  },
+  "importancia_top5_por_fold": [
+    [
+      "texto: palabras",
+      "texto: bigramas",
+      "estancia_dias",
+      "servicio",
+      "largo de la nota"
+    ],
+    [
+      "texto: palabras",
+      "texto: bigramas",
+      "estancia_dias",
+      "servicio",
+      "largo de la nota"
+    ],
+    [
+      "texto: palabras",
+      "texto: bigramas",
+      "estancia_dias",
+      "largo de la nota",
+      "servicio"
+    ],
+    [
+      "texto: palabras",
+      "texto: bigramas",
+      "estancia_dias",
+      "servicio",
+      "largo de la nota"
+    ],
+    [
+      "texto: palabras",
+      "texto: bigramas",
+      "estancia_dias",
+      "servicio",
+      "destino_alta"
+    ]
+  ],
+  "importancia_veces_en_top5": {
+    "texto: palabras": 5,
+    "texto: bigramas": 5,
+    "estancia_dias": 5,
+    "servicio": 5,
+    "largo de la nota": 4,
+    "destino_alta": 1
+  },
+  "curva_de_aprendizaje": {
+    "variante": "D2",
+    "fold": 1,
+    "puntos": [
+      {
+        "fraccion": 0.1,
+        "filas": 3888,
+        "pr_auc_train": 0.9569,
+        "pr_auc_validacion": 0.8028
+      },
+      {
+        "fraccion": 0.25,
+        "filas": 9722,
+        "pr_auc_train": 0.9509,
+        "pr_auc_validacion": 0.8294
+      },
+      {
+        "fraccion": 0.5,
+        "filas": 19444,
+        "pr_auc_train": 0.9427,
+        "pr_auc_validacion": 0.8426
+      },
+      {
+        "fraccion": 0.75,
+        "filas": 29166,
+        "pr_auc_train": 0.9354,
+        "pr_auc_validacion": 0.8528
+      },
+      {
+        "fraccion": 1.0,
+        "filas": 38888,
+        "pr_auc_train": 0.9351,
+        "pr_auc_validacion": 0.8567
+      }
+    ]
+  },
+  "calibracion": {
+    "D0": {
+      "brier": 0.1588,
+      "prob_media": [
+        0.0613,
+        0.149,
+        0.2487,
+        0.3494,
+        0.4483,
+        0.5493,
+        0.6502,
+        0.7502,
+        0.8514,
+        0.9503
+      ],
+      "frecuencia_real": [
+        0.0496,
+        0.1433,
+        0.2453,
+        0.358,
+        0.4624,
+        0.5623,
+        0.6432,
+        0.7561,
+        0.8436,
+        0.9488
+      ]
+    },
+    "D2": {
+      "brier": 0.1533,
+      "prob_media": [
+        0.0597,
+        0.1491,
+        0.2481,
+        0.3488,
+        0.4492,
+        0.5501,
+        0.65,
+        0.7511,
+        0.8514,
+        0.951
+      ],
+      "frecuencia_real": [
+        0.0444,
+        0.1313,
+        0.2363,
+        0.3388,
+        0.4446,
+        0.5509,
+        0.6541,
+        0.7544,
+        0.847,
+        0.9518
+      ]
+    }
+  },
+  "vif": {
+    "horas_emergencia": 1.05,
+    "n_servicios": 1.15,
+    "estancia_dias": 2.2,
+    "n_traslados": 2.89,
+    "n_unidades": 3.05,
+    "dias_uci": 1.83,
+    "n_medicamentos": 2.26,
+    "n_cultivos": 1.81,
+    "edad": 1.1
+  },
+  "coherencia": {
+    "tipos": {
+      "numericas": [
+        "edad",
+        "horas_emergencia",
+        "n_servicios",
+        "estancia_dias",
+        "n_traslados",
+        "n_unidades",
+        "dias_uci",
+        "n_medicamentos",
+        "n_cultivos",
+        "servicio_quirurgico",
+        "uci"
+      ],
+      "categoricas": [
+        "sexo",
+        "tipo_ingreso",
+        "procedencia",
+        "seguro",
+        "servicio",
+        "servicio_alta",
+        "destino_alta"
+      ]
+    },
+    "rangos_train": {
+      "edad": [
+        18.0,
+        103.0
+      ],
+      "horas_emergencia": [
+        0.0,
+        115.817
+      ],
+      "n_servicios": [
+        1.0,
+        5.0
+      ],
+      "estancia_dias": [
+        0.028,
+        230.689
+      ],
+      "n_traslados": [
+        0.0,
+        19.0
+      ],
+      "n_unidades": [
+        0.0,
+        9.0
+      ],
+      "dias_uci": [
+        0.0,
+        106.372
+      ],
+      "n_medicamentos": [
+        0.0,
+        193.0
+      ],
+      "n_cultivos": [
+        0.0,
+        162.0
+      ],
+      "servicio_quirurgico": [
+        0.0,
+        1.0
+      ],
+      "uci": [
+        0.0,
+        1.0
+      ]
+    },
+    "valores_negativos_train": {},
+    "categorias_solo_en_test": {
+      "sexo": [],
+      "tipo_ingreso": [],
+      "procedencia": [],
+      "seguro": [],
+      "servicio": [],
+      "servicio_alta": [
+        "DENT"
+      ],
+      "destino_alta": []
+    },
+    "pct_nulos_train": {
+      "horas_emergencia": 33.26,
+      "estancia_dias": 0.02,
+      "seguro": 1.07,
+      "destino_alta": 12.37
+    }
+  }
+}

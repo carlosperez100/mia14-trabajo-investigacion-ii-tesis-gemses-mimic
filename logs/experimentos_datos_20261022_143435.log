@@ -1,0 +1,33 @@
+2026-10-22 14:34:35 | experimentos_datos | INFO | log -> logs\experimentos_datos_20261022_143435.log
+2026-10-22 14:34:38 | experimentos_datos | INFO | variables de dominio: se reutiliza dominio_hadm.parquet
+2026-10-22 14:34:38 | experimentos_datos | INFO | variantes de datos: se reutiliza variantes_datos.parquet
+2026-10-22 14:34:38 | experimentos_datos | INFO | marcas: {'train': {'negativas_dudosas': 617, 'positivas_dudosas': 6300, 'por_motivo': {'caída sin lugar hospital': 4930, 'úlcera sin 707.0x': 1370, 'negativa con código causal': 617}, 'filas': 55915, 'filas_de_evaluacion_comun': 48998, 'pct_positivas_evaluacion_comun': 48.6448}, 'test': {'negativas_dudosas': 188, 'positivas_dudosas': 1576, 'por_motivo': {'caída sin lugar hospital': 1207, 'úlcera sin 707.0x': 369, 'negativa con código causal': 188}, 'filas': 14085, 'filas_de_evaluacion_comun': 12321, 'pct_positivas_evaluacion_comun': 48.5431}} · filas de entrenamiento por variante (train completo): {'D0': 55915, 'D1': 55298, 'D2': 48998}
+2026-10-22 14:40:08 | experimentos_datos | INFO | D0 fold 1: entrena con 44,343 · PR-AUC común 0.8459 · completa 0.8764 · ROC-AUC común 0.8489 · 280 s
+2026-10-22 14:41:08 | experimentos_datos | INFO | VIF de las numéricas del dominio: {'horas_emergencia': 1.05, 'n_servicios': 1.15, 'estancia_dias': 2.2, 'n_traslados': 2.89, 'n_unidades': 3.05, 'dias_uci': 1.83, 'n_medicamentos': 2.26, 'n_cultivos': 1.81, 'edad': 1.1}
+2026-10-22 14:45:53 | experimentos_datos | INFO | D0 fold 2: entrena con 44,701 · PR-AUC común 0.8448 · completa 0.8731 · ROC-AUC común 0.8469 · 247 s
+2026-10-22 14:50:54 | experimentos_datos | INFO | D0 fold 3: entrena con 44,897 · PR-AUC común 0.8385 · completa 0.8696 · ROC-AUC común 0.8469 · 262 s
+2026-10-22 14:55:36 | experimentos_datos | INFO | D0 fold 4: entrena con 44,870 · PR-AUC común 0.8432 · completa 0.8723 · ROC-AUC común 0.8505 · 246 s
+2026-10-22 16:11:22 | experimentos_datos | INFO | D0 fold 5: entrena con 44,849 · PR-AUC común 0.8431 · completa 0.8744 · ROC-AUC común 0.8471 · 4511 s
+2026-10-22 16:15:56 | experimentos_datos | INFO | D1 fold 1: entrena con 43,852 · PR-AUC común 0.8474 · completa 0.8767 · ROC-AUC común 0.8498 · 241 s
+2026-10-22 16:20:54 | experimentos_datos | INFO | D1 fold 2: entrena con 44,206 · PR-AUC común 0.8455 · completa 0.8724 · ROC-AUC común 0.8474 · 259 s
+2026-10-22 16:26:51 | experimentos_datos | INFO | D1 fold 3: entrena con 44,391 · PR-AUC común 0.8396 · completa 0.8698 · ROC-AUC común 0.8475 · 304 s
+2026-10-22 16:32:12 | experimentos_datos | INFO | D1 fold 4: entrena con 44,379 · PR-AUC común 0.8436 · completa 0.8721 · ROC-AUC común 0.8504 · 275 s
+2026-10-22 16:38:17 | experimentos_datos | INFO | D1 fold 5: entrena con 44,364 · PR-AUC común 0.8439 · completa 0.8746 · ROC-AUC común 0.8477 · 327 s
+2026-10-22 16:42:23 | experimentos_datos | INFO | D2 fold 1: entrena con 38,888 · PR-AUC común 0.8567 · completa 0.8521 · ROC-AUC común 0.8602 · 209 s
+2026-10-22 16:46:44 | experimentos_datos | INFO | D2 fold 2: entrena con 39,203 · PR-AUC común 0.8527 · completa 0.8465 · ROC-AUC común 0.8556 · 225 s
+2026-10-22 16:51:49 | experimentos_datos | INFO | D2 fold 3: entrena con 39,314 · PR-AUC común 0.8467 · completa 0.8413 · ROC-AUC común 0.8551 · 264 s
+2026-10-22 16:55:56 | experimentos_datos | INFO | D2 fold 4: entrena con 39,267 · PR-AUC común 0.8542 · completa 0.8477 · ROC-AUC común 0.8605 · 214 s
+2026-10-22 16:59:54 | experimentos_datos | INFO | D2 fold 5: entrena con 39,320 · PR-AUC común 0.8566 · completa 0.8509 · ROC-AUC común 0.8596 · 203 s
+2026-10-22 16:59:54 | experimentos_datos | INFO | CV (evaluación común): D0 0.8431 ± 0.0028 · D1 0.8440 ± 0.0029 · D2 0.8534 ± 0.0041 · elegida: D2
+2026-10-22 16:59:54 | experimentos_datos | INFO | importancia (D2): top 5 por fold [['texto: palabras', 'texto: bigramas', 'estancia_dias', 'servicio', 'largo de la nota'], ['texto: palabras', 'texto: bigramas', 'estancia_dias', 'servicio', 'largo de la nota'], ['texto: palabras', 'texto: bigramas', 'estancia_dias', 'largo de la nota', 'servicio'], ['texto: palabras', 'texto: bigramas', 'estancia_dias', 'servicio', 'largo de la nota'], ['texto: palabras', 'texto: bigramas', 'estancia_dias', 'servicio', 'destino_alta']] · veces en el top 5: {'texto: palabras': 5, 'texto: bigramas': 5, 'estancia_dias': 5, 'servicio': 5, 'largo de la nota': 4, 'destino_alta': 1}
+2026-10-22 16:59:54 | experimentos_datos | INFO | calibración: {v: brier} = {'D0': 0.1588, 'D2': 0.1533}
+2026-10-22 17:00:46 | experimentos_datos | INFO | curva de aprendizaje: 3,888 filas · PR-AUC train 0.9569 · validación 0.8028
+2026-10-22 17:02:26 | experimentos_datos | INFO | curva de aprendizaje: 9,722 filas · PR-AUC train 0.9509 · validación 0.8294
+2026-10-22 17:04:36 | experimentos_datos | INFO | curva de aprendizaje: 19,444 filas · PR-AUC train 0.9427 · validación 0.8426
+2026-10-22 17:08:02 | experimentos_datos | INFO | curva de aprendizaje: 29,166 filas · PR-AUC train 0.9354 · validación 0.8528
+2026-10-22 17:12:42 | experimentos_datos | INFO | curva de aprendizaje: 38,888 filas · PR-AUC train 0.9351 · validación 0.8567
+2026-10-22 17:19:17 | experimentos_datos | INFO | test D0: PR-AUC común 0.8562 [0.8475, 0.8651] · completa 0.8830
+2026-10-22 17:26:31 | experimentos_datos | INFO | test D1: PR-AUC común 0.8575 [0.8487, 0.8662] · completa 0.8828
+2026-10-22 17:32:15 | experimentos_datos | INFO | test D2: PR-AUC común 0.8671 [0.8589, 0.8749] · completa 0.8580
+2026-10-22 17:32:15 | experimentos_datos | INFO | coherencia: {'tipos': {'numericas': ['edad', 'horas_emergencia', 'n_servicios', 'estancia_dias', 'n_traslados', 'n_unidades', 'dias_uci', 'n_medicamentos', 'n_cultivos', 'servicio_quirurgico', 'uci'], 'categoricas': ['sexo', 'tipo_ingreso', 'procedencia', 'seguro', 'servicio', 'servicio_alta', 'destino_alta']}, 'rangos_train': {'edad': [18.0, 103.0], 'horas_emergencia': [0.0, 115.817], 'n_servicios': [1.0, 5.0], 'estancia_dias': [0.028, 230.689], 'n_traslados': [0.0, 19.0], 'n_unidades': [0.0, 9.0], 'dias_uci': [0.0, 106.372], 'n_medicamentos': [0.0, 193.0], 'n_cultivos': [0.0, 162.0], 'servicio_quirurgico': [0.0, 1.0], 'uci': [0.0, 1.0]}, 'valores_negativos_train': {}, 'categorias_solo_en_test': {'sexo': [], 'tipo_ingreso': [], 'procedencia': [], 'seguro': [], 'servicio': [], 'servicio_alta': ['DENT'], 'destino_alta': []}, 'pct_nulos_train': {'horas_emergencia': 33.26, 'estancia_dias': 0.02, 'seguro': 1.07, 'destino_alta': 12.37}}
+2026-10-22 17:32:16 | experimentos_datos | INFO | Salidas: logs/metrics_datos.txt · reportes/datos_resultados.json · reportes/datos_folds.csv · reportes/figuras/fig_datos_*.png

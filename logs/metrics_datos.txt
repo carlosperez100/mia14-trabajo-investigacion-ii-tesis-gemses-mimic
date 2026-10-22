@@ -1,0 +1,45 @@
+# metrics_datos.txt · 2026-10-22T17:32:15 · modelo A+B+C · semilla 42
+protocolo: StratifiedGroupKFold(5, shuffle=True, random_state=42) por subject_id en train; las variantes cambian solo las filas de entrenamiento; evaluación común = filas que ninguna variante quita
+marcas: {'train': {'negativas_dudosas': 617, 'positivas_dudosas': 6300, 'por_motivo': {'caída sin lugar hospital': 4930, 'úlcera sin 707.0x': 1370, 'negativa con código causal': 617}, 'filas': 55915, 'filas_de_evaluacion_comun': 48998, 'pct_positivas_evaluacion_comun': 48.6448}, 'test': {'negativas_dudosas': 188, 'positivas_dudosas': 1576, 'por_motivo': {'caída sin lugar hospital': 1207, 'úlcera sin 707.0x': 369, 'negativa con código causal': 188}, 'filas': 14085, 'filas_de_evaluacion_comun': 12321, 'pct_positivas_evaluacion_comun': 48.5431}}
+filas de entrenamiento (train completo): {'D0': 55915, 'D1': 55298, 'D2': 48998}
+
+validación cruzada (media ± desv. de 5 folds) · evaluación común | completa:
+  D0 (datos actuales): PR-AUC 0.8431 ± 0.0028 | 0.8732 ± 0.0025 · ROC-AUC común 0.8480 · F1 común 0.7544 · Brier común 0.1588 · dif. con D0 (común) +0.0000 ± 0.0000 (0/5 folds mejores)
+  D1 (sin negativas dudosas): PR-AUC 0.8440 ± 0.0029 | 0.8731 ± 0.0026 · ROC-AUC común 0.8486 · F1 común 0.7563 · Brier común 0.1586 · dif. con D0 (común) +0.0009 ± 0.0004 (5/5 folds mejores)
+  D2 (sin negativas ni positivas dudosas): PR-AUC 0.8534 ± 0.0041 | 0.8477 ± 0.0043 · ROC-AUC común 0.8582 · F1 común 0.7677 · Brier común 0.1533 · dif. con D0 (común) +0.0103 ± 0.0023 (5/5 folds mejores)
+elegida por validación cruzada: D2
+
+test (una sola medición):
+  D0: común PR-AUC 0.8562 [0.8475, 0.8651] · ROC-AUC 0.8603 · Brier 0.1522 | completa PR-AUC 0.8830 [0.8754, 0.8905]
+  D1: común PR-AUC 0.8575 [0.8487, 0.8662] · ROC-AUC 0.8610 · Brier 0.1517 | completa PR-AUC 0.8828 [0.8751, 0.8902]
+  D2: común PR-AUC 0.8671 [0.8589, 0.8749] · ROC-AUC 0.8706 · Brier 0.1462 | completa PR-AUC 0.8580 [0.8493, 0.8664]
+
+importancia por permutación (D2), caída de PR-AUC media ± desv.:
+  texto: palabras          0.1259 ± 0.0028 · top 5 en 5/5 folds
+  texto: bigramas          0.0333 ± 0.0014 · top 5 en 5/5 folds
+  estancia_dias            0.0136 ± 0.0019 · top 5 en 5/5 folds
+  servicio                 0.0061 ± 0.0009 · top 5 en 5/5 folds
+  largo de la nota         0.0053 ± 0.0007 · top 5 en 4/5 folds
+  servicio_alta            0.0044 ± 0.0007 · top 5 en 0/5 folds
+  destino_alta             0.0038 ± 0.0010 · top 5 en 1/5 folds
+  n_cultivos               0.0037 ± 0.0003 · top 5 en 0/5 folds
+  n_medicamentos           0.0012 ± 0.0006 · top 5 en 0/5 folds
+  tipo_ingreso             0.0008 ± 0.0004 · top 5 en 0/5 folds
+  procedencia              0.0007 ± 0.0003 · top 5 en 0/5 folds
+  horas_emergencia         0.0003 ± 0.0002 · top 5 en 0/5 folds
+  n_unidades               0.0002 ± 0.0002 · top 5 en 0/5 folds
+  dias_uci                 0.0001 ± 0.0001 · top 5 en 0/5 folds
+  edad                     0.0001 ± 0.0001 · top 5 en 0/5 folds
+  servicio_quirurgico      0.0001 ± 0.0003 · top 5 en 0/5 folds
+  n_servicios              0.0000 ± 0.0001 · top 5 en 0/5 folds
+  n_traslados              0.0000 ± 0.0000 · top 5 en 0/5 folds
+  sexo                     -0.0000 ± 0.0001 · top 5 en 0/5 folds
+  seguro                   0.0000 ± 0.0001 · top 5 en 0/5 folds
+  uci                      0.0000 ± 0.0002 · top 5 en 0/5 folds
+
+curva de aprendizaje: [{'fraccion': 0.1, 'filas': 3888, 'pr_auc_train': 0.9569, 'pr_auc_validacion': 0.8028}, {'fraccion': 0.25, 'filas': 9722, 'pr_auc_train': 0.9509, 'pr_auc_validacion': 0.8294}, {'fraccion': 0.5, 'filas': 19444, 'pr_auc_train': 0.9427, 'pr_auc_validacion': 0.8426}, {'fraccion': 0.75, 'filas': 29166, 'pr_auc_train': 0.9354, 'pr_auc_validacion': 0.8528}, {'fraccion': 1.0, 'filas': 38888, 'pr_auc_train': 0.9351, 'pr_auc_validacion': 0.8567}]
+calibración: {'D0': {'brier': 0.1588, 'prob_media': [0.0613, 0.149, 0.2487, 0.3494, 0.4483, 0.5493, 0.6502, 0.7502, 0.8514, 0.9503], 'frecuencia_real': [0.0496, 0.1433, 0.2453, 0.358, 0.4624, 0.5623, 0.6432, 0.7561, 0.8436, 0.9488]}, 'D2': {'brier': 0.1533, 'prob_media': [0.0597, 0.1491, 0.2481, 0.3488, 0.4492, 0.5501, 0.65, 0.7511, 0.8514, 0.951], 'frecuencia_real': [0.0444, 0.1313, 0.2363, 0.3388, 0.4446, 0.5509, 0.6541, 0.7544, 0.847, 0.9518]}}
+VIF: {'horas_emergencia': 1.05, 'n_servicios': 1.15, 'estancia_dias': 2.2, 'n_traslados': 2.89, 'n_unidades': 3.05, 'dias_uci': 1.83, 'n_medicamentos': 2.26, 'n_cultivos': 1.81, 'edad': 1.1}
+coherencia: {'tipos': {'numericas': ['edad', 'horas_emergencia', 'n_servicios', 'estancia_dias', 'n_traslados', 'n_unidades', 'dias_uci', 'n_medicamentos', 'n_cultivos', 'servicio_quirurgico', 'uci'], 'categoricas': ['sexo', 'tipo_ingreso', 'procedencia', 'seguro', 'servicio', 'servicio_alta', 'destino_alta']}, 'rangos_train': {'edad': [18.0, 103.0], 'horas_emergencia': [0.0, 115.817], 'n_servicios': [1.0, 5.0], 'estancia_dias': [0.028, 230.689], 'n_traslados': [0.0, 19.0], 'n_unidades': [0.0, 9.0], 'dias_uci': [0.0, 106.372], 'n_medicamentos': [0.0, 193.0], 'n_cultivos': [0.0, 162.0], 'servicio_quirurgico': [0.0, 1.0], 'uci': [0.0, 1.0]}, 'valores_negativos_train': {}, 'categorias_solo_en_test': {'sexo': [], 'tipo_ingreso': [], 'procedencia': [], 'seguro': [], 'servicio': [], 'servicio_alta': ['DENT'], 'destino_alta': []}, 'pct_nulos_train': {'horas_emergencia': 33.26, 'estancia_dias': 0.02, 'seguro': 1.07, 'destino_alta': 12.37}}
+
+duración: 10662 s
