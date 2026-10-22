@@ -129,7 +129,7 @@ def dibujar(R, folds_df):
            + " y ".join(f"{NOMBRE.get(k, k).replace(' (días)', ' en días')} ({imp[k]['media']:.4f})" for k in hosp)
            + ". Al lado de cada barra, en cuántos de los 5 folds el grupo quedó entre los cinco primeros: "
            + ("los cinco primeros, en todos" if fijos == 5 else f"los {fijos} primeros, en todos; {NOMBRE.get(orden[4], orden[4])}, en {est.get(orden[4], 0)}")
-           + ", así que el orden es estable entre folds. Esto implica que el modelo detecta sobre todo por lo que dice la epicrisis; el peso "
+           + "; los tres primeros van en el mismo orden en los 5 folds. Esto implica que el modelo detecta sobre todo por lo que dice la epicrisis; el peso "
            "de la estancia y del servicio obliga a evaluarlo por subgrupo para descartar que reconozca el tipo de paciente y no el evento.")
     fig, ax, pie, fr = con_pie(9.5, 5.0, [txt], 125)
     ax.barh([NOMBRE.get(k, k) for k in I.index], I.media, xerr=I["std"], color="#1F4E79", capsize=3)

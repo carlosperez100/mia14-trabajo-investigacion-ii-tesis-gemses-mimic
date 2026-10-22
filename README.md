@@ -577,9 +577,11 @@ ruido de la etiqueta está sobre todo en las positivas, y que con ellas el model
 asegurar que hayan ocurrido en la hospitalización. En test D2 también queda arriba (0.8671 frente a
 0.8562), pero los intervalos se solapan, así que la decisión se apoya en la comparación por fold.
 
-Con todas las filas y la etiqueta original, D2 baja (0.8732 → 0.8477).
-Es lo esperable: deja de marcar como evento justo las caídas y úlceras que la etiqueta original cuenta como positivas. A mi juicio no es una
-pérdida de capacidad sino un cambio en lo que el modelo considera evento, y por eso la comparación justa es la de las mismas filas.
+Con todas las filas y la etiqueta original, en cambio, D2 queda por debajo de D0 en los 5 folds (0.8477 frente a 0.8732 en validación
+cruzada; 0.8580 frente a 0.8830 en test). Mi lectura es que deja de marcar como evento justo las caídas y úlceras que la etiqueta original
+cuenta como positivas. Elegir D2 supone aceptar que esas positivas no son eventos de la atención: es un criterio mío que sale del EDA, no algo
+que el experimento demuestre. Además, D2 deja fuera del entrenamiento casi todas las positivas que lo son solo por una caída (en todo el corpus
+quedan 159 de 6 296), así que con estos datos no se puede medir si el modelo reconoce las caídas intrahospitalarias.
 
 ### Diagnósticos del modelo (D2)
 | Grupo de atributos | Caída de la PR-AUC al barajarlo | En el top 5 |
@@ -594,33 +596,35 @@ pérdida de capacidad sino un cambio en lo que el modelo considera evento, y por
 
 ![Importancia por permutación](reportes/figuras/fig_datos_importancia.png)
 
-- **Importancia por permutación:** el texto es lo que más pesa, y el orden de los primeros grupos se repite en los 5 folds. Entre las variables
+- **Importancia por permutación:** el texto es lo que más pesa, y los tres primeros grupos van en el mismo orden en los 5 folds. Entre las variables
   de la hospitalización pesan la estancia y el servicio, lo que deja la duda de si el modelo reconoce en parte el *tipo de paciente*; se
   revisará con la evaluación por subgrupo.
 - **Curva de aprendizaje (fold 1):** train 0.9351 y validación 0.8567 con todas las filas,
   una brecha de 0.078; la validación todavía sube en el último tramo (+0.0039), así que más datos ayudarían y conviene ajustar `C`.
 - **Calibración:** las probabilidades siguen la diagonal en el corpus del estudio (Brier 0.1588 con D0 y 0.1533
   con D2). Con la prevalencia real, de cada 10 alertas de D2 unas 6 serían eventos
-  (VPP 0.58); para usar la probabilidad como riesgo hay que recalibrar.
-- **Colinealidad y coherencia:** VIF máximo 3.05 (n unidades), sin colinealidad preocupante. Los tipos y rangos son los
+  (VPP 0.58 en validación cruzada, en las epicrisis sin etiqueta dudosa); para usar la probabilidad como riesgo hay que recalibrar.
+- **Colinealidad y coherencia:** VIF máximo 3.05 (número de unidades distintas por las que pasó el paciente), sin colinealidad preocupante. Los tipos y rangos son los
   esperados; solo la categoría DENT del servicio al alta aparece en test sin estar en train, y el modelo la trata como infrecuente.
 
 ### Qué significan esos decimales en eventos adversos
 Para traducir la PR-AUC a eventos, apliqué la sensibilidad y la especificidad medidas en test (umbral 0.5) a 10 000 hospitalizaciones con
 epicrisis con la prevalencia real de 27.6 %: 2 759 con evento según los códigos y 7 241 sin evento.
 
-| Modelo | PR-AUC en test | Sensibilidad | Especificidad | Eventos detectados | Eventos que se escapan | Falsas alarmas | De cada 100 alertas, con evento |
+| Modelo · epicrisis evaluadas | PR-AUC en test | Sensibilidad | Especificidad | Eventos detectados (VP) | Eventos que se escapan (FN) | Falsas alarmas (FP) | VPP: de cada 100 alertas, con evento |
 |---|---|---|---|---|---|---|---|
-| A, baseline de la semana 3 | 0.8787 | 77.1 % | 79.3 % | 2 128 | 631 | 1 495 | 59 |
-| A+B+C, semana 5 | 0.8830 | 77.5 % | 79.2 % | 2 139 | 620 | 1 503 | 59 |
-| D0, mismas epicrisis | 0.8562 | 74.7 % | 80.1 % | 2 061 | 698 | 1 438 | 59 |
-| D2, mismas epicrisis | 0.8671 | 76.9 % | 80.4 % | 2 121 | 638 | 1 421 | 60 |
+| A, baseline de la semana 3 · todas | 0.8787 | 77.1 % | 79.3 % | 2 128 | 631 | 1 495 | 59 |
+| A+B+C (= D0), semana 5 · todas | 0.8830 | 77.5 % | 79.2 % | 2 139 | 620 | 1 503 | 59 |
+| D0 (= A+B+C) · sin etiqueta dudosa | 0.8562 | 74.7 % | 80.1 % | 2 061 | 698 | 1 438 | 59 |
+| D2 · sin etiqueta dudosa | 0.8671 | 76.9 % | 80.4 % | 2 121 | 638 | 1 421 | 60 |
+| D2 · todas, etiqueta original | 0.8580 | 71.9 % | 79.5 % | 1 983 | 776 | 1 484 | 57 |
 
-El feature engineering (+0.0043 de PR-AUC) suma 11 eventos
-detectados por cada 10 000 hospitalizaciones, con 8 falsas alarmas más: casi nada. La limpieza de los datos
-(+0.0109) suma 60 eventos detectados y quita
-17 falsas alarmas. Los «eventos» son los que marcan los códigos CIE, y las filas de D0 y D2 son las epicrisis
-que ninguna variante quita, así que las dos comparaciones no se suman.
+El feature engineering (+0.0043 de PR-AUC) suma 11 eventos detectados por cada 10 000 hospitalizaciones, con 8 falsas alarmas más: casi
+nada. La limpieza de los datos (+0.0109 en las epicrisis sin etiqueta dudosa) suma 60 eventos detectados y quita 17 falsas alarmas, pero esa
+cuenta supone que todos los eventos son como los de las epicrisis comparadas, y la prevalencia de 27.6 % incluye las positivas dudosas (una de
+cada cinco positivas del corpus, 20.9 %). Con todas las epicrisis y la etiqueta original, D2 detecta 156 eventos codificados menos (1 983
+frente a 2 139) y da 19 falsas alarmas menos: los que deja de marcar son, por diseño, los que se quitaron del entrenamiento por dudosos. Por
+eso la mejora no se extrapola a toda la base. Los «eventos» son los que marcan los códigos CIE, no una revisión clínica de cada nota.
 
 ### Decisión y siguiente sprint
 - **Se adopta D2 con A+B+C** como referencia al cierre del Sprint 2.
