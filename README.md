@@ -491,7 +491,7 @@ En el gráfico de la izquierda, el eje x es la sensibilidad y el eje y la precis
 
 Las cuatro curvas casi se superponen: la diferencia entre configuraciones es pequeña frente a la distancia que las separa del piso de 0.539. El orden, en cambio, es consistente: las tres variantes superan al baseline en los 5 folds, y A+B+C es la mejor de las cuatro en los 5 folds. Su mejora (+0.0065) es casi cuatro veces su propia variabilidad entre folds (± 0.0017). En test se mantiene el mismo orden (0.8787 → 0.8830), aunque los intervalos de las cuatro configuraciones se solapan.
 
-El feature engineering mejora al baseline de forma pequeña pero sistemática. El bloque de dominio aporta más que los bigramas (+0.0047 frente a +0.0021), y juntos aportan casi lo mismo que la suma de los dos por separado (+0.0065 frente a +0.0068). Ninguna variante cambia el orden de magnitud del resultado.
+El feature engineering mejora al baseline de forma pequeña pero sistemática. El bloque de dominio aporta más que los bigramas (+0.0047 frente a +0.0021), y juntos aportan casi lo mismo que la suma de los dos por separado (+0.0065 frente a +0.0067). Ninguna variante cambia el orden de magnitud del resultado.
 
 ### ¿Qué feature aportó más?
 Se entrenaron modelos **sin texto**, sumando un grupo de variables de dominio a la vez (validación cruzada, PR-AUC):
@@ -504,7 +504,7 @@ Se entrenaron modelos **sin texto**, sumando un grupo de variables de dominio a 
 | + Atención | 0.7767 ± 0.0037 | +0.0083 |
 | + Nota (largo) | 0.7771 ± 0.0040 | +0.0004 |
 
-La tabla muestra cuánto se puede detectar el evento sin leer la nota y cuánto agrega cada grupo, en el orden en que se suman. El servicio y el paso por el hospital aportan casi todo (+0.058 y +0.056). El largo de la nota ya no agrega nada (+0.0004) una vez que se conocen la estancia y los traslados, que es lo que anticipaba el EDA: el largo se mueve con la estancia (Spearman 0.468). Aun así, el dominio solo llega a 0.777, frente a 0.867 del texto solo, así que la mayor parte de la señal está en la nota. En el modelo A+C, los coeficientes de mayor peso son categorías de servicio: obstetricia (OBS) baja la probabilidad de evento y cirugía plástica (PSURG) la sube. Como los coeficientes de un one-hot se leen frente a las demás categorías, los tomo solo como orientación (`logs/metrics_fe.txt`).
+La tabla muestra cuánto se puede detectar el evento sin leer la nota y cuánto agrega cada grupo, en el orden en que se suman. El servicio y el paso por el hospital aportan casi todo (+0.0575 y +0.0557). El largo de la nota ya no agrega nada (+0.0004) una vez que se conocen la estancia y los traslados, que es lo que anticipaba el EDA: el largo se mueve con la estancia (Spearman 0.468). Aun así, el dominio solo llega a 0.777, frente a 0.867 del texto solo, así que la mayor parte de la señal está en la nota. En el modelo A+C, la mayoría de los coeficientes de mayor peso son categorías de servicio: obstetricia (OBS) baja la probabilidad de evento y cirugía plástica (PSURG) la sube. Como los coeficientes de un one-hot se leen frente a las demás categorías, los tomo solo como orientación (`logs/metrics_fe.txt`).
 
 El dominio aporta información que el texto no tiene completa: qué servicio atendió al paciente y cómo fue su paso por el hospital. Es la misma «mezcla de casos» que advirtió el EDA de la semana 4, así que parte de la mejora puede venir de reconocer el *tipo de paciente* y no el evento; eso hay que verificarlo antes de adoptar el bloque de forma definitiva.
 
