@@ -70,3 +70,17 @@ hiperparametros:            # Sprint 3, semana 7: búsqueda aleatoria y bayesian
   regla:                    # prerregistrada antes de correr la búsqueda (validación cruzada de 5 folds)
     folds_mejores_minimo: 4         # la ajustada debe superar a la actual en al menos 4 de los 5 folds
     desviaciones_minimas: 1.0       # y la mejora media debe superar 1 desviación estándar de las diferencias por fold
+
+importancia:                # Sprint 3, semana 7: importancia de variables (src/importancia_variables.py)
+  # modelo: la configuración vigente (D2, A+B+C, C 1, A y B con 20 000 términos y min_df 3, balanced, sublinear_tf)
+  particion: confirmacion   # los 5 folds del proyecto dentro de train (los de las semanas 5 a 7); no se usa test
+  n_repeticiones: 30        # permutaciones por grupo de atributos y por fold
+  top_terminos: 20          # top de coeficientes por fold con el que se mide la estabilidad entre folds
+  candidatos_por_fold: 50   # términos por signo, bloque y fold que pasan al filtro de privacidad
+  mostrar_terminos: 15      # términos por signo y bloque que se publican, ya filtrados
+  filtro_privacidad:        # licencia de PhysioNet: se aplica antes de mostrar o guardar cualquier término
+    min_pacientes: 100      # pacientes distintos de train con el término en su epicrisis
+    min_pct_notas: 1.0      # % de epicrisis de train con el término (precedente del EDA de la semana 4, src/eda_texto.py)
+    solo_letras: true       # sin dígitos ni el marcador de anonimización ___ (cada palabra solo con letras a-z)
+    max_pct_mayuscula_inicial: 50   # posible nombre propio: alguna palabra del término va con mayúscula inicial en más de este %
+    muestra_mayusculas: 10000       # epicrisis de train (al azar, semilla 42) en las que se mide el uso de mayúsculas

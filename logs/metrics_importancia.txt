@@ -1,0 +1,105 @@
+# metrics_importancia.txt · 2026-10-28T11:51:50 · D2 con A+B+C · semilla 42
+partición: StratifiedGroupKFold(5, shuffle=True, random_state=42) por subject_id en train; entrenan las filas de D2; se evalúa en las epicrisis de validación sin etiqueta dudosa; no se usa test
+configuración: C=1 · A 20000/3 · B 20000/3 · class_weight=balanced · sublinear_tf=True
+repeticiones por grupo y fold: 30
+caché igual al pipeline de features.py en los 5 folds: True
+control (PR-AUC de cada fold = semana 6): {'pr_auc_base_esta_corrida': [0.856697, 0.852738, 0.846717, 0.854189, 0.856627], 'pr_auc_semana6': [0.856697, 0.852738, 0.846717, 0.854189, 0.856627], 'dif_maxima': 0.0, 'reproduce': True}
+
+IMPORTANCIA POR BLOQUE (caída de la PR-AUC al permutar; media ± desv. entre folds)
+  A · palabras           0.1274 ± 0.0028 · por fold [0.128004, 0.128558, 0.123131, 0.130595, 0.126814]
+  B · bigramas           0.0331 ± 0.0013 · por fold [0.033637, 0.031007, 0.033192, 0.034627, 0.033005]
+  C · contexto           0.1106 ± 0.0034 · por fold [0.11061, 0.114782, 0.107527, 0.107, 0.11325]
+  A+B · texto completo   0.2349 ± 0.0046 · por fold [0.234937, 0.233398, 0.23034, 0.242571, 0.233331]
+
+IMPORTANCIA DE LAS VARIABLES DE C
+  estancia_dias          0.0132 ± 0.0014
+  servicio               0.0061 ± 0.0011
+  largo de la nota       0.0054 ± 0.0002
+  servicio_alta          0.0040 ± 0.0008
+  n_cultivos             0.0038 ± 0.0008
+  destino_alta           0.0037 ± 0.0009
+  n_medicamentos         0.0013 ± 0.0004
+  tipo_ingreso           0.0008 ± 0.0004
+  procedencia            0.0008 ± 0.0003
+  horas_emergencia       0.0003 ± 0.0002
+  n_unidades             0.0003 ± 0.0001
+  servicio_quirurgico    0.0001 ± 0.0003
+  uci                    0.0001 ± 0.0002
+  dias_uci               0.0001 ± 0.0001
+  seguro                 0.0001 ± 0.0001
+  edad                   0.0000 ± 0.0001
+  sexo                   0.0000 ± 0.0001
+  n_servicios            0.0000 ± 0.0001
+  n_traslados            0.0000 ± 0.0000
+
+comparación con las semanas 5 y 6: {'ablacion_semana5': {'nota': 'D0, todas las filas de validación; caída de la PR-AUC al quitar el bloque y reentrenar', 'A': None, 'B': 0.0018, 'C': 0.0044, 'A+B+C': 0.8732, 'A+C': 0.8714, 'A+B': 0.8688, 'C_sin_texto': 0.7771}, 'permutacion_semana6': {'nota': 'D2, evaluación común, 3 repeticiones por variable; no calculó el bloque C completo', 'A': 0.1259, 'B': 0.0333, 'variables_de_C': {'largo de la nota': 0.0053, 'horas_emergencia': 0.0003, 'n_servicios': 0.0, 'estancia_dias': 0.0136, 'n_traslados': 0.0, 'n_unidades': 0.0002, 'dias_uci': 0.0001, 'n_medicamentos': 0.0012, 'n_cultivos': 0.0037, 'edad': 0.0001, 'sexo': -0.0, 'tipo_ingreso': 0.0008, 'procedencia': 0.0007, 'seguro': 0.0, 'servicio': 0.0061, 'servicio_alta': 0.0044, 'destino_alta': 0.0038, 'servicio_quirurgico': 0.0001, 'uci': 0.0}}}
+
+ESTABILIDAD DE LOS COEFICIENTES ENTRE FOLDS
+  A: {'terminos_por_fold': [20000, 20000, 20000, 20000, 20000], 'terminos_en_los_5_folds': 18828, 'spearman_coeficientes': {'media': 0.7769, 'min': 0.7709, 'max': 0.7818}, 'positivo': {'top': 20, 'en_los_5_folds': 15, 'en_al_menos_3_folds': 21, 'terminos_distintos_en_los_top': 25, 'jaccard_medio_entre_pares': 0.7813}, 'negativo': {'top': 20, 'en_los_5_folds': 3, 'en_al_menos_3_folds': 12, 'terminos_distintos_en_los_top': 55, 'jaccard_medio_entre_pares': 0.2548}}
+  B: {'terminos_por_fold': [20000, 20000, 20000, 20000, 20000], 'terminos_en_los_5_folds': 19335, 'spearman_coeficientes': {'media': 0.7696, 'min': 0.7658, 'max': 0.774}, 'positivo': {'top': 20, 'en_los_5_folds': 16, 'en_al_menos_3_folds': 19, 'terminos_distintos_en_los_top': 27, 'jaccard_medio_entre_pares': 0.788}, 'negativo': {'top': 20, 'en_los_5_folds': 2, 'en_al_menos_3_folds': 10, 'terminos_distintos_en_los_top': 59, 'jaccard_medio_entre_pares': 0.2109}}
+
+filtro de privacidad: {'candidatos': 409, 'excluidos': 109, 'publicables': 300, 'min_notas': 560, 'por_motivo': {'dígitos o símbolos': 33, 'menos de 100 pacientes': 0, 'menos del 1 % de las epicrisis': 36, 'posible nombre propio': 45}, 'segundos': 211.1}
+
+TÉRMINOS PUBLICABLES (ya filtrados)
+  A positivo   1 induced                      coef +6.2708 ± 0.1208 · top 20 en 5/5 folds · 3228 pacientes · 6.9 % de las notas
+  A positivo   2 hematoma                     coef +5.3334 ± 0.2441 · top 20 en 5/5 folds · 6839 pacientes · 13.7 % de las notas
+  A positivo   3 revision                     coef +5.1867 ± 0.1199 · top 20 en 5/5 folds · 1339 pacientes · 3.2 % de las notas
+  A positivo   4 reaction                     coef +4.4660 ± 0.1766 · top 20 en 5/5 folds · 2479 pacientes · 4.9 % de las notas
+  A positivo   5 site                         coef +4.3869 ± 0.1573 · top 20 en 5/5 folds · 13822 pacientes · 30.6 % de las notas
+  A positivo   6 wound                        coef +4.2581 ± 0.3402 · top 20 en 5/5 folds · 12035 pacientes · 27.0 % de las notas
+  A positivo   7 fall                         coef +3.6113 ± 0.2962 · top 20 en 5/5 folds · 10729 pacientes · 21.8 % de las notas
+  A positivo   8 sacral                       coef +3.5997 ± 0.1540 · top 20 en 5/5 folds · 1423 pacientes · 3.1 % de las notas
+  A positivo   9 ulcer                        coef +3.5307 ± 0.1796 · top 20 en 5/5 folds · 4653 pacientes · 11.6 % de las notas
+  A positivo  10 decubitus                    coef +3.5065 ± 0.1018 · top 20 en 5/5 folds · 897 pacientes · 2.0 % de las notas
+  A positivo  11 hardware                     coef +3.3833 ± 0.3436 · top 20 en 5/5 folds · 1532 pacientes · 3.3 % de las notas
+  A positivo  12 ileus                        coef +3.3466 ± 0.1188 · top 20 en 5/5 folds · 1541 pacientes · 2.9 % de las notas
+  A positivo  13 toxicity                     coef +2.8874 ± 0.2162 · top 20 en 4/5 folds · 1146 pacientes · 2.4 % de las notas
+  A positivo  14 seroma                       coef +2.8699 ± 0.1149 · top 20 en 5/5 folds · 533 pacientes · 1.0 % de las notas
+  A positivo  15 leak                         coef +2.8694 ± 0.1423 · top 20 en 5/5 folds · 2544 pacientes · 5.1 % de las notas
+  A negativo   1 abscess                      coef -2.0017 ± 0.0909 · top 20 en 5/5 folds · 4359 pacientes · 9.6 % de las notas
+  A negativo   2 flare                        coef -1.6232 ± 0.1175 · top 20 en 5/5 folds · 1740 pacientes · 3.9 % de las notas
+  A negativo   3 sbo                          coef -1.5224 ± 0.3026 · top 20 en 4/5 folds · 970 pacientes · 2.3 % de las notas
+  A negativo   4 gastroenteritis              coef -1.4613 ± 0.2345 · top 20 en 5/5 folds · 848 pacientes · 1.6 % de las notas
+  A negativo   5 paracentesis                 coef -1.4503 ± 0.1883 · top 20 en 3/5 folds · 932 pacientes · 2.2 % de las notas
+  A negativo   6 viral                        coef -1.4048 ± 0.2290 · top 20 en 4/5 folds · 4141 pacientes · 9.1 % de las notas
+  A negativo   7 admissions                   coef -1.3716 ± 0.1607 · top 20 en 3/5 folds · 1939 pacientes · 4.7 % de las notas
+  A negativo   8 struck                       coef -1.3572 ± 0.2162 · top 20 en 2/5 folds · 541 pacientes · 1.0 % de las notas
+  A negativo   9 abscesses                    coef -1.3442 ± 0.1865 · top 20 en 4/5 folds · 707 pacientes · 1.6 % de las notas
+  A negativo  10 shin                         coef -1.3402 ± 0.1230 · top 20 en 4/5 folds · 1923 pacientes · 3.7 % de las notas
+  A negativo  11 gib                          coef -1.3333 ± 0.2923 · top 20 en 2/5 folds · 1259 pacientes · 2.7 % de las notas
+  A negativo  12 necrotizing                  coef -1.3179 ± 0.3170 · top 20 en 2/5 folds · 432 pacientes · 1.0 % de las notas
+  A negativo  13 source                       coef -1.3002 ± 0.1013 · top 20 en 3/5 folds · 7723 pacientes · 16.2 % de las notas
+  A negativo  14 hiv                          coef -1.2966 ± 0.1546 · top 20 en 2/5 folds · 2475 pacientes · 5.3 % de las notas
+  A negativo  15 urgency                      coef -1.2716 ± 0.1638 · top 20 en 2/5 folds · 2178 pacientes · 4.2 % de las notas
+  B positivo   1 decubitus ulcer              coef +2.7415 ± 0.0410 · top 20 en 5/5 folds · 487 pacientes · 1.2 % de las notas
+  B positivo   2 wound infection              coef +2.5427 ± 0.1603 · top 20 en 5/5 folds · 1123 pacientes · 2.4 % de las notas
+  B positivo   3 side effect                  coef +2.2899 ± 0.1380 · top 20 en 5/5 folds · 3190 pacientes · 6.1 % de las notas
+  B positivo   4 pressure ulcer               coef +2.2767 ± 0.0655 · top 20 en 5/5 folds · 599 pacientes · 1.2 % de las notas
+  B positivo   5 reaction to                  coef +2.2341 ± 0.1298 · top 20 en 5/5 folds · 988 pacientes · 1.9 % de las notas
+  B positivo   6 complicated by               coef +2.2278 ± 0.1963 · top 20 en 5/5 folds · 7554 pacientes · 18.1 % de las notas
+  B positivo   7 was complicated              coef +2.1682 ± 0.1341 · top 20 en 5/5 folds · 3214 pacientes · 6.4 % de las notas
+  B positivo   8 removal of                   coef +2.1352 ± 0.2373 · top 20 en 5/5 folds · 3743 pacientes · 7.7 % de las notas
+  B positivo   9 effect of                    coef +2.1062 ± 0.1508 · top 20 en 5/5 folds · 1421 pacientes · 2.6 % de las notas
+  B positivo  10 wound care                   coef +2.0014 ± 0.1792 · top 20 en 5/5 folds · 5273 pacientes · 10.9 % de las notas
+  B positivo  11 supratherapeutic inr         coef +1.8233 ± 0.1297 · top 20 en 4/5 folds · 823 pacientes · 1.7 % de las notas
+  B positivo  12 who underwent                coef +1.8072 ± 0.1526 · top 20 en 3/5 folds · 684 pacientes · 1.3 % de las notas
+  B positivo  13 mechanical fall              coef +1.7538 ± 0.0907 · top 20 en 5/5 folds · 2128 pacientes · 4.0 % de las notas
+  B positivo  14 secondary to                 coef +1.7264 ± 0.0557 · top 20 en 5/5 folds · 12904 pacientes · 29.4 % de las notas
+  B positivo  15 transplant in                coef +1.6232 ± 0.1731 · top 20 en 1/5 folds · 588 pacientes · 1.9 % de las notas
+  B negativo   1 pain with                    coef -1.2604 ± 0.1450 · top 20 en 4/5 folds · 5157 pacientes · 10.2 % de las notas
+  B negativo   2 daily prn                    coef -1.1566 ± 0.2056 · top 20 en 2/5 folds · 6768 pacientes · 14.8 % de las notas
+  B negativo   3 days of                      coef -1.1194 ± 0.2606 · top 20 en 3/5 folds · 6833 pacientes · 13.7 % de las notas
+  B negativo   4 to an                        coef -1.1070 ± 0.2165 · top 20 en 3/5 folds · 4593 pacientes · 8.8 % de las notas
+  B negativo   5 abdominal and                coef -1.0982 ± 0.1305 · top 20 en 2/5 folds · 667 pacientes · 1.3 % de las notas
+  B negativo   6 palpation of                 coef -1.0853 ± 0.1606 · top 20 en 3/5 folds · 1139 pacientes · 2.1 % de las notas
+  B negativo   7 tolerated the                coef -1.0818 ± 0.1424 · top 20 en 2/5 folds · 6839 pacientes · 13.3 % de las notas
+  B negativo   8 without complication         coef -1.0761 ± 0.1270 · top 20 en 3/5 folds · 2773 pacientes · 5.1 % de las notas
+  B negativo   9 source of                    coef -1.0483 ± 0.2730 · top 20 en 2/5 folds · 3181 pacientes · 6.2 % de las notas
+  B negativo  10 prior episodes               coef -1.0000 ± 0.1545 · top 20 en 1/5 folds · 760 pacientes · 1.5 % de las notas
+  B negativo  11 during his                   coef -0.9990 ± 0.1267 · top 20 en 2/5 folds · 3320 pacientes · 6.7 % de las notas
+  B negativo  12 for nausea                   coef -0.9971 ± 0.1378 · top 20 en 2/5 folds · 2489 pacientes · 5.7 % de las notas
+  B negativo  13 were started                 coef -0.9882 ± 0.1516 · top 20 en 1/5 folds · 4918 pacientes · 9.4 % de las notas
+  B negativo  14 no hematoma                  coef -0.9740 ± 0.1642 · top 20 en 1/5 folds · 753 pacientes · 1.4 % de las notas
+  B negativo  15 the neck                     coef -0.9703 ± 0.2058 · top 20 en 1/5 folds · 1421 pacientes · 2.7 % de las notas
+
+tiempos (s): {'modelos': 335.3, 'nombres_y_equivalencia': 646.8, 'permutaciones': 12.8, 'filtro_privacidad': 211.1, 'total': 1218.7}

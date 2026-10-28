@@ -47,7 +47,8 @@ notebooks/
  ├── 01_EDA_sprint1.ipynb     # primera versión del EDA (semana 3)
  ├── 02_EDA_semana4.ipynb     # EDA desplegada (src/eda.py) y, en la sección 7, el feature engineering (src/experimentos_fe.py)
  ├── 03_sprint2_semana6_variantes_datos.ipynb   # variantes de los datos y diagnósticos (semana 6)
- └── 04_sprint3_semana7_hiperparametros.ipynb   # búsqueda de hiperparámetros, aleatoria y bayesiana (semana 7)
+ ├── 04_sprint3_semana7_hiperparametros.ipynb   # búsqueda de hiperparámetros, aleatoria y bayesiana (semana 7)
+ └── 05_sprint3_semana7_importancia_variables.ipynb   # importancia de variables del modelo vigente (semana 7)
 src/
  ├── run_pipeline.py          # orquestador: ingesta → preprocesado → eda → baseline → features
  ├── ingesta.py               # script de ingesta (idempotente, con hash)
@@ -63,9 +64,10 @@ src/
  ├── variantes_datos.py       # marcas de etiqueta dudosa y variantes D0, D1 y D2 (semana 6)
  ├── experimentos_datos.py    # variantes de los datos y diagnósticos del modelo (semana 6); figuras en figuras_datos.py
  ├── experimentos_hp.py       # búsqueda de hiperparámetros aleatoria y bayesiana, confirmación y test (semana 7); figuras en figuras_hp.py
+ ├── importancia_variables.py # importancia por permutación de bloques y variables, y coeficientes de términos filtrados (semana 7); figuras en figuras_imp.py
  └── utils.py                 # configuración, logging y hash
 config/config.yaml            # semilla, split e hiperparámetros
-logs/                         # logs por etapa, metrics_baseline.txt, metrics_eda.txt, metrics_fe.txt, metrics_datos.txt y metrics_hp.txt
+logs/                         # logs por etapa, metrics_baseline.txt, metrics_eda.txt, metrics_fe.txt, metrics_datos.txt, metrics_hp.txt y metrics_importancia.txt
 reportes/                     # resultados en JSON y CSV, y figuras
 slides/                       # presentación de resultados del sprint
 entregables/                  # entregables por semana (diseño del pipeline de la semana 2, matriz de consistencia de la semana 3, roadmap y guion de la demo)
@@ -774,6 +776,71 @@ El cómputo total fue de 110.3 minutos (1.8 horas en CPU). De ese total, 20.3 mi
 
 Referencias: Bergstra, J. y Bengio, Y. (2012). Random search for hyper-parameter optimization. *Journal of Machine Learning Research, 13*, 281-305. Bergstra, J., Bardenet, R., Bengio, Y. y Kégl, B. (2011). Algorithms for hyper-parameter optimization. *Advances in Neural Information Processing Systems 24*. Falkner, S., Klein, A. y Hutter, F. (2018). BOHB: Robust and efficient hyperparameter optimization at scale. *ICML 2018*, PMLR 80. Las demás referencias están en el cuaderno.
 
+### Importancia de variables (rama `sprint3-importancia-variables`)
+
+El análisis completo está en el cuaderno [`notebooks/05_sprint3_semana7_importancia_variables.ipynb`](notebooks/05_sprint3_semana7_importancia_variables.ipynb). Se analizó el modelo vigente, es decir, D2 con A+B+C y la configuración que confirmó la búsqueda de hiperparámetros (C 1, 20 000 palabras y 20 000 bigramas con `min_df` de 3, *balanced* y `sublinear_tf`).
+
+- Partición: solo los 5 *folds* del proyecto dentro de *train*, separados por paciente. No se usó el *test*, con el fin de no gastarlo y de no anticipar HE1.
+- Sin estratos: no se calculó ninguna importancia ni ningún desempeño por servicio, edad o largo de la nota, comparación que corresponde a HE1 y se reserva para otro momento.
+- Métodos: permutación por bloque (A, B y C, cada uno permutado en conjunto, 30 veces por *fold*), permutación de cada variable de contexto (con sus columnas *one-hot* juntas) y coeficientes de la regresión, con su estabilidad entre *folds*.
+- Filtro de privacidad: se aplica antes de mostrar o guardar un término. Por criterio del autor, exige solo letras (sin dígitos ni el marcador ___), al menos 100 pacientes de *train* y ninguna palabra con mayúscula inicial en más del 50 % de sus apariciones. Además, exige el 1 % de las epicrisis de *train*, precedente del EDA de la semana 4 (`src/eda_texto.py`, línea 21, `MIN_DF = 0.01`).
+- Control: en los 5 *folds*, la caché de conteos de la búsqueda de hiperparámetros dio matrices idénticas a las del *pipeline* de `src/features.py`, y la PR-AUC de cada *fold* reprodujo la de la semana 6 (diferencia máxima 0.000000).
+
+Tabla 6. Caída de la PR-AUC al permutar cada bloque (media ± desviación estándar de 5 *folds*)
+
+| Bloque | Caída de la PR-AUC | Por *fold* |
+|---|---|---|
+| A · palabras | 0.1274 ± 0.0028 | 0.1280, 0.1286, 0.1231, 0.1306, 0.1268 |
+| B · bigramas | 0.0331 ± 0.0013 | 0.0336, 0.0310, 0.0332, 0.0346, 0.0330 |
+| C · contexto | 0.1106 ± 0.0034 | 0.1106, 0.1148, 0.1075, 0.1070, 0.1133 |
+| A+B · texto completo | 0.2349 ± 0.0046 | 0.2349, 0.2334, 0.2303, 0.2426, 0.2333 |
+
+Fuente: elaboración propia a partir de [`reportes/importancia_resultados.json`](reportes/importancia_resultados.json).
+
+Figura 4. Importancia por bloque y comparación con las semanas 5 y 6
+
+![Importancia por bloque](reportes/figuras/fig_imp_bloques.png)
+
+Fuente: elaboración propia a partir de [`reportes/importancia_resultados.json`](reportes/importancia_resultados.json).
+
+Como se aprecia en la Tabla 6 y en la Figura 4, el bloque de mayor peso es el de las palabras (0.1274), seguido del contexto (0.1106) y de los bigramas (0.0331), en ese orden en los 5 *folds*. Al permutar juntas las palabras y los bigramas la caída es 0.2349, mayor que la suma de las dos por separado (0.1605). A criterio del autor, esto es coherente con que ambos bloques compartan información, aunque no lo demuestra. La permutación de esta semana coincide con la de la semana 6 (0.1259 y 0.0333). En cambio, la ablación de la semana 5, que reentrena sin el bloque, da caídas mucho menores (0.0018 para B y 0.0044 para C). La ablación mide cuánto pierde un modelo reentrenado sin el bloque, y no cuánto se apoya en él el modelo ya entrenado.
+
+Tabla 7. Las seis variables de contexto de mayor peso (caída de la PR-AUC, media ± desviación estándar de 5 *folds*)
+
+| Variable | Esta semana | Semana 6 |
+|---|---|---|
+| estancia (días) | 0.0132 ± 0.0014 | 0.0136 |
+| servicio al ingreso | 0.0061 ± 0.0011 | 0.0061 |
+| largo de la nota | 0.0054 ± 0.0002 | 0.0053 |
+| servicio al alta | 0.0040 ± 0.0008 | 0.0044 |
+| n.º de cultivos | 0.0038 ± 0.0008 | 0.0037 |
+| destino al alta | 0.0037 ± 0.0009 | 0.0038 |
+
+Fuente: elaboración propia a partir de [`reportes/importancia_resultados.json`](reportes/importancia_resultados.json) y [`reportes/datos_resultados.json`](reportes/datos_resultados.json).
+
+Figura 5. Importancia de las variables de contexto
+
+![Importancia de las variables de contexto](reportes/figuras/fig_imp_contexto.png)
+
+Fuente: elaboración propia a partir de [`reportes/importancia_resultados.json`](reportes/importancia_resultados.json).
+
+Como se aprecia en la Tabla 7 y en la Figura 5, dentro del contexto pesan sobre todo estancia (días), servicio al ingreso y largo de la nota, mientras que 10 de las 19 variables quedan por debajo de 0.0005. La suma de las caídas por variable (0.0401) es menor que la del bloque completo (0.1106); a criterio del autor, esto es coherente con que las variables de contexto compartan información entre sí, aunque no lo demuestra.
+
+Figura 6. Términos de mayor coeficiente que pasaron el filtro de privacidad
+
+![Términos de mayor coeficiente](reportes/figuras/fig_imp_terminos.png)
+
+Fuente: elaboración propia a partir de [`reportes/importancia_terminos.csv`](reportes/importancia_terminos.csv).
+
+Como se aprecia en la Figura 6, que muestra solo términos ya filtrados, entre *folds* la correlación de rangos de los coeficientes es 0.78 en las palabras y 0.77 en los bigramas. De los 20 términos de mayor coeficiente positivo se repiten en los 5 *folds* 15 palabras y 16 bigramas, frente a 3 y 2 del lado negativo. El filtro de privacidad excluyó 109 de 409 términos candidatos (45 por posible nombre propio, 36 por baja frecuencia y 33 por dígitos o símbolos), y se publican 60 términos ya filtrados.
+
+A criterio del autor, los términos positivos (*induced*, *hematoma*, *revision*, *reaction*, *decubitus ulcer*, *wound infection*, y *fall* en el puesto 7 de las palabras) describen complicaciones de procedimientos, lesiones por presión, caídas y efectos adversos de medicamentos, las mismas familias de códigos de la etiqueta. Esta lectura es una interpretación y no un hallazgo. La importancia no es causalidad, los coeficientes de TF-IDF dependen de la escala y de la correlación entre términos, y, si los bloques comparten información, la permutación de cada uno por separado puede subestimar su peso.
+
+#### Cómo reproducir la importancia de variables
+- Requisitos: los mismos de la búsqueda de hiperparámetros (el `.env`, `data/processed/dataset.parquet` y las cachés de dominio y de variantes) y, además, la caché de conteos de `data/interim/cache_hp/`, que arma `python src/experimentos_hp.py --solo-conteos`. También lee `reportes/datos_folds.csv`, `reportes/datos_resultados.json`, `reportes/fe_resultados.json` y `reportes/hp_resultados.json`.
+- Comando: `python src/importancia_variables.py`, con los parámetros de la sección `importancia` de `config/config.yaml`. La corrida del 28-10-2026 tomó 20.3 minutos en CPU, de modo que no fue necesario reducir las permutaciones. El modo `--prueba` corre 2 *folds* con 2 permutaciones, escribe en `data/interim/prueba_imp/` y deja su registro en [`logs/importancia_variables_prueba_20261028_123034.log`](logs/importancia_variables_prueba_20261028_123034.log), con el control de la caché y de la PR-AUC por *fold*. Una primera corrida de prueba falló al final por un choque de nombres de variable, que se corrigió antes de la corrida completa; su registro no se conservó.
+- Las figuras se redibujan sin entrenar con `python src/figuras_imp.py`. Las cifras salen de [`logs/metrics_importancia.txt`](logs/metrics_importancia.txt), [`reportes/importancia_resultados.json`](reportes/importancia_resultados.json), [`reportes/importancia_grupos.csv`](reportes/importancia_grupos.csv) y [`reportes/importancia_terminos.csv`](reportes/importancia_terminos.csv).
+
 ---
 
 ## 📌 Roadmap
@@ -785,6 +852,7 @@ Las tareas, con responsable y plazo, están en los [issues](https://github.com/c
 - [x] Semana 5 → Feature engineering en la rama `sprint2-feature-engineering`: ablación A, A+B, A+C y A+B+C con validación cruzada por paciente; se adopta A+B+C (PR-AUC 0.8732 en validación cruzada y 0.8830 en test).
 - [x] Semana 6 → Cierre del Sprint 2: variantes de los datos (D0, D1, D2) y diagnósticos; se adopta D2 con A+B+C (PR-AUC 0.8534 frente a 0.8431 de D0 en validación cruzada, sobre las mismas filas).
 - [x] Semana 7 → Sprint 3, búsqueda de hiperparámetros aleatoria y bayesiana (Optuna) en la rama `sprint3-hiperparametros`: ninguna configuración supera a la actual y, por la regla prerregistrada, se mantiene D2 con A+B+C (PR-AUC 0.8534 en validación cruzada y 0.8671 en test).
+- [x] Semana 7 → importancia de variables en la rama `sprint3-importancia-variables`, con los 5 folds de train y sin test: palabras 0.1274, contexto 0.1106 y bigramas 0.0331 de caída de la PR-AUC al permutar cada bloque.
 - [ ] Sprint 3 → Evaluación por servicio, grupo de edad y decil de largo frente al modelo de contexto, recalibración a la prevalencia de 27.6 % y explicación de logística frente a LinearSVC.
 
 ---

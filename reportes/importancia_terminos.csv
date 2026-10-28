@@ -1,0 +1,61 @@
+bloque,signo,puesto,termino,coef_media,coef_std,folds_en_top,pacientes_train,pct_notas_train
+A,positivo,1,induced,6.2708,0.1208,5,3228,6.9
+A,positivo,2,hematoma,5.3334,0.2441,5,6839,13.7
+A,positivo,3,revision,5.1867,0.1199,5,1339,3.2
+A,positivo,4,reaction,4.466,0.1766,5,2479,4.9
+A,positivo,5,site,4.3869,0.1573,5,13822,30.6
+A,positivo,6,wound,4.2581,0.3402,5,12035,27.0
+A,positivo,7,fall,3.6113,0.2962,5,10729,21.8
+A,positivo,8,sacral,3.5997,0.154,5,1423,3.1
+A,positivo,9,ulcer,3.5307,0.1796,5,4653,11.6
+A,positivo,10,decubitus,3.5065,0.1018,5,897,2.0
+A,positivo,11,hardware,3.3833,0.3436,5,1532,3.3
+A,positivo,12,ileus,3.3466,0.1188,5,1541,2.9
+A,positivo,13,toxicity,2.8874,0.2162,4,1146,2.4
+A,positivo,14,seroma,2.8699,0.1149,5,533,1.0
+A,positivo,15,leak,2.8694,0.1423,5,2544,5.1
+A,negativo,1,abscess,-2.0017,0.0909,5,4359,9.6
+A,negativo,2,flare,-1.6232,0.1175,5,1740,3.9
+A,negativo,3,sbo,-1.5224,0.3026,4,970,2.3
+A,negativo,4,gastroenteritis,-1.4613,0.2345,5,848,1.6
+A,negativo,5,paracentesis,-1.4503,0.1883,3,932,2.2
+A,negativo,6,viral,-1.4048,0.229,4,4141,9.1
+A,negativo,7,admissions,-1.3716,0.1607,3,1939,4.7
+A,negativo,8,struck,-1.3572,0.2162,2,541,1.0
+A,negativo,9,abscesses,-1.3442,0.1865,4,707,1.6
+A,negativo,10,shin,-1.3402,0.123,4,1923,3.7
+A,negativo,11,gib,-1.3333,0.2923,2,1259,2.7
+A,negativo,12,necrotizing,-1.3179,0.317,2,432,1.0
+A,negativo,13,source,-1.3002,0.1013,3,7723,16.2
+A,negativo,14,hiv,-1.2966,0.1546,2,2475,5.3
+A,negativo,15,urgency,-1.2716,0.1638,2,2178,4.2
+B,positivo,1,decubitus ulcer,2.7415,0.041,5,487,1.2
+B,positivo,2,wound infection,2.5427,0.1603,5,1123,2.4
+B,positivo,3,side effect,2.2899,0.138,5,3190,6.1
+B,positivo,4,pressure ulcer,2.2767,0.0655,5,599,1.2
+B,positivo,5,reaction to,2.2341,0.1298,5,988,1.9
+B,positivo,6,complicated by,2.2278,0.1963,5,7554,18.1
+B,positivo,7,was complicated,2.1682,0.1341,5,3214,6.4
+B,positivo,8,removal of,2.1352,0.2373,5,3743,7.7
+B,positivo,9,effect of,2.1062,0.1508,5,1421,2.6
+B,positivo,10,wound care,2.0014,0.1792,5,5273,10.9
+B,positivo,11,supratherapeutic inr,1.8233,0.1297,4,823,1.7
+B,positivo,12,who underwent,1.8072,0.1526,3,684,1.3
+B,positivo,13,mechanical fall,1.7538,0.0907,5,2128,4.0
+B,positivo,14,secondary to,1.7264,0.0557,5,12904,29.4
+B,positivo,15,transplant in,1.6232,0.1731,1,588,1.9
+B,negativo,1,pain with,-1.2604,0.145,4,5157,10.2
+B,negativo,2,daily prn,-1.1566,0.2056,2,6768,14.8
+B,negativo,3,days of,-1.1194,0.2606,3,6833,13.7
+B,negativo,4,to an,-1.107,0.2165,3,4593,8.8
+B,negativo,5,abdominal and,-1.0982,0.1305,2,667,1.3
+B,negativo,6,palpation of,-1.0853,0.1606,3,1139,2.1
+B,negativo,7,tolerated the,-1.0818,0.1424,2,6839,13.3
+B,negativo,8,without complication,-1.0761,0.127,3,2773,5.1
+B,negativo,9,source of,-1.0483,0.273,2,3181,6.2
+B,negativo,10,prior episodes,-1.0,0.1545,1,760,1.5
+B,negativo,11,during his,-0.999,0.1267,2,3320,6.7
+B,negativo,12,for nausea,-0.9971,0.1378,2,2489,5.7
+B,negativo,13,were started,-0.9882,0.1516,1,4918,9.4
+B,negativo,14,no hematoma,-0.974,0.1642,1,753,1.4
+B,negativo,15,the neck,-0.9703,0.2058,1,1421,2.7

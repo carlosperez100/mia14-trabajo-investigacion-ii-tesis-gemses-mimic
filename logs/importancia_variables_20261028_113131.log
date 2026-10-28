@@ -1,0 +1,23 @@
+2026-10-28 11:31:31 | importancia_variables | INFO | log -> logs\importancia_variables_20261028_113131.log
+2026-10-28 11:31:31 | importancia_variables | INFO | modelo: D2 con A+B+C · C=1 · A 20000/3 · B 20000/3 · class_weight=balanced · sublinear_tf=True · partición: confirmacion (5 folds dentro de train; no se usa test)
+2026-10-28 11:31:31 | importancia_variables | INFO | parámetros: {"particion": "confirmacion", "n_repeticiones": 30, "top_terminos": 20, "candidatos_por_fold": 50, "mostrar_terminos": 15, "filtro_privacidad": {"min_pacientes": 100, "min_pct_notas": 1.0, "solo_letras": true, "max_pct_mayuscula_inicial": 50, "muestra_mayusculas": 10000}}
+2026-10-28 11:31:34 | importancia_variables | INFO | variables de dominio: se reutiliza dominio_hadm.parquet
+2026-10-28 11:31:34 | importancia_variables | INFO | variantes de datos: se reutiliza variantes_datos.parquet
+2026-10-28 11:31:42 | importancia_variables | INFO | train 55,915 epicrisis · entrenan 48,998 filas de D2 · 5 folds por paciente
+2026-10-28 11:35:06 | importancia_variables | INFO | fold 1: caché igual al pipeline de features.py en A, B y C: True
+2026-10-28 11:35:09 | importancia_variables | INFO | fold 1: PR-AUC de validación 0.856697 (semana 6: 0.856697) · 23 grupos permutados 30 veces en 3 s
+2026-10-28 11:38:25 | importancia_variables | INFO | fold 2: caché igual al pipeline de features.py en A, B y C: True
+2026-10-28 11:38:27 | importancia_variables | INFO | fold 2: PR-AUC de validación 0.852738 (semana 6: 0.852738) · 23 grupos permutados 30 veces en 2 s
+2026-10-28 11:41:45 | importancia_variables | INFO | fold 3: caché igual al pipeline de features.py en A, B y C: True
+2026-10-28 11:41:48 | importancia_variables | INFO | fold 3: PR-AUC de validación 0.846717 (semana 6: 0.846717) · 23 grupos permutados 30 veces en 3 s
+2026-10-28 11:45:08 | importancia_variables | INFO | fold 4: caché igual al pipeline de features.py en A, B y C: True
+2026-10-28 11:45:10 | importancia_variables | INFO | fold 4: PR-AUC de validación 0.854189 (semana 6: 0.854189) · 23 grupos permutados 30 veces en 3 s
+2026-10-28 11:48:15 | importancia_variables | INFO | fold 5: caché igual al pipeline de features.py en A, B y C: True
+2026-10-28 11:48:17 | importancia_variables | INFO | fold 5: PR-AUC de validación 0.856627 (semana 6: 0.856627) · 23 grupos permutados 30 veces en 3 s
+2026-10-28 11:48:17 | importancia_variables | INFO | bloques: A · palabras 0.1274 ± 0.0028 · B · bigramas 0.0331 ± 0.0013 · C · contexto 0.1106 ± 0.0034 · A+B · texto completo 0.2349 ± 0.0046
+2026-10-28 11:48:17 | importancia_variables | INFO | variables de C (las 5 primeras): estancia_dias 0.0132 · servicio 0.0061 · largo de la nota 0.0054 · servicio_alta 0.0040 · n_cultivos 0.0038
+2026-10-28 11:48:18 | importancia_variables | INFO | estabilidad A: {'terminos_por_fold': [20000, 20000, 20000, 20000, 20000], 'terminos_en_los_5_folds': 18828, 'spearman_coeficientes': {'media': 0.7769, 'min': 0.7709, 'max': 0.7818}, 'positivo': {'top': 20, 'en_los_5_folds': 15, 'en_al_menos_3_folds': 21, 'terminos_distintos_en_los_top': 25, 'jaccard_medio_entre_pares': 0.7813}, 'negativo': {'top': 20, 'en_los_5_folds': 3, 'en_al_menos_3_folds': 12, 'terminos_distintos_en_los_top': 55, 'jaccard_medio_entre_pares': 0.2548}}
+2026-10-28 11:48:18 | importancia_variables | INFO | estabilidad B: {'terminos_por_fold': [20000, 20000, 20000, 20000, 20000], 'terminos_en_los_5_folds': 19335, 'spearman_coeficientes': {'media': 0.7696, 'min': 0.7658, 'max': 0.774}, 'positivo': {'top': 20, 'en_los_5_folds': 16, 'en_al_menos_3_folds': 19, 'terminos_distintos_en_los_top': 27, 'jaccard_medio_entre_pares': 0.788}, 'negativo': {'top': 20, 'en_los_5_folds': 2, 'en_al_menos_3_folds': 10, 'terminos_distintos_en_los_top': 59, 'jaccard_medio_entre_pares': 0.2109}}
+2026-10-28 11:51:49 | importancia_variables | INFO | filtro de privacidad: {'candidatos': 409, 'excluidos': 109, 'publicables': 300, 'min_notas': 560, 'por_motivo': {'dígitos o símbolos': 33, 'menos de 100 pacientes': 0, 'menos del 1 % de las epicrisis': 36, 'posible nombre propio': 45}, 'segundos': 211.1}
+2026-10-28 11:51:50 | importancia_variables | INFO | control: la PR-AUC de cada fold reproduce la semana 6: {'pr_auc_base_esta_corrida': [0.856697, 0.852738, 0.846717, 0.854189, 0.856627], 'pr_auc_semana6': [0.856697, 0.852738, 0.846717, 0.854189, 0.856627], 'dif_maxima': 0.0, 'reproduce': True}
+2026-10-28 11:51:51 | importancia_variables | INFO | Salidas: logs/metrics_importancia.txt · reportes/importancia_resultados.json · reportes/importancia_grupos.csv · reportes/importancia_terminos.csv · reportes/figuras/fig_imp_*.png · duración 1219 s
