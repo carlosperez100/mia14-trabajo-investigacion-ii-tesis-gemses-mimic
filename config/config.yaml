@@ -45,3 +45,28 @@ feature_engineering:        # Sprint 2, semana 5: ablación A, A+B, A+C, A+B+C (
     min_frecuencia: 50      # categorías con menos casos en train -> «infrecuentes»
     grupos: [nota, paciente, servicio, hospital, atencion]   # ver src/variables_dominio.py
     grupos_escalera: [paciente, servicio, hospital, atencion, nota]   # análisis sin texto: se suma un grupo a la vez
+
+hiperparametros:            # Sprint 3, semana 7: búsqueda aleatoria y bayesiana (src/experimentos_hp.py)
+  modelo: A+B+C             # bloques de la semana 5 (src/features.py), sin cambios de diseño
+  variante: D2              # filas de entrenamiento de la semana 6 (src/variantes_datos.py)
+  # configuración actual = la de feature_engineering: A y B con 20 000 términos y min_df 3, sublinear_tf, C 1.0 y balanced
+  n_folds_busqueda: 3       # StratifiedGroupKFold por paciente, solo en train, para buscar
+  n_folds_confirmacion: 5   # los 5 folds del proyecto (semanas 5 y 6), para confirmar la mejor frente a la actual
+  n_ensayos: 15             # por método, el mismo para la búsqueda aleatoria y la bayesiana. Se fijó primero en 18 y se bajó a 15
+                            # antes de la búsqueda, por una estimación previa de que con C alto un ensayo tarda varios minutos
+                            # (logs/experimentos_hp_20261028_081924.log registra los 18)
+  ensayos_iniciales_tpe: 5  # la bayesiana (TPE) empieza con 5 ensayos al azar y después aprende de los anteriores
+  tpe_multivariado: true    # TPE multivariado. Es el valor por defecto de Optuna 5.0.0 con un solo objetivo (multivariate=None),
+                            # que usó la corrida del 28-10-2026; se hizo explícito después y la secuencia se verificó idéntica
+  n_bootstrap: 200          # IC 95 % de la PR-AUC en test, remuestreando pacientes
+  espacio:
+    C: [0.001, 100.0]                              # regresión logística, log-uniforme
+    A_max_features: [10000, 20000, 40000, 60000]   # 60 000: palabras del modelo de la tesis (baseline.referencia_fase9)
+    A_min_df: [2, 3, 5]
+    B_max_features: [10000, 20000, 40000]
+    B_min_df: [2, 3, 5]
+    class_weight: [balanced, ninguno]
+    sublinear_tf: [true, false]                    # el mismo valor en los bloques A y B
+  regla:                    # prerregistrada antes de correr la búsqueda (validación cruzada de 5 folds)
+    folds_mejores_minimo: 4         # la ajustada debe superar a la actual en al menos 4 de los 5 folds
+    desviaciones_minimas: 1.0       # y la mejora media debe superar 1 desviación estándar de las diferencias por fold

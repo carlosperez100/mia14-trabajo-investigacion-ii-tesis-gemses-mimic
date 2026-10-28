@@ -1,0 +1,58 @@
+# metrics_hp.txt · 2026-10-28T10:17:34 · modelo A+B+C con D2 · semilla 42 · Optuna 5.0.0
+protocolo: búsqueda: StratifiedGroupKFold(3, shuffle=True, random_state=42) por subject_id en train; confirmación: StratifiedGroupKFold(5, shuffle=True, random_state=42) (los folds de las semanas 5 y 6); entrenan las filas de D2; métrica: PR-AUC media en las epicrisis de validación sin etiqueta dudosa; test usado una vez
+regla prerregistrada: adopta la candidata si mejora la PR-AUC en ≥ 4 de 5 folds y la mejora media > 1.0 desviación estándar de las diferencias por fold
+configuración actual: C=1 · A 20000/3 · B 20000/3 · class_weight=balanced · sublinear_tf=True
+referencia (actual, 3 folds): PR-AUC 0.8498 ± 0.0009 · 156 s
+
+ENSAYOS (uno por línea): método · n.º · parámetros · PR-AUC media ± desv. (3 folds) · ROC-AUC media · tiempo
+aleatoria #01 · C=0.07459 · A 10000/5 · B 20000/2 · class_weight=ninguno · sublinear_tf=False · PR-AUC 0.8158 ± 0.0015 · ROC-AUC 0.8239 · 62 s
+aleatoria #02 · C=0.1445 · A 20000/5 · B 40000/3 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8288 ± 0.0008 · ROC-AUC 0.8361 · 87 s
+aleatoria #03 · C=0.03335 · A 20000/5 · B 20000/3 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8008 ± 0.0007 · ROC-AUC 0.8094 · 49 s
+aleatoria #04 · C=0.9761 · A 10000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8471 ± 0.0014 · ROC-AUC 0.8521 · 141 s
+aleatoria #05 · C=0.001066 · A 10000/3 · B 10000/5 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.7583 ± 0.0019 · ROC-AUC 0.7642 · 20 s
+aleatoria #06 · C=0.003963 · A 60000/3 · B 20000/2 · class_weight=balanced · sublinear_tf=False · PR-AUC 0.7692 ± 0.0018 · ROC-AUC 0.7770 · 24 s
+aleatoria #07 · C=0.01393 · A 60000/5 · B 40000/5 · class_weight=balanced · sublinear_tf=False · PR-AUC 0.7843 ± 0.0014 · ROC-AUC 0.7932 · 37 s
+aleatoria #08 · C=12.3 · A 10000/5 · B 10000/5 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8215 ± 0.0021 · ROC-AUC 0.8246 · 308 s
+aleatoria #09 · C=0.02656 · A 20000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=False · PR-AUC 0.7954 ± 0.0012 · ROC-AUC 0.8043 · 50 s
+aleatoria #10 · C=1.471 · A 40000/5 · B 10000/3 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8469 ± 0.0010 · ROC-AUC 0.8517 · 164 s
+aleatoria #11 · C=0.05074 · A 20000/3 · B 10000/3 · class_weight=ninguno · sublinear_tf=False · PR-AUC 0.8082 ± 0.0013 · ROC-AUC 0.8167 · 49 s
+aleatoria #12 · C=27.25 · A 10000/2 · B 20000/5 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8157 ± 0.0004 · ROC-AUC 0.8190 · 456 s
+aleatoria #13 · C=0.04236 · A 40000/2 · B 40000/3 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8042 ± 0.0006 · ROC-AUC 0.8128 · 59 s
+aleatoria #14 · C=0.009467 · A 10000/5 · B 10000/5 · class_weight=balanced · sublinear_tf=False · PR-AUC 0.7802 ± 0.0015 · ROC-AUC 0.7889 · 27 s
+aleatoria #15 · C=18.02 · A 60000/2 · B 20000/3 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8283 ± 0.0003 · ROC-AUC 0.8318 · 438 s
+bayesiana #01 · C=0.07459 · A 10000/5 · B 20000/2 · class_weight=ninguno · sublinear_tf=False · PR-AUC 0.8158 ± 0.0015 · ROC-AUC 0.8239 · 62 s · igual a aleatoria #1 (reutilizado)
+bayesiana #02 · C=0.1445 · A 20000/5 · B 40000/3 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8288 ± 0.0008 · ROC-AUC 0.8361 · 87 s · igual a aleatoria #2 (reutilizado)
+bayesiana #03 · C=0.03335 · A 20000/5 · B 20000/3 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8008 ± 0.0007 · ROC-AUC 0.8094 · 49 s · igual a aleatoria #3 (reutilizado)
+bayesiana #04 · C=0.9761 · A 10000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8471 ± 0.0014 · ROC-AUC 0.8521 · 141 s · igual a aleatoria #4 (reutilizado)
+bayesiana #05 · C=0.001066 · A 10000/3 · B 10000/5 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.7583 ± 0.0019 · ROC-AUC 0.7642 · 20 s · igual a aleatoria #5 (reutilizado)
+bayesiana #06 · C=11.81 · A 10000/2 · B 10000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8222 ± 0.0022 · ROC-AUC 0.8254 · 335 s
+bayesiana #07 · C=2.864 · A 20000/3 · B 20000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8465 ± 0.0004 · ROC-AUC 0.8505 · 238 s
+bayesiana #08 · C=0.1618 · A 60000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=False · PR-AUC 0.8287 ± 0.0024 · ROC-AUC 0.8357 · 76 s
+bayesiana #09 · C=0.001516 · A 10000/2 · B 10000/3 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.7611 ± 0.0019 · ROC-AUC 0.7674 · 21 s
+bayesiana #10 · C=1.23 · A 60000/3 · B 10000/2 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8472 ± 0.0011 · ROC-AUC 0.8522 · 166 s
+bayesiana #11 · C=4.576 · A 60000/3 · B 10000/2 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8390 ± 0.0014 · ROC-AUC 0.8429 · 278 s
+bayesiana #12 · C=59.66 · A 60000/3 · B 40000/2 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8268 ± 0.0004 · ROC-AUC 0.8298 · 508 s
+bayesiana #13 · C=0.2635 · A 60000/3 · B 10000/2 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8369 ± 0.0013 · ROC-AUC 0.8437 · 94 s
+bayesiana #14 · C=2.318 · A 10000/3 · B 10000/2 · class_weight=ninguno · sublinear_tf=False · PR-AUC 0.8480 ± 0.0024 · ROC-AUC 0.8510 · 202 s
+bayesiana #15 · C=8.588 · A 10000/3 · B 10000/2 · class_weight=ninguno · sublinear_tf=False · PR-AUC 0.8360 ± 0.0023 · ROC-AUC 0.8378 · 351 s
+
+MEJOR POR MÉTODO
+  aleatoria: ensayo #4 · C=0.9761 · A 10000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8471 ± 0.0014
+  bayesiana: ensayo #14 · C=2.318 · A 10000/3 · B 10000/2 · class_weight=ninguno · sublinear_tf=False · PR-AUC 0.8480 ± 0.0024
+  candidata: la de la búsqueda bayesiana
+
+CONFIRMACIÓN (5 folds del proyecto; PR-AUC en las epicrisis sin etiqueta dudosa)
+  actual    0.8567 · 0.8527 · 0.8467 · 0.8542 · 0.8566 · media 0.8534 ± 0.0041 · ROC-AUC 0.8582
+  candidata 0.8567 · 0.8513 · 0.8435 · 0.8521 · 0.8562 · media 0.8519 ± 0.0053 · ROC-AUC 0.8550
+  diferencias (candidata − actual): [-3.4e-05, -0.001398, -0.003199, -0.002125, -0.000465] · folds mejores 0/5 · media -0.0014 · desv. 0.0013
+  regla: criterio de folds False · criterio de desviación False → se mantiene la configuración actual
+
+TEST (una sola medición)
+  actual    común PR-AUC 0.8671 [0.8589, 0.8749] · ROC-AUC 0.8706 · sensibilidad 0.7689 · especificidad 0.8038 | completa PR-AUC 0.8580 [0.8493, 0.8664]
+            por 10 000 hospitalizaciones (común): {'eventos': 2759, 'detectados_vp': 2121, 'se_escapan_fn': 638, 'falsas_alarmas_fp': 1421, 'vpp_de_cada_100_alertas': 60}
+  candidata común PR-AUC 0.8645 [0.8567, 0.8719] · ROC-AUC 0.8666 · sensibilidad 0.7629 · especificidad 0.8035 | completa PR-AUC 0.8555 [0.8464, 0.8637]
+            por 10 000 hospitalizaciones (común): {'eventos': 2759, 'detectados_vp': 2105, 'se_escapan_fn': 654, 'falsas_alarmas_fp': 1423, 'vpp_de_cada_100_alertas': 60}
+
+control de reproducción (validación cruzada): {'pr_auc_semana6': [0.856697, 0.852738, 0.846717, 0.854189, 0.856627], 'pr_auc_esta_corrida': [0.856697, 0.852738, 0.846717, 0.854189, 0.856627], 'dif_maxima': 0.0, 'reproduce': True}
+control de reproducción (test): {'pr_auc_comun_semana6': 0.8671, 'pr_auc_comun_esta_corrida': 0.8671, 'pr_auc_completa_semana6': 0.858, 'pr_auc_completa_esta_corrida': 0.858, 'reproduce': True}
+tiempos (s): {'conteos_calculo_original': 1215.6, 'busqueda_aleatoria': 1972.5, 'busqueda_bayesiana': 2270.9, 'referencia_actual_busqueda': 156.3, 'busqueda_calculo_original': 4394.8, 'confirmacion': 798.6, 'test': 208.1, 'esta_corrida': 5420.8, 'computo_total': 6616.5}

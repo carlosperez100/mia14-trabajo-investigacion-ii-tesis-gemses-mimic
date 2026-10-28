@@ -45,7 +45,9 @@ data/
  └── bitacora_datos.csv       # versionado de datos: fuente, fecha, SHA-256 y tamaño
 notebooks/
  ├── 01_EDA_sprint1.ipynb     # primera versión del EDA (semana 3)
- └── 02_EDA_semana4.ipynb     # EDA desplegada (src/eda.py) y, en la sección 7, el feature engineering (src/experimentos_fe.py)
+ ├── 02_EDA_semana4.ipynb     # EDA desplegada (src/eda.py) y, en la sección 7, el feature engineering (src/experimentos_fe.py)
+ ├── 03_sprint2_semana6_variantes_datos.ipynb   # variantes de los datos y diagnósticos (semana 6)
+ └── 04_sprint3_semana7_hiperparametros.ipynb   # búsqueda de hiperparámetros, aleatoria y bayesiana (semana 7)
 src/
  ├── run_pipeline.py          # orquestador: ingesta → preprocesado → eda → baseline → features
  ├── ingesta.py               # script de ingesta (idempotente, con hash)
@@ -58,9 +60,12 @@ src/
  ├── variables_dominio.py     # 18 variables de paciente, servicio, hospitalización y atención (semana 5)
  ├── features.py              # bloques de atributos A, B y C y configuraciones de la ablación (semana 5)
  ├── experimentos_fe.py       # validación cruzada por paciente, test, figura y metrics_fe.txt (semana 5)
+ ├── variantes_datos.py       # marcas de etiqueta dudosa y variantes D0, D1 y D2 (semana 6)
+ ├── experimentos_datos.py    # variantes de los datos y diagnósticos del modelo (semana 6); figuras en figuras_datos.py
+ ├── experimentos_hp.py       # búsqueda de hiperparámetros aleatoria y bayesiana, confirmación y test (semana 7); figuras en figuras_hp.py
  └── utils.py                 # configuración, logging y hash
 config/config.yaml            # semilla, split e hiperparámetros
-logs/                         # logs por etapa, metrics_baseline.txt, metrics_eda.txt y metrics_fe.txt
+logs/                         # logs por etapa, metrics_baseline.txt, metrics_eda.txt, metrics_fe.txt, metrics_datos.txt y metrics_hp.txt
 reportes/                     # resultados en JSON y CSV, y figuras
 slides/                       # presentación de resultados del sprint
 entregables/                  # entregables por semana (diseño del pipeline de la semana 2, matriz de consistencia de la semana 3, roadmap y guion de la demo)
@@ -631,6 +636,146 @@ salen de [`logs/metrics_datos.txt`](logs/metrics_datos.txt), [`reportes/datos_re
 
 ---
 
+## 🎛️ Semana 7 · Sprint 3: búsqueda de hiperparámetros
+
+Las tablas y las figuras de esta sección también están en el cuaderno [`notebooks/04_sprint3_semana7_hiperparametros.ipynb`](notebooks/04_sprint3_semana7_hiperparametros.ipynb), el cual lee los resultados sin volver a entrenar.
+
+Con el modelo y los datos de la semana 6 fijos (D2 con A+B+C), esta semana se buscaron sus hiperparámetros (valores que se fijan antes de entrenar y que el modelo no aprende de los datos). Se compararon dos métodos con el mismo presupuesto, es decir, la búsqueda aleatoria, que sortea cada ensayo de forma independiente, y la bayesiana, que elige cada ensayo a partir de los resultados de los anteriores. Bergstra y Bengio (2012) proponen la búsqueda aleatoria como punto de comparación de los métodos que aprenden de los ensayos previos, que es el uso que se le da aquí.
+
+La búsqueda bayesiana usa el estimador TPE (*Tree-structured Parzen Estimator*) multivariado de Optuna, que es la opción por defecto de Optuna 5.0.0 cuando hay un solo objetivo. La documentación de Optuna remite, entre otros, a Bergstra et al. (2011) y, para la variante multivariada, a Falkner et al. (2018).
+
+### Diseño, fijado antes de correr
+El diseño, el presupuesto y la regla se escribieron en [`config/config.yaml`](config/config.yaml) (sección `hiperparametros`) antes de ejecutar la búsqueda. Como ese archivo no tiene un *commit* anterior a la corrida, la única prueba del prerregistro es [`logs/experimentos_hp_20261028_081924.log`](logs/experimentos_hp_20261028_081924.log), escrito antes del primer ensayo con el espacio de búsqueda, la regla y un presupuesto inicial de 18 ensayos por método.
+
+- Modelo y datos: A+B+C sin cambios de diseño, entrenado con las filas de la variante D2, igual que en `src/experimentos_datos.py`. Cada configuración se evalúa en las epicrisis de validación sin etiqueta dudosa, las mismas con las que se eligió D2.
+- Búsqueda solo en *train*: `StratifiedGroupKFold` de 3 *folds* (partes en que se divide el *train* para entrenar con las demás y evaluar con la que queda) por paciente y semilla 42. La mejor configuración se confirma frente a la actual con los 5 *folds* del proyecto, y el *test* se usa una sola vez, al final, para esas dos configuraciones.
+- Métrica: PR-AUC media de los *folds*, y se registran también la ROC-AUC y el tiempo de cada ensayo.
+- Presupuesto: 15 ensayos por método, con Optuna 5.0.0 y semilla 42 (`RandomSampler` y `TPESampler` multivariado). La bayesiana empieza con 5 ensayos al azar que, por la misma semilla, coinciden con los 5 primeros de la aleatoria, y se evaluaron una sola vez.
+- Cambio de presupuesto: se fijó primero en 18 ensayos por método y se redujo a 15 antes de iniciar la búsqueda, por una estimación previa de que los ensayos con C alto tardarían varios minutos. Esa estimación no quedó registrada, y los dos valores constan en los registros de `logs/`.
+- TPE multivariado: la corrida no fijó `multivariate`, de modo que usó el valor por defecto de Optuna 5.0.0, que con un solo objetivo es `True`. Después de la corrida ese valor se hizo explícito en el script y en `config/config.yaml`, y el cuaderno verifica que la secuencia de los 15 ensayos bayesianos es idéntica a la registrada.
+- Regla de decisión: la configuración ajustada reemplaza a la actual solo si mejora la PR-AUC de la validación cruzada de 5 *folds* en al menos 4 de ellos y si la mejora media supera una desviación estándar de las diferencias por *fold*. Si no, se mantiene la actual, y la candidata es una sola, la de mayor PR-AUC media entre los dos métodos.
+- Revisión ciega en curso: el lote de la revisión ciega de HE2 y HE3 ya se generó con la configuración actual (D2, A+B+C, corte de probabilidad 0.5). Si la regla adoptara otra configuración, el lote no se regenera y HE2 y HE3 se refieren a la configuración con la que se muestreó.
+
+Tabla 1. Espacio de búsqueda
+
+| Hiperparámetro | Qué controla | Valores probados | Actual |
+|---|---|---|---|
+| `C` | inverso de la fuerza de la regularización de la regresión logística | log-uniforme entre 0.001 y 100 | 1 |
+| `max_features` de A | máximo de palabras | 10 000, 20 000, 40 000 y 60 000 | 20 000 |
+| `min_df` de A | mínimo de epicrisis en las que aparece una palabra | 2, 3 y 5 | 3 |
+| `max_features` de B | máximo de bigramas | 10 000, 20 000 y 40 000 | 20 000 |
+| `min_df` de B | mínimo de epicrisis en las que aparece un bigrama | 2, 3 y 5 | 3 |
+| `class_weight` | peso de las clases | *balanced* o sin pesos | *balanced* |
+| `sublinear_tf` | contar las repeticiones como 1 + log(frecuencia), en A y en B | sí o no | sí |
+
+Fuente: elaboración propia a partir de `config/config.yaml`. El valor de 60 000 palabras es el del modelo de la tesis (`baseline.referencia_fase9` en el mismo archivo).
+
+Para que cada ensayo tarde minutos y no horas, en cada partición las palabras y los bigramas se cuentan una sola vez y se guardan en una caché fuera de git. Cada ensayo elige el vocabulario con la misma regla de scikit-learn y aplica la ponderación TF-IDF, con matrices idénticas a las del *pipeline* de `src/features.py`. El control de esa equivalencia se ejecuta con `--prueba`, y su registro ([`logs/experimentos_hp_prueba_20261028_104516.log`](logs/experimentos_hp_prueba_20261028_104516.log)) muestra una diferencia máxima de probabilidad de 0 con una muestra de 4 000 epicrisis de *train*.
+
+### Control de reproducción
+La configuración actual reproduce la PR-AUC de D2 de la semana 6 en los 5 *folds*, sin diferencias hasta el sexto decimal (diferencia máxima 0.000000). En *test* obtiene 0.8671 en las epicrisis sin etiqueta dudosa y 0.8580 con todas, iguales a las de la semana 6.
+
+### Resultados de la búsqueda
+Se registraron 30 ensayos, que corresponden a 25 configuraciones distintas. La Tabla 2 compara la configuración actual con la mejor de cada método en la validación cruzada de 3 *folds* (media ± desviación estándar).
+
+Tabla 2. Mejor configuración de cada método frente a la actual (validación cruzada de 3 *folds*)
+
+| Configuración | Hiperparámetros | PR-AUC | Diferencia con la actual |
+|---|---|---|---|
+| Actual (referencia) | C 1 · A 20 000/3 · B 20 000/3 · balanced · sublinear_tf sí | 0.8498 ± 0.0009 | referencia |
+| Mejor aleatoria (ensayo 4) | C 0.976 · A 10 000/3 · B 10 000/5 · sin pesos · sublinear_tf sí | 0.8471 ± 0.0014 | -0.0027 |
+| Mejor bayesiana (ensayo 14, candidata) | C 2.32 · A 10 000/3 · B 10 000/2 · sin pesos · sublinear_tf no | 0.8480 ± 0.0024 | -0.0018 |
+
+Fuente: elaboración propia a partir de [`reportes/hp_resultados.json`](reportes/hp_resultados.json) y [`reportes/hp_ensayos.csv`](reportes/hp_ensayos.csv).
+
+Como se aprecia en la Tabla 2, ninguno de los 30 ensayos superó a la configuración actual en los mismos 3 *folds*. La mejor configuración de la búsqueda, el ensayo 14 de la bayesiana, quedó 0.0018 por debajo de ella y usa la mitad del vocabulario (10 000 palabras y 10 000 bigramas).
+
+Figura 1. Mejor resultado acumulado y resultado de cada ensayo, por método
+
+![Mejor resultado acumulado y resultado de cada ensayo](reportes/figuras/fig_hp_busqueda.png)
+
+Fuente: elaboración propia a partir de [`reportes/hp_ensayos.csv`](reportes/hp_ensayos.csv).
+
+En el gráfico izquierdo de la Figura 1, el eje x es el número de ensayo de cada método y el eje y la mejor PR-AUC obtenida hasta ese ensayo; en el derecho, el eje y es la PR-AUC de cada ensayo. Después de los 5 ensayos compartidos, la mediana de la bayesiana fue 0.8364 y la de la aleatoria 0.8062. Esa diferencia es coherente con que el TPE propuso C de al menos 0.1 en 9 de sus 10 ensayos propios, frente a 4 de 10 de la aleatoria, y evitó así la zona de C pequeño donde la PR-AUC cae. En esta corrida y con una sola semilla, la bayesiana aprovechó mejor el presupuesto, aunque su mejor resultado superó al de la aleatoria en solo 0.0009.
+
+Figura 2. Efecto de cada hiperparámetro en la PR-AUC de la búsqueda
+
+![Efecto de cada hiperparámetro](reportes/figuras/fig_hp_parametros.png)
+
+Fuente: elaboración propia a partir de [`reportes/hp_ensayos.csv`](reportes/hp_ensayos.csv).
+
+En el panel a) de la Figura 2, el eje x es C en escala logarítmica y el eje y la PR-AUC de cada configuración; en los paneles b) a g), el eje x son los valores de cada hiperparámetro. La mediana de la PR-AUC pasa de 0.7651 con C hasta 0.01 a 0.8471 con C entre 0.3 y 3, y vuelve a bajar a 0.8268 con C mayor que 3. Los demás hiperparámetros separan bastante menos las medianas, y esas diferencias reflejan en parte los valores de C con los que coincidieron en cada ensayo. La configuración actual, con C de 1, ya está en el tramo de C con la PR-AUC más alta, lo cual es coherente con que la búsqueda no la haya superado.
+
+### Confirmación con los 5 *folds* y regla
+Tabla 3. PR-AUC por *fold* de la configuración actual y de la candidata (validación cruzada de 5 *folds*)
+
+| *Fold* | Actual | Candidata | Diferencia |
+|---|---|---|---|
+| 1 | 0.8567 | 0.8567 | -0.00003 |
+| 2 | 0.8527 | 0.8513 | -0.0014 |
+| 3 | 0.8467 | 0.8435 | -0.0032 |
+| 4 | 0.8542 | 0.8521 | -0.0021 |
+| 5 | 0.8566 | 0.8562 | -0.0005 |
+| Media | 0.8534 | 0.8519 | -0.0014 ± 0.0013 |
+
+Fuente: elaboración propia a partir de [`reportes/hp_resultados.json`](reportes/hp_resultados.json).
+
+Figura 3. Confirmación con los 5 *folds* del proyecto
+
+![Confirmación con los 5 folds](reportes/figuras/fig_hp_folds.png)
+
+Fuente: elaboración propia a partir de [`reportes/hp_resultados.json`](reportes/hp_resultados.json).
+
+Como se aprecia en la Tabla 3 y en la Figura 3, la candidata no superó a la configuración actual en ninguno de los 5 *folds*, con una diferencia media de -0.0014 y una desviación estándar de 0.0013. La mayor caída se dio en el *fold* 3 (-0.0032). Por consiguiente, no se cumple ninguna de las dos condiciones de la regla y se mantiene la configuración actual. La ROC-AUC media también fue menor con la candidata (0.8550 frente a 0.8582).
+
+### *Test* (una sola medición)
+Tabla 4. Medición única en *test* de la configuración actual y de la candidata
+
+| Configuración | PR-AUC sin etiqueta dudosa | IC 95 % | PR-AUC con todas las epicrisis | ROC-AUC | Sensibilidad | Especificidad |
+|---|---|---|---|---|---|---|
+| Actual | 0.8671 | 0.8589–0.8749 | 0.8580 | 0.8706 | 0.7689 | 0.8038 |
+| Candidata | 0.8645 | 0.8567–0.8719 | 0.8555 | 0.8666 | 0.7629 | 0.8035 |
+
+Fuente: elaboración propia a partir de [`reportes/hp_resultados.json`](reportes/hp_resultados.json).
+
+Como se aprecia en la Tabla 4, el *test* repite el orden de la validación cruzada, aunque los intervalos de confianza (remuestreando pacientes 200 veces) se solapan. Por ello, la decisión se apoya en la comparación por *fold*.
+
+### Qué significan esos decimales en eventos adversos
+Igual que en la semana 6, se aplicaron la sensibilidad y la especificidad de *test* (umbral 0.5) a 10 000 hospitalizaciones con epicrisis y la prevalencia real de 27.6 %, es decir, 2 759 con evento según los códigos.
+
+Tabla 5. Eventos por cada 10 000 hospitalizaciones con epicrisis
+
+| Configuración · epicrisis evaluadas | Eventos detectados (VP) | Eventos que se escapan (FN) | Falsas alarmas (FP) | De cada 100 alertas, con evento |
+|---|---|---|---|---|
+| Actual · sin etiqueta dudosa | 2 121 | 638 | 1 421 | 60 |
+| Candidata · sin etiqueta dudosa | 2 105 | 654 | 1 423 | 60 |
+| Actual · todas, etiqueta original | 1 983 | 776 | 1 484 | 57 |
+| Candidata · todas, etiqueta original | 1 967 | 792 | 1 484 | 57 |
+
+Fuente: elaboración propia a partir de [`reportes/hp_resultados.json`](reportes/hp_resultados.json).
+
+Como se aprecia en la Tabla 5, la candidata detectaría 16 eventos menos por cada 10 000 hospitalizaciones, con 2 falsas alarmas más en las epicrisis sin etiqueta dudosa. El cálculo supone que las tasas de *test* valen para toda la base y que los eventos son los que marcan los códigos CIE, no una revisión clínica. Además, la diferencia está dentro de los intervalos de confianza, así que se toma solo como orden de magnitud.
+
+### Tiempo de cómputo
+El cómputo total fue de 110.3 minutos (1.8 horas en CPU). De ese total, 20.3 minutos fueron para contar palabras y bigramas en las 9 particiones (corrida previa con `--solo-conteos`) y 73.2 para la búsqueda. La confirmación tomó 13.3 minutos y el *test* 3.5, y los ensayos con C alto fueron los más lentos (hasta 8.5 minutos por ensayo).
+
+### Decisión y siguiente paso
+- Se mantiene la configuración actual, es decir, D2 con A+B+C, C 1 · A 20 000/3 · B 20 000/3 · balanced · sublinear_tf sí. Ninguna de las 25 configuraciones la superó en la búsqueda, y la candidata quedó por debajo en los 5 *folds* de la confirmación. La configuración actual ya se encuentra en la zona de mejor desempeño del espacio explorado.
+- Aleatoria frente a bayesiana: en esta corrida y con una sola semilla, la bayesiana concentró mejor sus ensayos, pero su mejor resultado apenas superó al de la aleatoria (+0.0009). Con una sola repetición no se puede afirmar que un método sea mejor que el otro.
+- Revisión ciega: como se mantiene la configuración actual, HE2 y HE3 se refieren a la misma configuración con la que se generó el lote.
+- Siguiente experimento del Sprint 3: evaluar el modelo por servicio, grupo de edad y decil de largo frente al modelo de contexto, y recalibrar las probabilidades a la prevalencia real.
+
+### Cómo reproducir la semana 7
+- Requisitos: un archivo `.env` con las variables de `.env.example`, porque `cargar_config` (`src/utils.py`, líneas 27 a 31) se detiene si falta alguna. También se necesitan `data/processed/dataset.parquet`, las cachés `data/interim/dominio_hadm.parquet` y `data/interim/variantes_datos.parquet`, y `reportes/eda_resumen.json`, `reportes/datos_folds.csv` y `reportes/datos_resultados.json`. Si las dos cachés no existen, el script las rehace con `src/variables_dominio.py` y `src/variantes_datos.py`, que leen las tablas de MIMIC-IV de las rutas del `.env` y las etiquetas que deja la ingesta en `data/interim/`.
+- Comandos de la corrida del 28-10-2026: primero `python src/experimentos_hp.py --solo-conteos`, que arma la caché de conteos, y después `python src/experimentos_hp.py`, que hace la búsqueda, la confirmación y el *test*. Un solo `python src/experimentos_hp.py` hace todo.
+- Caché: el script guarda en `data/interim/cache_hp/`, fuera de git, los conteos y los resultados de cada evaluación, y una nueva corrida los reutiliza. Para repetir todo desde cero se borra esa carpeta.
+- Control y figuras: `python src/experimentos_hp.py --prueba` corre una versión corta con el control de equivalencia y escribe sus salidas en `data/interim/prueba_hp/`. Las figuras se redibujan sin entrenar con `python src/figuras_hp.py`.
+- Las cifras de esta sección salen de [`logs/metrics_hp.txt`](logs/metrics_hp.txt), [`reportes/hp_resultados.json`](reportes/hp_resultados.json) y [`reportes/hp_ensayos.csv`](reportes/hp_ensayos.csv).
+
+Referencias: Bergstra, J. y Bengio, Y. (2012). Random search for hyper-parameter optimization. *Journal of Machine Learning Research, 13*, 281-305. Bergstra, J., Bardenet, R., Bengio, Y. y Kégl, B. (2011). Algorithms for hyper-parameter optimization. *Advances in Neural Information Processing Systems 24*. Falkner, S., Klein, A. y Hutter, F. (2018). BOHB: Robust and efficient hyperparameter optimization at scale. *ICML 2018*, PMLR 80. Las demás referencias están en el cuaderno.
+
+---
+
 ## 📌 Roadmap
 Las tareas, con responsable y plazo, están en los [issues](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/issues) y [milestones](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/milestones).
 - [x] Semana 1 → Diagnóstico, estructura del repositorio y plan del Sprint 1.
@@ -639,7 +784,8 @@ Las tareas, con responsable y plazo, están en los [issues](https://github.com/c
 - [x] Semana 4 → EDA reproducible con log automático (`src/eda.py`) en la rama `sprint1-eda`: variables de la hospitalización, texto y eventos del Anexo 02.
 - [x] Semana 5 → Feature engineering en la rama `sprint2-feature-engineering`: ablación A, A+B, A+C y A+B+C con validación cruzada por paciente; se adopta A+B+C (PR-AUC 0.8732 en validación cruzada y 0.8830 en test).
 - [x] Semana 6 → Cierre del Sprint 2: variantes de los datos (D0, D1, D2) y diagnósticos; se adopta D2 con A+B+C (PR-AUC 0.8534 frente a 0.8431 de D0 en validación cruzada, sobre las mismas filas).
-- [ ] Sprint 3 → Evaluación por servicio, grupo de edad y decil de largo frente al modelo de contexto, ajuste de `C`, recalibración a la prevalencia de 27.6 % y explicación de logística frente a LinearSVC.
+- [x] Semana 7 → Sprint 3, búsqueda de hiperparámetros aleatoria y bayesiana (Optuna) en la rama `sprint3-hiperparametros`: ninguna configuración supera a la actual y, por la regla prerregistrada, se mantiene D2 con A+B+C (PR-AUC 0.8534 en validación cruzada y 0.8671 en test).
+- [ ] Sprint 3 → Evaluación por servicio, grupo de edad y decil de largo frente al modelo de contexto, recalibración a la prevalencia de 27.6 % y explicación de logística frente a LinearSVC.
 
 ---
 
