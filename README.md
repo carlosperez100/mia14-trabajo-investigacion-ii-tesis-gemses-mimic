@@ -70,7 +70,7 @@ config/config.yaml            # semilla, split e hiperparámetros
 logs/                         # logs por etapa, metrics_baseline.txt, metrics_eda.txt, metrics_fe.txt, metrics_datos.txt, metrics_hp.txt y metrics_importancia.txt
 reportes/                     # resultados en JSON y CSV, y figuras
 slides/                       # presentación de resultados del sprint
-entregables/                  # entregables por semana (diseño del pipeline de la semana 2, matriz de consistencia de la semana 3, roadmap y guion de la demo)
+entregables/                  # entregables por semana (diseño del pipeline de la semana 2, matrices de consistencia de las semanas 3 y 7, roadmap y guion de la demo)
 docs/                         # GitHub Pages
 README.md
 requirements.txt
