@@ -221,7 +221,7 @@ id_ev,nombre,nat,tier_a,tier_b,razon,patron
 10018,Retraso en toma de exámenes auxiliares,GESTIÓN ORGANIZACIÓN,C,-,labs order-result time,"delayed labs, lab delay"
 10019,Ausentismo del Recurso Humano,GESTIÓN ORGANIZACIÓN,E,-,Proceso RRHH,N/A
 10020,Prolongación de la Cirugía,GESTIÓN ORGANIZACIÓN,C,B,procedure duration,"prolonged surgery, long OR time"
-10021,Falla en Planificación de actividades asistenciales,GESTIÓN ORGANIZACIÓN,E,-,Proceso administrativo,N/A
+10021,Falla en Planificación de las actividades asistenciales (aparte de cateterismo y cirugía),GESTIÓN ORGANIZACIÓN,E,-,Proceso administrativo,N/A
 1101,Cantidad errónea (nutrición),NUTRICIÓN,B,-,Notas dieta,wrong diet amount
 1102,Condiciones de conservación inadecuadas (nutrición),NUTRICIÓN,E,-,Proceso cocina,N/A
 1103,Consistencia errónea,NUTRICIÓN,B,C,Notas + diet orders,"wrong diet consistency, pureed"
