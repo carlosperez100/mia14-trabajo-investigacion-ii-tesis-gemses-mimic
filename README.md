@@ -38,7 +38,7 @@ Este repositorio forma parte del curso **Proyecto de Investigación II (MIA 403)
 ## 🗂️ Estructura del repositorio
 ```
 data/
- ├── catalogos/               # catálogo de los 231 eventos del Anexo 02 y tabla evento-código CIE-10
+ ├── catalogos/               # catálogo de los 231 eventos del Anexo 02, tabla de la etiqueta y equivalencia con los eventos oficiales
  ├── raw/                     # vacío en git: MIMIC se lee desde la ruta del .env (DUA)
  ├── interim/                 # etiquetas copiadas y época CIE (salida de la ingesta)
  ├── processed/               # dataset.parquet, splits.csv y modelos (fuera de git)
@@ -358,6 +358,8 @@ Tres naturalezas existen solo en la época CIE-10, porque las familias de CIE-9 
 
 ### 5 · Los 231 eventos del Anexo 02
 El catálogo de los 231 eventos (12 naturalezas) y la tabla de códigos están versionados en [`data/catalogos/`](data/catalogos/). El resultado por evento, con una fila para cada uno de los 231, está en [`reportes/eda_eventos_231.csv`](reportes/eda_eventos_231.csv).
+
+La tabla de la etiqueta mezcla los números oficiales del Anexo 02 con números internos y reutiliza algunos; por ejemplo, el 301 identifica en ella tanto el error en el diagnóstico (Y65.8), que es su significado oficial, como una hemorragia postprocedimiento (T81.0). Por ello, [`data/catalogos/anexo02_equivalencia_cie10_oficial.csv`](data/catalogos/anexo02_equivalencia_cie10_oficial.csv) asigna cada código a su evento oficial a partir del título oficial del código en la CIE-10 de la OMS (versión 2019) o en la CIE-10-CM, según corresponda. La correspondencia es exacta si el código nombra el evento, o si describe una complicación concreta de un procedimiento sin evento propio, que va al genérico 8015. Es aproximada si el código solo es compatible con un único evento. Si es compatible con varios eventos de una misma naturaleza se registra solo la naturaleza, y si no es compatible con ninguno, o lo es con eventos de naturalezas distintas, queda sin equivalente. La naturaleza la fija el agente que produjo el daño, y la columna `nota` señala los casos detectados de códigos de la OMS con otro alcance en la CIE-10-CM, con la que se codifica MIMIC-IV. De los 223 códigos distintos, 112 tienen correspondencia exacta, 7 aproximada, 32 solo con la naturaleza y 72 ninguna, y los 119 con evento remiten a 59 eventos oficiales. La equivalencia es un criterio técnico del estudio y no modifica la etiqueta del modelo.
 
 ![Del catálogo de 231 eventos a los datos](reportes/figuras/fig_eda_eventos_catalogo.png)
 
