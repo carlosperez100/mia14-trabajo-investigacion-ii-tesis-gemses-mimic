@@ -1,0 +1,289 @@
+{
+  "etapa": "experimentos_d3",
+  "generado": "2026-10-29T12:35:28",
+  "semilla": 42,
+  "modelo": "A+B+C",
+  "parametros": {
+    "n_folds": 5,
+    "n_bootstrap": 200,
+    "logistica": {
+      "C": 1.0
+    },
+    "A": {
+      "max_features": 20000,
+      "min_df": 3
+    },
+    "B": {
+      "max_features": 20000,
+      "min_df": 3
+    },
+    "C": {
+      "winsor": [
+        1,
+        99
+      ],
+      "min_frecuencia": 50,
+      "grupos": [
+        "nota",
+        "paciente",
+        "servicio",
+        "hospital",
+        "atencion"
+      ],
+      "grupos_escalera": [
+        "paciente",
+        "servicio",
+        "hospital",
+        "atencion",
+        "nota"
+      ]
+    }
+  },
+  "prevalencia_real_con_epicrisis": 0.27588,
+  "variantes": {
+    "D2": "vigente: sin negativas ni positivas dudosas",
+    "D3": "D2 con negativas liberadas por la equivalencia validada"
+  },
+  "liberadas": {
+    "sin_etiqueta_dudosa_train": 10399,
+    "sin_etiqueta_dudosa_test": 2539,
+    "proporcion_esperada_entre_negativas_cie10": 0.1924,
+    "dudosas_en_el_corpus_cie10": 0.0861,
+    "dudosas_en_las_liberadas": 0.2008
+  },
+  "protocolo": "StratifiedGroupKFold(5, shuffle=True, random_state=42) por subject_id en train (folds de la semana 6); D3 reemplaza negativas CIE-10 de D2 por liberadas en la proporción esperada, con el mismo total de filas; evaluación común (semana 6), ampliada (común + liberadas en la proporción esperada) y tasa de liberadas marcadas",
+  "regla": "D3 mejor que D2 si su PR-AUC ampliada supera a la de D2 en >= 4 de 5 folds y la diferencia media supera 1 desv. estándar",
+  "regla_cumplida": true,
+  "cv": {
+    "D2": {
+      "comun": {
+        "pr_auc": {
+          "media": 0.8534,
+          "std": 0.0041
+        },
+        "roc_auc": {
+          "media": 0.8582,
+          "std": 0.0026
+        },
+        "f1": {
+          "media": 0.7677,
+          "std": 0.0044
+        },
+        "recall": {
+          "media": 0.7592,
+          "std": 0.0068
+        },
+        "especificidad": {
+          "media": 0.793,
+          "std": 0.0038
+        }
+      },
+      "ampliada": {
+        "pr_auc": {
+          "media": 0.837,
+          "std": 0.005
+        },
+        "roc_auc": {
+          "media": 0.8509,
+          "std": 0.0034
+        },
+        "f1": {
+          "media": 0.7566,
+          "std": 0.0051
+        },
+        "recall": {
+          "media": 0.7592,
+          "std": 0.0068
+        },
+        "especificidad": {
+          "media": 0.7796,
+          "std": 0.0051
+        }
+      },
+      "marcadas_liberadas": {
+        "media": 0.4261,
+        "std": 0.011
+      },
+      "marcadas_negativas_cie10_comun": {
+        "media": 0.1873,
+        "std": 0.0109
+      },
+      "dif_pr_auc_comun_vs_D2": {
+        "media": 0.0,
+        "std": 0.0,
+        "folds_mejor_que_D2": 0
+      },
+      "dif_pr_auc_ampliada_vs_D2": {
+        "media": 0.0,
+        "std": 0.0,
+        "folds_mejor_que_D2": 0
+      }
+    },
+    "D3": {
+      "comun": {
+        "pr_auc": {
+          "media": 0.8522,
+          "std": 0.0035
+        },
+        "roc_auc": {
+          "media": 0.8575,
+          "std": 0.0024
+        },
+        "f1": {
+          "media": 0.7667,
+          "std": 0.0061
+        },
+        "recall": {
+          "media": 0.7555,
+          "std": 0.0093
+        },
+        "especificidad": {
+          "media": 0.7961,
+          "std": 0.0039
+        }
+      },
+      "ampliada": {
+        "pr_auc": {
+          "media": 0.8393,
+          "std": 0.0042
+        },
+        "roc_auc": {
+          "media": 0.8528,
+          "std": 0.003
+        },
+        "f1": {
+          "media": 0.7576,
+          "std": 0.0069
+        },
+        "recall": {
+          "media": 0.7555,
+          "std": 0.0093
+        },
+        "especificidad": {
+          "media": 0.7873,
+          "std": 0.0057
+        }
+      },
+      "marcadas_liberadas": {
+        "media": 0.3461,
+        "std": 0.0053
+      },
+      "marcadas_negativas_cie10_comun": {
+        "media": 0.1775,
+        "std": 0.0116
+      },
+      "dif_pr_auc_comun_vs_D2": {
+        "media": -0.0012,
+        "std": 0.0011,
+        "folds_mejor_que_D2": 1
+      },
+      "dif_pr_auc_ampliada_vs_D2": {
+        "media": 0.0022,
+        "std": 0.0016,
+        "folds_mejor_que_D2": 5
+      }
+    }
+  },
+  "test": {
+    "D2": {
+      "filas_entrenamiento": 48998,
+      "liberadas_en_entrenamiento": 0,
+      "comun": {
+        "pr_auc": 0.8671,
+        "f1": 0.7779,
+        "recall": 0.7689,
+        "especificidad": 0.8038,
+        "roc_auc": 0.8706,
+        "vpp_prevalencia_real": 0.5989,
+        "pr_auc_ic95_pacientes": [
+          0.8589,
+          0.8749
+        ]
+      },
+      "ampliada": {
+        "pr_auc": 0.8518,
+        "f1": 0.7663,
+        "recall": 0.7689,
+        "especificidad": 0.7892,
+        "roc_auc": 0.8633,
+        "vpp_prevalencia_real": 0.5815,
+        "liberadas_agregadas": 409
+      },
+      "marcadas_liberadas": 0.4179,
+      "liberadas_evaluadas": 2539,
+      "marcadas_negativas_cie10_comun": 0.1725,
+      "marcadas_liberadas_por_codigo": {
+        "N17.9": {
+          "n": 1517,
+          "marcadas": 0.4311
+        },
+        "J96.0": {
+          "n": 303,
+          "marcadas": 0.5446
+        },
+        "B95": {
+          "n": 234,
+          "marcadas": 0.7051
+        },
+        "S22": {
+          "n": 99,
+          "marcadas": 0.1919
+        },
+        "N17.0": {
+          "n": 77,
+          "marcadas": 0.7532
+        }
+      }
+    },
+    "D3": {
+      "filas_entrenamiento": 48998,
+      "liberadas_en_entrenamiento": 1313,
+      "comun": {
+        "pr_auc": 0.8652,
+        "f1": 0.7742,
+        "recall": 0.7634,
+        "especificidad": 0.803,
+        "roc_auc": 0.8695,
+        "vpp_prevalencia_real": 0.5962,
+        "pr_auc_ic95_pacientes": [
+          0.8571,
+          0.8735
+        ]
+      },
+      "ampliada": {
+        "pr_auc": 0.8533,
+        "f1": 0.7648,
+        "recall": 0.7634,
+        "especificidad": 0.7935,
+        "roc_auc": 0.8648,
+        "vpp_prevalencia_real": 0.5847,
+        "liberadas_agregadas": 409
+      },
+      "marcadas_liberadas": 0.3403,
+      "liberadas_evaluadas": 2539,
+      "marcadas_negativas_cie10_comun": 0.1655,
+      "marcadas_liberadas_por_codigo": {
+        "N17.9": {
+          "n": 1517,
+          "marcadas": 0.3276
+        },
+        "J96.0": {
+          "n": 303,
+          "marcadas": 0.4653
+        },
+        "B95": {
+          "n": 234,
+          "marcadas": 0.6239
+        },
+        "S22": {
+          "n": 99,
+          "marcadas": 0.1818
+        },
+        "N17.0": {
+          "n": 77,
+          "marcadas": 0.6494
+        }
+      }
+    }
+  }
+}

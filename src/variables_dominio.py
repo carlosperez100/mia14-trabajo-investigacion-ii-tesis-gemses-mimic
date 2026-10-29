@@ -52,10 +52,10 @@ def _leer(rel, **kw):
     return pd.read_csv(ruta, **kw), {"tabla": rel, "tamano_bytes": ruta.stat().st_size, "sha256": sha256_cacheado(ruta)}
 
 
-def calcular(df, log):
-    """df: corpus con hadm_id. Devuelve df con las variables de dominio unidas (y deja la caché)."""
+def calcular(df, log, cache=None):
+    """df: corpus con hadm_id. Devuelve df con las variables de dominio unidas (y deja la caché, por defecto la del corpus)."""
     load_dotenv(RAIZ / ".env")
-    cache = INTERIM / "dominio_hadm.parquet"
+    cache = cache or INTERIM / "dominio_hadm.parquet"
     hadm = set(df.hadm_id)
     if cache.exists():
         dom = pd.read_parquet(cache)

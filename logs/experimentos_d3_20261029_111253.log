@@ -1,0 +1,19 @@
+2026-10-29 11:12:53 | experimentos_d3 | INFO | log -> logs\experimentos_d3_20261029_111253.log
+2026-10-29 11:12:55 | experimentos_d3 | INFO | variables de dominio: se reutiliza dominio_hadm.parquet
+2026-10-29 11:12:55 | experimentos_d3 | INFO | variantes de datos: se reutiliza variantes_datos.parquet
+2026-10-29 11:12:56 | experimentos_d3 | INFO | proporción esperada de liberadas entre las negativas CIE-10 sin etiqueta dudosa: 0.1924 (dudosas: 0.0861 en el corpus, 0.2008 en las liberadas)
+2026-10-29 11:13:06 | experimentos_d3 | INFO | liberadas sin etiqueta dudosa: train 10,399 (por fold {1: 2084, 2: 2099, 3: 2069, 4: 2076, 5: 2071}) · test 2,539
+2026-10-29 11:26:32 | experimentos_d3 | INFO | D2 fold 1: entrena con 38,888 (0 liberadas) · PR-AUC común 0.8567 · ampliada 0.8405 · liberadas marcadas 0.4299 de 2,084 · negativas CIE-10 marcadas 0.1734 · 565 s
+2026-10-29 11:49:18 | experimentos_d3 | INFO | D3 fold 1: entrena con 38,888 (1,059 liberadas) · PR-AUC común 0.8555 · ampliada 0.8434 · liberadas marcadas 0.3464 de 2,084 · negativas CIE-10 marcadas 0.1612 · 1290 s
+2026-10-29 11:58:48 | experimentos_d3 | INFO | D2 fold 2: entrena con 39,203 (0 liberadas) · PR-AUC común 0.8527 · ampliada 0.8356 · liberadas marcadas 0.4378 de 2,099 · negativas CIE-10 marcadas 0.1862 · 497 s
+2026-10-29 12:05:05 | experimentos_d3 | INFO | D3 fold 2: entrena con 39,203 (1,047 liberadas) · PR-AUC común 0.8503 · ampliada 0.8364 · liberadas marcadas 0.3506 de 2,099 · negativas CIE-10 marcadas 0.1812 · 348 s
+2026-10-29 12:08:24 | experimentos_d3 | INFO | D2 fold 3: entrena con 39,314 (0 liberadas) · PR-AUC común 0.8467 · ampliada 0.8289 · liberadas marcadas 0.4340 de 2,069 · negativas CIE-10 marcadas 0.1884 · 170 s
+2026-10-29 12:11:40 | experimentos_d3 | INFO | D3 fold 3: entrena con 39,314 (1,043 liberadas) · PR-AUC común 0.8470 · ampliada 0.8334 · liberadas marcadas 0.3514 de 2,069 · negativas CIE-10 marcadas 0.1792 · 170 s
+2026-10-29 12:15:17 | experimentos_d3 | INFO | D2 fold 4: entrena con 39,267 (0 liberadas) · PR-AUC común 0.8542 · ampliada 0.8393 · liberadas marcadas 0.4133 de 2,076 · negativas CIE-10 marcadas 0.1849 · 186 s
+2026-10-29 12:18:55 | experimentos_d3 | INFO | D3 fold 4: entrena con 39,267 (1,051 liberadas) · PR-AUC común 0.8536 · ampliada 0.8417 · liberadas marcadas 0.3386 de 2,076 · negativas CIE-10 marcadas 0.1731 · 191 s
+2026-10-29 12:22:05 | experimentos_d3 | INFO | D2 fold 5: entrena con 39,320 (0 liberadas) · PR-AUC común 0.8566 · ampliada 0.8409 · liberadas marcadas 0.4157 de 2,071 · negativas CIE-10 marcadas 0.2038 · 161 s
+2026-10-29 12:25:41 | experimentos_d3 | INFO | D3 fold 5: entrena con 39,320 (1,052 liberadas) · PR-AUC común 0.8544 · ampliada 0.8415 · liberadas marcadas 0.3433 de 2,071 · negativas CIE-10 marcadas 0.1928 · 184 s
+2026-10-29 12:25:41 | experimentos_d3 | INFO | CV: D2 ampliada 0.8370 · D3 ampliada 0.8393 · dif. +0.0022 ± 0.0016 (5/5 folds) · regla cumplida: True
+2026-10-29 12:30:23 | experimentos_d3 | INFO | test D2: PR-AUC común 0.8671 [0.8589, 0.8749] · ampliada 0.8518 · liberadas marcadas 0.4179 de 2,539 · negativas CIE-10 marcadas 0.1725 · por código {'N17.9': {'n': 1517, 'marcadas': 0.4311}, 'J96.0': {'n': 303, 'marcadas': 0.5446}, 'B95': {'n': 234, 'marcadas': 0.7051}, 'S22': {'n': 99, 'marcadas': 0.1919}, 'N17.0': {'n': 77, 'marcadas': 0.7532}}
+2026-10-29 12:35:28 | experimentos_d3 | INFO | test D3: PR-AUC común 0.8652 [0.8571, 0.8735] · ampliada 0.8533 · liberadas marcadas 0.3403 de 2,539 · negativas CIE-10 marcadas 0.1655 · por código {'N17.9': {'n': 1517, 'marcadas': 0.3276}, 'J96.0': {'n': 303, 'marcadas': 0.4653}, 'B95': {'n': 234, 'marcadas': 0.6239}, 'S22': {'n': 99, 'marcadas': 0.1818}, 'N17.0': {'n': 77, 'marcadas': 0.6494}}
+2026-10-29 12:35:29 | experimentos_d3 | INFO | Salidas: logs/metrics_d3.txt · reportes/d3_resultados.json · reportes/d3_folds.csv · reportes/figuras/fig_d3_resultados.png

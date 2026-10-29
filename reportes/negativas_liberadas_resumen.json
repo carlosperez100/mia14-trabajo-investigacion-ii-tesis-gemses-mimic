@@ -1,0 +1,74 @@
+{
+  "etapa": "negativas_liberadas",
+  "generado": "2026-10-29T12:42:15",
+  "semilla": 42,
+  "codigos": {
+    "no_es_evento_adverso": 41,
+    "en_estrato_A1_o_equivalencias": 0,
+    "en_estrato_A2": 32,
+    "sin_registros": 9
+  },
+  "positivas_que_dependen_solo_de_ellos": 0,
+  "liberadas": {
+    "hospitalizaciones": 16189,
+    "por_epoca": {
+      "10": 16189
+    },
+    "por_codigo": {
+      "N17.9": 9371,
+      "J96.0": 1910,
+      "B95": 1427,
+      "S22": 886,
+      "N17.0": 587,
+      "K57.9": 565,
+      "S72": 553,
+      "R31.9": 471,
+      "S32": 431,
+      "L29.9": 374,
+      "S06.5": 256,
+      "D69.3": 252,
+      "J32.9": 236,
+      "S00": 197,
+      "S72.0": 164,
+      "I31.9": 161,
+      "B96.5": 148,
+      "T17": 146,
+      "T18": 127,
+      "K55.0": 108,
+      "S06.0": 50,
+      "T14.9": 48,
+      "T78.4": 43,
+      "T14.8": 34,
+      "K63.9": 32,
+      "N89.8": 28,
+      "F68.1": 23,
+      "T78.2": 10,
+      "Q27.30": "<10",
+      "O88.0": "<10",
+      "P96.8": "<10"
+    }
+  },
+  "proporcion": {
+    "marco_epoca10_con_epicrisis": 59423,
+    "liberadas_epoca10_con_epicrisis": 16189,
+    "proporcion_entre_negativas_epoca10": 0.214106
+  },
+  "notas": {
+    "recuperadas": 16189,
+    "tras_limpieza": 16189,
+    "hospitalizaciones": 16189,
+    "pacientes": 12506,
+    "pacientes_ya_en_corpus": 3946,
+    "por_particion": {
+      "train": 12989,
+      "test": 3200
+    }
+  },
+  "marcas": {
+    "negativas_dudosas": 3251,
+    "por_particion_sin_dudosas": {
+      "train": 10399,
+      "test": 2539
+    }
+  }
+}

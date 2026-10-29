@@ -1,0 +1,12 @@
+2026-10-29 11:03:50 | negativas_liberadas | INFO | log -> logs\negativas_liberadas_20261029_110350.log
+2026-10-29 11:03:51 | negativas_liberadas | INFO | 1. Códigos «no es evento adverso»: {'no_es_evento_adverso': 41, 'en_estrato_A1_o_equivalencias': 0, 'en_estrato_A2': 32, 'sin_registros': 9} · positivas que dependen solo de ellos: 0
+2026-10-29 11:03:52 | negativas_liberadas | INFO | 2. Hospitalizaciones liberadas: 16,189 · por época {10: 16189} · códigos más frecuentes {'N17.9': 9371, 'J96.0': 1910, 'B95': 1427, 'S22': 886, 'N17.0': 587}
+2026-10-29 11:03:52 | negativas_liberadas | INFO | 3. Marco de negativas de la época CIE-10 con epicrisis: 59,423 · liberadas 16,189 · proporción esperada entre las negativas de esa época 0.2141
+2026-10-29 11:03:55 | negativas_liberadas | INFO |    lote 0 …
+2026-10-29 11:04:30 | negativas_liberadas | INFO | 4. Notas de las liberadas: {'recuperadas': 16189, 'tras_limpieza': 16189, 'hospitalizaciones': 16189, 'pacientes': 12506, 'pacientes_ya_en_corpus': 3946, 'por_particion': {'train': 12989, 'test': 3200}}
+2026-10-29 11:04:44 | negativas_liberadas | INFO | variables: 21 variables; 7 tablas de MIMIC-IV leídas · hospitalizaciones sin registro de admisión: 0 · años de ingreso registrados [2110, 2211] (desplazados) · año real aproximado [2013, 2021]
+2026-10-29 11:04:47 | negativas_liberadas | INFO | variables de dominio: contando medicamentos prescritos (prescriptions, por lotes) ...
+2026-10-29 11:05:32 | negativas_liberadas | INFO | variables de dominio: 18 variables para 16,189 hospitalizaciones -> dominio_liberadas.parquet · tablas: ['hosp/admissions.csv.gz', 'hosp/services.csv.gz', 'hosp/transfers.csv.gz', 'icu/icustays.csv.gz', 'hosp/prescriptions.csv.gz', 'hosp/microbiologyevents.csv.gz']
+2026-10-29 11:05:35 | negativas_liberadas | INFO | variantes de datos: negativas dudosas 3251 · positivas dudosas 0 (caída sin lugar hospital 0, úlcera sin 707.0x 0)
+2026-10-29 11:05:35 | negativas_liberadas | INFO | 5. Negativas dudosas entre las liberadas (códigos causales fuera de la tabla): {'negativas_dudosas': 3251, 'por_particion_sin_dudosas': {'train': 10399, 'test': 2539}}
+2026-10-29 11:05:36 | negativas_liberadas | INFO | Salidas: data\interim\negativas_liberadas.parquet (fuera de git) · reportes/negativas_liberadas_resumen.json
