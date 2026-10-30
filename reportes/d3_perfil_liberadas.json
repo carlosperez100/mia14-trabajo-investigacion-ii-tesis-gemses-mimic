@@ -1,0 +1,92 @@
+{
+  "etapa": "perfil_liberadas",
+  "generado": "2026-10-29T13:21:50",
+  "semilla": 42,
+  "nota": "medianas y percentiles 25 y 75; grupos sin etiqueta dudosa, train y test juntos",
+  "grupos": {
+    "liberadas": {
+      "hospitalizaciones": 12938,
+      "largo_epicrisis_caracteres": {
+        "mediana": 11692.0,
+        "p25": 9256.25,
+        "p75": 14517.75,
+        "sin_dato": 0
+      },
+      "estancia_dias": {
+        "mediana": 4.44,
+        "p25": 2.54,
+        "p75": 7.56,
+        "sin_dato": "<10"
+      },
+      "edad": {
+        "mediana": 67.0,
+        "p25": 54.0,
+        "p75": 78.0,
+        "sin_dato": 0
+      },
+      "medicamentos_distintos": {
+        "mediana": 24.0,
+        "p25": 17.0,
+        "p75": 32.0,
+        "sin_dato": 0
+      },
+      "proporcion_con_uci": 0.2468
+    },
+    "negativas_epoca10_corpus": {
+      "hospitalizaciones": 8540,
+      "largo_epicrisis_caracteres": {
+        "mediana": 9524.0,
+        "p25": 7390.75,
+        "p75": 12306.75,
+        "sin_dato": 0
+      },
+      "estancia_dias": {
+        "mediana": 2.84,
+        "p25": 1.67,
+        "p75": 4.85,
+        "sin_dato": "<10"
+      },
+      "edad": {
+        "mediana": 61.0,
+        "p25": 46.0,
+        "p75": 72.0,
+        "sin_dato": 0
+      },
+      "medicamentos_distintos": {
+        "mediana": 18.0,
+        "p25": 13.0,
+        "p75": 25.0,
+        "sin_dato": 0
+      },
+      "proporcion_con_uci": 0.1341
+    },
+    "positivas_epoca10_corpus": {
+      "hospitalizaciones": 9051,
+      "largo_epicrisis_caracteres": {
+        "mediana": 12393.0,
+        "p25": 9486.5,
+        "p75": 16134.5,
+        "sin_dato": 0
+      },
+      "estancia_dias": {
+        "mediana": 6.47,
+        "p25": 3.58,
+        "p75": 11.98,
+        "sin_dato": "<10"
+      },
+      "edad": {
+        "mediana": 66.0,
+        "p25": 55.0,
+        "p75": 75.0,
+        "sin_dato": 0
+      },
+      "medicamentos_distintos": {
+        "mediana": 31.0,
+        "p25": 22.0,
+        "p75": 45.0,
+        "sin_dato": 0
+      },
+      "proporcion_con_uci": 0.3201
+    }
+  }
+}

@@ -25,9 +25,9 @@ VARIANTES = {"D0": "datos actuales",
              "D2": "sin negativas ni positivas dudosas"}
 
 
-def marcar(df, log):
-    """Devuelve df con las columnas negativa_dudosa, positiva_dudosa y motivo."""
-    cache = INTERIM / "variantes_datos.parquet"
+def marcar(df, log, cache=None):
+    """Devuelve df con las columnas negativa_dudosa, positiva_dudosa y motivo (caché por defecto: la del corpus)."""
+    cache = cache or INTERIM / "variantes_datos.parquet"
     if cache.exists():
         m = pd.read_parquet(cache)
         if set(df.hadm_id) <= set(m.hadm_id):

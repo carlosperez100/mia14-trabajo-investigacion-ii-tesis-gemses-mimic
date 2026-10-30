@@ -1,0 +1,7 @@
+2026-10-29 13:21:45 | perfil_liberadas | INFO | log -> logs\perfil_liberadas_20261029_132145.log
+2026-10-29 13:21:49 | perfil_liberadas | INFO | variables de dominio: se reutiliza dominio_hadm.parquet
+2026-10-29 13:21:49 | perfil_liberadas | INFO | variantes de datos: se reutiliza variantes_datos.parquet
+2026-10-29 13:21:50 | perfil_liberadas | INFO | liberadas: 12,938 · largo 11,692 · estancia 4.44 días · edad 67.0 · medicamentos 24.0 · UCI 0.2468
+2026-10-29 13:21:50 | perfil_liberadas | INFO | negativas_epoca10_corpus: 8,540 · largo 9,524 · estancia 2.84 días · edad 61.0 · medicamentos 18.0 · UCI 0.1341
+2026-10-29 13:21:50 | perfil_liberadas | INFO | positivas_epoca10_corpus: 9,051 · largo 12,393 · estancia 6.47 días · edad 66.0 · medicamentos 31.0 · UCI 0.3201
+2026-10-29 13:21:50 | perfil_liberadas | INFO | Salida: reportes/d3_perfil_liberadas.json

@@ -40,7 +40,7 @@ Este repositorio forma parte del curso **Proyecto de Investigación II (MIA 403)
 data/
  ├── catalogos/               # catálogo de los 231 eventos del Anexo 02, tabla de la etiqueta y equivalencia validada con los eventos oficiales
  ├── raw/                     # vacío en git: MIMIC se lee desde la ruta del .env (DUA)
- ├── interim/                 # etiquetas copiadas y época CIE (salida de la ingesta)
+ ├── interim/                 # etiquetas copiadas y época CIE (salida de la ingesta) y cachés de las etapas siguientes, como las liberadas de D3
  ├── processed/               # dataset.parquet, splits.csv y modelos (fuera de git)
  └── bitacora_datos.csv       # versionado de datos: fuente, fecha, SHA-256 y tamaño
 notebooks/
@@ -65,9 +65,12 @@ src/
  ├── experimentos_datos.py    # variantes de los datos y diagnósticos del modelo (semana 6); figuras en figuras_datos.py
  ├── experimentos_hp.py       # búsqueda de hiperparámetros aleatoria y bayesiana, confirmación y test (semana 7); figuras en figuras_hp.py
  ├── importancia_variables.py # importancia por permutación de bloques y variables, y coeficientes de términos filtrados (semana 7); figuras en figuras_imp.py
+ ├── negativas_liberadas.py   # hospitalizaciones que libera la equivalencia validada como posibles negativas (variante D3, semana 7)
+ ├── experimentos_d3.py       # D2 frente a D3 en los 5 folds y en test, con la evaluación común y la ampliada (semana 7)
+ ├── perfil_liberadas.py      # perfil de las liberadas frente a las negativas y las positivas CIE-10 del corpus, sin modelo (semana 7)
  └── utils.py                 # configuración, logging y hash
 config/config.yaml            # semilla, split e hiperparámetros
-logs/                         # logs por etapa, metrics_baseline.txt, metrics_eda.txt, metrics_fe.txt, metrics_datos.txt, metrics_hp.txt y metrics_importancia.txt
+logs/                         # logs por etapa, metrics_baseline.txt, metrics_eda.txt, metrics_fe.txt, metrics_datos.txt, metrics_hp.txt, metrics_importancia.txt y metrics_d3.txt
 reportes/                     # resultados en JSON y CSV, y figuras
 slides/                       # presentación de resultados del sprint
 entregables/                  # entregables por semana (diseño del pipeline de la semana 2, matrices de consistencia de las semanas 3 y 7, roadmap y guion de la demo)
@@ -359,7 +362,7 @@ Tres naturalezas existen solo en la época CIE-10, porque las familias de CIE-9 
 ### 5 · Los 231 eventos del Anexo 02
 El catálogo de los 231 eventos (12 naturalezas) y la tabla de códigos están versionados en [`data/catalogos/`](data/catalogos/). El resultado por evento, con una fila para cada uno de los 231, está en [`reportes/eda_eventos_231.csv`](reportes/eda_eventos_231.csv). La columna `nombre_oficial` del catálogo reproduce el nombre de cada evento según la tabla del Anexo 02 de la Directiva (páginas 30 a 38 del PDF), sin corregir su ortografía y uniendo con un espacio las líneas de una misma celda. La columna `nombre` conserva el nombre de trabajo del proyecto, con el que el EDA enlaza las tablas, y difiere del oficial en 72 eventos por sufijos que distinguen nombres repetidos, nombres acortados o resumidos, correcciones ortográficas o espacios.
 
-La tabla de la etiqueta mezcla los números oficiales del Anexo 02 con números internos y reutiliza algunos; por ejemplo, el 301 identifica en ella tanto el error en el diagnóstico (Y65.8), que es su significado oficial, como una hemorragia postprocedimiento (T81.0). Por ello, [`data/catalogos/anexo02_equivalencia_cie10_oficial.csv`](data/catalogos/anexo02_equivalencia_cie10_oficial.csv) establece la equivalencia de cada código con los eventos oficiales. La propuesta se construyó con reglas explícitas a partir del título oficial del código en la CIE-10 de la OMS (versión 2019) o en la CIE-10-CM, y el autor la validó código por código el 29 de octubre de 2026, en un instrumento de validación que registra cada decisión con su fecha; ese mismo día precisó el alcance de 20 de sus decisiones y corrigió 3, lo cual consta en la columna `aclaracion_autor`. De los 223 códigos distintos, 131 quedaron con un evento oficial, que suman 60 eventos distintos, 24 solo con la naturaleza y 27 sin equivalente, y 41 se marcaron como no evento adverso. Con esas precisiones, la validación modificó la propuesta en 46 códigos y dejó sin cambio 177. En los códigos con evento, si el evento ocurrió durante la atención lo decide el contexto de la epicrisis y no el código. La columna `nota` señala los casos detectados de códigos de la OMS con otro alcance en la CIE-10-CM, con la que se codifica MIMIC-IV, y las descripciones de la tabla de la etiqueta que no corresponden al título del código. La equivalencia no modifica la etiqueta del modelo. Ninguno de los 41 códigos marcados como no evento adverso pertenece al estrato A1 ni a sus equivalencias CIE-10-CM, que, junto con las cinco familias CIE-9, son las fuentes de las positivas, de modo que ninguna positiva depende de ellos. Todos son del estrato A2, el cual no aporta positivas, pero excluye del sorteo de las negativas a las hospitalizaciones que los tienen.
+La tabla de la etiqueta mezcla los números oficiales del Anexo 02 con números internos y reutiliza algunos; por ejemplo, el 301 identifica en ella tanto el error en el diagnóstico (Y65.8), que es su significado oficial, como una hemorragia postprocedimiento (T81.0). Por ello, [`data/catalogos/anexo02_equivalencia_cie10_oficial.csv`](data/catalogos/anexo02_equivalencia_cie10_oficial.csv) establece la equivalencia de cada código con los eventos oficiales. La propuesta se construyó con reglas explícitas a partir del título oficial del código en la CIE-10 de la OMS (versión 2019) o en la CIE-10-CM, y el autor la validó código por código el 29 de octubre de 2026, en un instrumento de validación que registra cada decisión con su fecha; ese mismo día precisó el alcance de 20 de sus decisiones y corrigió 3, lo cual consta en la columna `aclaracion_autor`. De los 223 códigos distintos, 131 quedaron con un evento oficial, que suman 60 eventos distintos, 24 solo con la naturaleza y 27 sin equivalente, y 41 se marcaron como no evento adverso. Con esas precisiones, la validación modificó la propuesta en 46 códigos y dejó sin cambio 177. En los códigos con evento, si el evento ocurrió durante la atención lo decide el contexto de la epicrisis y no el código. La columna `nota` señala los casos detectados de códigos de la OMS con otro alcance en la CIE-10-CM, con la que se codifica MIMIC-IV, y las descripciones de la tabla de la etiqueta que no corresponden al título del código. La equivalencia no modifica la etiqueta del modelo. Ninguno de los 41 códigos marcados como no evento adverso pertenece al estrato A1 ni a sus equivalencias CIE-10-CM, que, junto con las cinco familias CIE-9, son las fuentes de las positivas, de modo que ninguna positiva depende de ellos. Todos son del estrato A2, el cual no aporta positivas, pero excluye del sorteo de las negativas a las hospitalizaciones que los tienen. El efecto de liberar esas hospitalizaciones se evaluó como variante D3 en la semana 7.
 
 ![Del catálogo de 231 eventos a los datos](reportes/figuras/fig_eda_eventos_catalogo.png)
 
@@ -843,6 +846,130 @@ A criterio del autor, los términos positivos (*induced*, *hematoma*, *revision*
 - Comando: `python src/importancia_variables.py`, con los parámetros de la sección `importancia` de `config/config.yaml`. La corrida del 28-10-2026 tomó 20.3 minutos en CPU, de modo que no fue necesario reducir las permutaciones. El modo `--prueba` corre 2 *folds* con 2 permutaciones, escribe en `data/interim/prueba_imp/` y deja su registro en [`logs/importancia_variables_prueba_20261028_123034.log`](logs/importancia_variables_prueba_20261028_123034.log), con el control de la caché y de la PR-AUC por *fold*. Una primera corrida de prueba falló al final por un choque de nombres de variable, que se corrigió antes de la corrida completa; su registro no se conservó.
 - Las figuras se redibujan sin entrenar con `python src/figuras_imp.py`. Las cifras salen de [`logs/metrics_importancia.txt`](logs/metrics_importancia.txt), [`reportes/importancia_resultados.json`](reportes/importancia_resultados.json), [`reportes/importancia_grupos.csv`](reportes/importancia_grupos.csv) y [`reportes/importancia_terminos.csv`](reportes/importancia_terminos.csv).
 
+### Variante D3: negativas que libera la equivalencia validada (rama `sprint3-etiqueta-d3`)
+
+La equivalencia que el autor validó el 29-10-2026 (ver el punto 5 del EDA) marcó 41 códigos de la tabla de la etiqueta como no evento adverso. Ninguno de ellos pertenece al estrato A1 ni a sus equivalencias CIE-10-CM, por lo que ninguna positiva depende de ellos. Sin embargo, todos son del estrato A2, el cual excluye del sorteo de las negativas a toda hospitalización que tenga uno de sus códigos (`src/preprocesado.py`, líneas 66 a 69), y 32 de ellos tienen hospitalizaciones registradas en las tablas de la etiqueta.
+
+En consecuencia, retirar esos códigos de la etiqueta no cambia ninguna positiva, pero libera 16 189 hospitalizaciones, todas de la época CIE-10 y con epicrisis, cuyos códigos A2 pertenecen todos a ese grupo. Frente a las 59 423 hospitalizaciones de esa época con epicrisis que hoy pueden sortearse como negativas, las liberadas serían el 21.4 % de las negativas de esa época en un nuevo sorteo.
+
+Por decisión del autor, el cambio se probó como una variante nueva, D3, sin modificar D2. HE2 y HE3 siguen con D2, que es la variante con la que se sorteó el lote de la revisión ciega.
+
+#### Diseño, fijado antes de correr
+Antes de correr se fijó la forma de calcular cada cantidad. Las cifras que en esta lista se presentan como de la corrida salen de ella y no formaban parte del diseño.
+
+- Modelo: el vigente, A+B+C con la configuración que confirmó la búsqueda de hiperparámetros, sin cambios.
+- D2: las mismas filas de entrenamiento de la semana 6 (en la corrida, 39 198 por *fold* en promedio).
+- D3: las filas de D2 y el mismo número de ellas, pero en cada entrenamiento se reemplaza al azar, por liberadas, la proporción esperada de las negativas de la época CIE-10. En la corrida fueron entre 1 043 y 1 059 filas por *fold*, el 2.7 % del entrenamiento, y 1 313 de 48 998 en el entrenamiento final.
+- Proporción esperada: la que tendrían las liberadas sin etiqueta dudosa entre las negativas de la época CIE-10 sin etiqueta dudosa, porque ni D2 ni D3 entrenan con las dudosas (códigos causales fuera de la tabla). En la corrida, el 20.1 % de las liberadas eran dudosas, frente al 8.6 % de las negativas de esa época en el corpus, y la proporción fue 19.2 %.
+- Tasa de dudosas del corpus: se tomó de *train* y *test* juntos. Solo con *train* (8.3 %), la proporción habría sido 0.1919 y no 0.1924, con unas 3 filas menos por *fold*.
+- Datos de las liberadas: la epicrisis se recupera y se filtra como en `src/preprocesado.py` (texto de más de 100 caracteres), y las variables de dominio y las marcas de etiqueta dudosa se calculan con las mismas funciones del corpus, en cachés aparte.
+- Partición: los 5 *folds* de la semana 6 (`StratifiedGroupKFold` por paciente, semilla 42). La liberada de un paciente del corpus va a la misma partición y al mismo *fold* que ese paciente; la de un paciente nuevo va a *test* con probabilidad 0.20 (`test_size`) y, en *train*, a un *fold* al azar, siempre por paciente.
+- Evaluaciones, las mismas para D2 y D3:
+  1) común: las filas de validación (o de *test*) sin etiqueta dudosa, las mismas de la semana 6;
+  2) ampliada: las de la común más liberadas del mismo *fold* (o del *test*), en la proporción esperada entre las negativas de la época CIE-10, con el mismo sorteo para las dos variantes (en la corrida, entre 315 y 334 por *fold* y 409 en *test*);
+  3) liberadas marcadas: proporción de las liberadas del *fold* (o del *test*) con probabilidad de 0.5 o más, frente a la de las negativas de la época CIE-10 de la evaluación común, que en adelante se denominan negativas comunes.
+- Regla: D3 se considera mejor que D2 si su PR-AUC en la evaluación ampliada supera a la de D2 en al menos 4 de los 5 *folds* y la diferencia media supera una desviación estándar de las diferencias por *fold*. Es la misma forma de la regla de la búsqueda de hiperparámetros.
+- Prerregistro: la regla se escribió en el encabezado de `src/experimentos_d3.py` antes de la corrida corta de control (`--prueba`) y de la corrida completa, y no se modificó después. Sin embargo, el *script* no tiene un *commit* anterior a la corrida, y el registro de la corrida corta se borró antes de la corrida completa. Por ello, el repositorio no contiene una prueba con fecha de ese orden.
+- Cambios posteriores: después de la corrida completa solo se corrigieron, en `src/experimentos_d3.py`, el comentario del modo `--prueba` y una importación sin uso, sin cambiar ningún cálculo.
+
+#### Control de reproducción
+D2 reprodujo la PR-AUC común de la semana 6 en los 5 *folds*, con las mismas filas de entrenamiento y sin diferencias hasta el sexto decimal. En *test* obtuvo 0.8671 (IC 95 %: 0.8589–0.8749), igual que en la semana 6.
+
+#### Resultados
+Tabla 8. PR-AUC por *fold* de D2 y D3 en las dos evaluaciones (validación cruzada de 5 *folds*)
+
+| *Fold* | D2 común | D3 común | Diferencia común | D2 ampliada | D3 ampliada | Diferencia ampliada |
+|---|---|---|---|---|---|---|
+| 1 | 0.8567 | 0.8555 | -0.0012 | 0.8405 | 0.8434 | +0.0028 |
+| 2 | 0.8527 | 0.8503 | -0.0025 | 0.8356 | 0.8364 | +0.0008 |
+| 3 | 0.8467 | 0.8470 | +0.0003 | 0.8289 | 0.8334 | +0.0044 |
+| 4 | 0.8542 | 0.8536 | -0.0006 | 0.8393 | 0.8417 | +0.0024 |
+| 5 | 0.8566 | 0.8544 | -0.0022 | 0.8409 | 0.8415 | +0.0006 |
+| Media | 0.8534 | 0.8522 | -0.0012 ± 0.0011 | 0.8370 | 0.8393 | +0.0022 ± 0.0016 |
+
+Fuente: elaboración propia a partir de [`reportes/d3_folds.csv`](reportes/d3_folds.csv). Las diferencias se calculan con seis decimales. El *script* evaluó la regla con la media y la desviación redondeadas a cuatro decimales, y sin redondear (0.002207 y 0.001578) el resultado es el mismo.
+
+Como se aprecia en la Tabla 8, D3 supera a D2 en la evaluación ampliada en los 5 *folds*, con una diferencia media de +0.0022 y una desviación estándar de 0.0016, de modo que se cumplen las dos condiciones de la regla. En la evaluación común, en cambio, D3 queda por debajo de D2 en 4 de los 5 *folds* (-0.0012 ± 0.0011). Ambas diferencias son pequeñas frente a la mejora de D2 sobre D0 en la semana 6 (+0.0103).
+
+Tabla 9. Proporción de hospitalizaciones marcadas como evento (probabilidad de 0.5 o más)
+
+| Variante | Liberadas, validación cruzada | Negativas comunes, validación cruzada | Liberadas, *test* | Negativas comunes, *test* |
+|---|---|---|---|---|
+| D2 | 0.4261 | 0.1873 | 0.4179 | 0.1725 |
+| D3 | 0.3461 | 0.1775 | 0.3403 | 0.1655 |
+
+Fuente: elaboración propia a partir de [`reportes/d3_resultados.json`](reportes/d3_resultados.json). En validación cruzada es la media de los 5 *folds*, sobre 10 399 liberadas de *train*; en *test*, sobre 2 539 liberadas.
+
+Como se aprecia en la Tabla 9, D2 marca como evento a cuatro de cada diez liberadas (0.4261 en validación cruzada y 0.4179 en *test*), más del doble que a las negativas comunes (0.1873 y 0.1725). D3, que entrenó con liberadas como negativas, baja esa proporción a 0.3461 y 0.3403. Asimismo, la proporción de las negativas comunes baja en los 5 *folds*, de 0.1873 a 0.1775 en promedio, y en *test* de 0.1725 a 0.1655.
+
+Tabla 10. Liberadas de *test* marcadas como evento, según los cinco códigos A2 más frecuentes entre las liberadas
+
+| Código | Descripción | Liberadas en *test* | D2 | D3 |
+|---|---|---|---|---|
+| N17.0 | Insuficiencia renal aguda con necrosis tubular | 77 | 0.7532 | 0.6494 |
+| B95 | Estreptococos y estafilococos como causa de enfermedades clasificadas en otros capítulos | 234 | 0.7051 | 0.6239 |
+| J96.0 | Insuficiencia respiratoria aguda | 303 | 0.5446 | 0.4653 |
+| N17.9 | Insuficiencia renal aguda no especificada | 1 517 | 0.4311 | 0.3276 |
+| S22 | Fractura de costilla, esternón y columna torácica | 99 | 0.1919 | 0.1818 |
+
+Fuente: elaboración propia a partir de [`reportes/d3_resultados.json`](reportes/d3_resultados.json), con las descripciones de [`data/catalogos/anexo02_equivalencia_cie10_oficial.csv`](data/catalogos/anexo02_equivalencia_cie10_oficial.csv), a las que se agregaron tildes y puntuación. Una hospitalización puede tener más de uno de estos códigos.
+
+Como se aprecia en la Tabla 10, la proporción de marcadas cambia mucho según el código. Con D2 es mayor en la insuficiencia renal aguda con necrosis tubular (0.7532) y en los estreptococos y estafilococos como causa de enfermedad (0.7051), mientras que en las fracturas de costilla, esternón y columna torácica (0.1919) queda cerca de la de las negativas comunes.
+
+Figura 7. PR-AUC por *fold* y hospitalizaciones de *test* marcadas como evento
+
+![PR-AUC por fold y marcadas como evento](reportes/figuras/fig_d3_resultados.png)
+
+Fuente: elaboración propia a partir de [`reportes/d3_folds.csv`](reportes/d3_folds.csv) y [`reportes/d3_resultados.json`](reportes/d3_resultados.json).
+
+En el gráfico izquierdo de la Figura 7, el eje x es el *fold* y el eje y la PR-AUC, con líneas continuas para la evaluación común y discontinuas para la ampliada. En el derecho, cada barra es la proporción de hospitalizaciones de *test* con probabilidad de 0.5 o más, y la mayor diferencia entre D2 y D3 se observa en las liberadas.
+
+#### *Test* (una sola medición)
+Tabla 11. Medición única en *test* de D2 y D3
+
+| Variante | PR-AUC común | IC 95 % | PR-AUC ampliada | ROC-AUC común | Sensibilidad | Especificidad común | Especificidad ampliada |
+|---|---|---|---|---|---|---|---|
+| D2 | 0.8671 | 0.8589–0.8749 | 0.8518 | 0.8706 | 0.7689 | 0.8038 | 0.7892 |
+| D3 | 0.8652 | 0.8571–0.8735 | 0.8533 | 0.8695 | 0.7634 | 0.8030 | 0.7935 |
+
+Fuente: elaboración propia a partir de [`reportes/d3_resultados.json`](reportes/d3_resultados.json). La sensibilidad es la misma en las dos evaluaciones, porque la ampliada solo agrega negativas.
+
+Como se aprecia en la Tabla 11, el *test* repite el orden de la validación cruzada, ya que D3 queda por encima en la evaluación ampliada (0.8533 frente a 0.8518) y por debajo en la común (0.8652 frente a 0.8671). Los intervalos de confianza de la evaluación común, remuestreando pacientes 200 veces, se solapan.
+
+#### Qué significan estos resultados
+Es preciso tomar en consideración que la evaluación ampliada cuenta a las liberadas como negativas, que es justamente el supuesto con el que se entrena D3. Por ello, la mejora de D3 en esa evaluación muestra que aprendió a tratar a las liberadas como negativas, pero no demuestra que lo sean.
+
+Por otra parte, que D2 marque como evento a más del doble de liberadas que de negativas comunes indica que, para el modelo, las liberadas se parecen más a las positivas que las demás negativas. Hay al menos dos explicaciones, y el experimento no permite distinguir entre ellas. La primera es que en parte de ellas haya un evento de la atención que la etiqueta no registra con un código de causa explícita, y la segunda, que el modelo responda a la gravedad del cuadro clínico y no a un evento.
+
+Tabla 12. Perfil de las liberadas frente a las negativas y las positivas de la época CIE-10 del corpus (número de hospitalizaciones, medianas y proporción con paso por UCI)
+
+| Grupo | Hospitalizaciones | Largo de la epicrisis (caracteres) | Estancia (días) | Edad (años) | Medicamentos distintos | Proporción con paso por UCI |
+|---|---|---|---|---|---|---|
+| Negativas de la época CIE-10 | 8 540 | 9 524 | 2.84 | 61 | 18 | 0.1341 |
+| Liberadas | 12 938 | 11 692 | 4.44 | 67 | 24 | 0.2468 |
+| Positivas de la época CIE-10 | 9 051 | 12 393 | 6.47 | 66 | 31 | 0.3201 |
+
+Fuente: elaboración propia a partir de [`reportes/d3_perfil_liberadas.json`](reportes/d3_perfil_liberadas.json). Los tres grupos van sin etiqueta dudosa, con *train* y *test* juntos, como en el EDA.
+
+Como se aprecia en la Tabla 12, las liberadas quedan entre las negativas y las positivas de la época CIE-10 en el largo de la epicrisis, la estancia, los medicamentos y el paso por UCI, y tienen la mayor edad mediana (67 años). La estancia y el largo de la nota son dos de las tres variables de contexto de mayor peso del modelo (Tabla 7), por lo que este perfil es coherente con la segunda explicación. Sin embargo, en el corpus la etiqueta también se asocia con la estancia y con el largo de la nota (correlaciones de Spearman de 0.306 y 0.182 en el punto 6 del EDA), de modo que el perfil tampoco permite elegir entre ellas.
+
+En consecuencia, para saber cuántas liberadas son negativas verdaderas sería necesario leer la epicrisis de una muestra de ellas, como en la revisión ciega. Mientras esa revisión no se haga, la diferencia entre D2 y D3 depende de un supuesto sobre la etiqueta que este experimento no puede comprobar.
+
+#### Decisión y siguiente paso
+- Por la regla fijada antes de la corrida, D3 se considera mejor que D2 en la evaluación ampliada (+0.0022 ± 0.0016, 5 de 5 *folds*). Esa evaluación supone que las liberadas son negativas verdaderas, y en la evaluación común D3 queda por debajo de D2 (-0.0012 ± 0.0011, 4 de 5 *folds*).
+- Por decisión del autor, HE2 y HE3 siguen con D2, que es la variante con la que se sorteó el lote de la revisión ciega.
+- La regla no establecía si D3 debía reemplazar a D2 como referencia. Por decisión del autor del 29-10-2026, D2 se mantiene como referencia de los siguientes experimentos del Sprint 3, y D3 queda documentada como variante.
+
+#### Cómo reproducir la variante D3
+- Requisitos: los de la búsqueda de hiperparámetros (el `.env`, `data/processed/dataset.parquet` y las cachés de dominio y de variantes). Además, las tablas de la etiqueta que deja la ingesta en `data/interim/` (`a1_tier_a.csv`, `equivalencias_cm.csv`, `positivos_cie9.csv` y `epoca.parquet`), la lista de hospitalizaciones con epicrisis que arma `src/eda_variables.py` (`data/interim/hadm_con_epicrisis.parquet`) y la equivalencia validada de `data/catalogos/`.
+- Comandos de la corrida del 29-10-2026, en este orden:
+  1) `python src/negativas_liberadas.py` identifica las liberadas, recupera su epicrisis y calcula sus variables con cachés propias en `data/interim/`, fuera de git (menos de 2 minutos);
+  2) `python src/experimentos_d3.py` compara D2 y D3 en los 5 *folds* y en *test* (82.6 minutos en CPU);
+  3) `python src/perfil_liberadas.py` describe a las liberadas sin entrenar ningún modelo (unos segundos).
+- El primer paso se ejecutó dos veces el 29-10-2026 ([`logs/negativas_liberadas_20261029_110350.log`](logs/negativas_liberadas_20261029_110350.log) y [`logs/negativas_liberadas_20261029_124215.log`](logs/negativas_liberadas_20261029_124215.log)). La segunda ejecución, posterior a la corrida de D3 y hecha con la equivalencia publicada en el repositorio, solo agregó al resumen la regla del EDA de escribir como <10 los conteos por código menores de 10. Produjo las mismas 16 189 liberadas, con contenido idéntico.
+- Modo de control: `python src/experimentos_d3.py --prueba` corre el flujo completo con 4 000 filas de *train* y 1 500 de *test*, pero escribe en las mismas salidas, por lo que después se debe repetir la corrida completa.
+- Las cifras de esta sección salen de [`logs/metrics_d3.txt`](logs/metrics_d3.txt), [`reportes/d3_resultados.json`](reportes/d3_resultados.json), [`reportes/d3_folds.csv`](reportes/d3_folds.csv), [`reportes/negativas_liberadas_resumen.json`](reportes/negativas_liberadas_resumen.json) y [`reportes/d3_perfil_liberadas.json`](reportes/d3_perfil_liberadas.json). Los registros de las corridas son [`logs/experimentos_d3_20261029_111253.log`](logs/experimentos_d3_20261029_111253.log) y [`logs/perfil_liberadas_20261029_132145.log`](logs/perfil_liberadas_20261029_132145.log).
+
 ---
 
 ## 📌 Roadmap
@@ -855,6 +982,7 @@ Las tareas, con responsable y plazo, están en los [issues](https://github.com/c
 - [x] Semana 6 → Cierre del Sprint 2: variantes de los datos (D0, D1, D2) y diagnósticos; se adopta D2 con A+B+C (PR-AUC 0.8534 frente a 0.8431 de D0 en validación cruzada, sobre las mismas filas).
 - [x] Semana 7 → Sprint 3, búsqueda de hiperparámetros aleatoria y bayesiana (Optuna) en la rama `sprint3-hiperparametros`: ninguna configuración supera a la actual y, por la regla prerregistrada, se mantiene D2 con A+B+C (PR-AUC 0.8534 en validación cruzada y 0.8671 en test).
 - [x] Semana 7 → importancia de variables en la rama `sprint3-importancia-variables`, con los 5 folds de train y sin test: palabras 0.1274, contexto 0.1106 y bigramas 0.0331 de caída de la PR-AUC al permutar cada bloque.
+- [x] Semana 7 → variante D3 en la rama `sprint3-etiqueta-d3`, con las negativas que libera la equivalencia validada. D3 cumple la regla en la evaluación ampliada (+0.0022 en 5 de 5 *folds*) y queda por debajo en la común (-0.0012). D2 marca como evento al 42.6 % de las liberadas, frente al 18.7 % de las negativas CIE-10 de la evaluación común. Por decisión del autor, D2 se mantiene como referencia, también para HE2 y HE3.
 - [ ] Sprint 3 → Evaluación por servicio, grupo de edad y decil de largo frente al modelo de contexto, recalibración a la prevalencia de 27.6 % y explicación de logística frente a LinearSVC.
 
 ---
