@@ -48,7 +48,8 @@ notebooks/
  ├── 02_EDA_semana4.ipynb     # EDA desplegada (src/eda.py) y, en la sección 7, el feature engineering (src/experimentos_fe.py)
  ├── 03_sprint2_semana6_variantes_datos.ipynb   # variantes de los datos y diagnósticos (semana 6)
  ├── 04_sprint3_semana7_hiperparametros.ipynb   # búsqueda de hiperparámetros, aleatoria y bayesiana (semana 7)
- └── 05_sprint3_semana7_importancia_variables.ipynb   # importancia de variables del modelo vigente (semana 7)
+ ├── 05_sprint3_semana7_importancia_variables.ipynb   # importancia de variables del modelo vigente (semana 7)
+ └── 06_sprint3_semana7_completo.ipynb   # semana 7 completa en un solo cuaderno ejecutado: hiperparámetros, importancia, equivalencia validada y variante D3
 src/
  ├── run_pipeline.py          # orquestador: ingesta → preprocesado → eda → baseline → features
  ├── ingesta.py               # script de ingesta (idempotente, con hash)
@@ -645,7 +646,7 @@ salen de [`logs/metrics_datos.txt`](logs/metrics_datos.txt), [`reportes/datos_re
 
 ## 🎛️ Semana 7 · Sprint 3: búsqueda de hiperparámetros
 
-Las tablas y las figuras de esta sección también están en el cuaderno [`notebooks/04_sprint3_semana7_hiperparametros.ipynb`](notebooks/04_sprint3_semana7_hiperparametros.ipynb), el cual lee los resultados sin volver a entrenar.
+Las tablas y las figuras de esta sección también están en el cuaderno [`notebooks/04_sprint3_semana7_hiperparametros.ipynb`](notebooks/04_sprint3_semana7_hiperparametros.ipynb), el cual lee los resultados sin volver a entrenar. El cuaderno [`notebooks/06_sprint3_semana7_completo.ipynb`](notebooks/06_sprint3_semana7_completo.ipynb) reúne en un solo documento ejecutado todo el trabajo de la semana 7, es decir, la búsqueda de hiperparámetros, la importancia de variables, la equivalencia validada y la variante D3.
 
 Con el modelo y los datos de la semana 6 fijos (D2 con A+B+C), esta semana se buscaron sus hiperparámetros (valores que se fijan antes de entrenar y que el modelo no aprende de los datos). Se compararon dos métodos con el mismo presupuesto, es decir, la búsqueda aleatoria, que sortea cada ensayo de forma independiente, y la bayesiana, que elige cada ensayo a partir de los resultados de los anteriores. Bergstra y Bengio (2012) proponen la búsqueda aleatoria como punto de comparación de los métodos que aprenden de los ensayos previos, que es el uso que se le da aquí.
 
@@ -861,7 +862,7 @@ Antes de correr se fijó la forma de calcular cada cantidad. Las cifras que en e
 - D2: las mismas filas de entrenamiento de la semana 6 (en la corrida, 39 198 por *fold* en promedio).
 - D3: las filas de D2 y el mismo número de ellas, pero en cada entrenamiento se reemplaza al azar, por liberadas, la proporción esperada de las negativas de la época CIE-10. En la corrida fueron entre 1 043 y 1 059 filas por *fold*, el 2.7 % del entrenamiento, y 1 313 de 48 998 en el entrenamiento final.
 - Proporción esperada: la que tendrían las liberadas sin etiqueta dudosa entre las negativas de la época CIE-10 sin etiqueta dudosa, porque ni D2 ni D3 entrenan con las dudosas (códigos causales fuera de la tabla). En la corrida, el 20.1 % de las liberadas eran dudosas, frente al 8.6 % de las negativas de esa época en el corpus, y la proporción fue 19.2 %.
-- Tasa de dudosas del corpus: se tomó de *train* y *test* juntos. Solo con *train* (8.3 %), la proporción habría sido 0.1919 y no 0.1924, con unas 3 filas menos por *fold*.
+- Tasa de dudosas del corpus: se tomó de *train* y *test* juntos. Según un cálculo aparte con los datos locales de MIMIC-IV, que no queda en los archivos versionados, solo con *train* (8.3 %) la proporción habría sido 0.1919 y no 0.1924, con unas 3 filas menos por *fold*.
 - Datos de las liberadas: la epicrisis se recupera y se filtra como en `src/preprocesado.py` (texto de más de 100 caracteres), y las variables de dominio y las marcas de etiqueta dudosa se calculan con las mismas funciones del corpus, en cachés aparte.
 - Partición: los 5 *folds* de la semana 6 (`StratifiedGroupKFold` por paciente, semilla 42). La liberada de un paciente del corpus va a la misma partición y al mismo *fold* que ese paciente; la de un paciente nuevo va a *test* con probabilidad 0.20 (`test_size`) y, en *train*, a un *fold* al azar, siempre por paciente.
 - Evaluaciones, las mismas para D2 y D3:
@@ -873,7 +874,7 @@ Antes de correr se fijó la forma de calcular cada cantidad. Las cifras que en e
 - Cambios posteriores: después de la corrida completa solo se corrigieron, en `src/experimentos_d3.py`, el comentario del modo `--prueba` y una importación sin uso, sin cambiar ningún cálculo.
 
 #### Control de reproducción
-D2 reprodujo la PR-AUC común de la semana 6 en los 5 *folds*, con las mismas filas de entrenamiento y sin diferencias hasta el sexto decimal. En *test* obtuvo 0.8671 (IC 95 %: 0.8589–0.8749), igual que en la semana 6.
+D2 reprodujo la PR-AUC común de la semana 6 en los 5 *folds*, con el mismo número de filas de entrenamiento y sin diferencias hasta el sexto decimal. En *test* obtuvo 0.8671 (IC 95 %: 0.8589–0.8749), igual que en la semana 6.
 
 #### Resultados
 Tabla 8. PR-AUC por *fold* de D2 y D3 en las dos evaluaciones (validación cruzada de 5 *folds*)
@@ -969,6 +970,21 @@ En consecuencia, para saber cuántas liberadas son negativas verdaderas sería n
 - El primer paso se ejecutó dos veces el 29-10-2026 ([`logs/negativas_liberadas_20261029_110350.log`](logs/negativas_liberadas_20261029_110350.log) y [`logs/negativas_liberadas_20261029_124215.log`](logs/negativas_liberadas_20261029_124215.log)). La segunda ejecución, posterior a la corrida de D3 y hecha con la equivalencia publicada en el repositorio, solo agregó al resumen la regla del EDA de escribir como <10 los conteos por código menores de 10. Produjo las mismas 16 189 liberadas, con contenido idéntico.
 - Modo de control: `python src/experimentos_d3.py --prueba` corre el flujo completo con 4 000 filas de *train* y 1 500 de *test*, pero escribe en las mismas salidas, por lo que después se debe repetir la corrida completa.
 - Las cifras de esta sección salen de [`logs/metrics_d3.txt`](logs/metrics_d3.txt), [`reportes/d3_resultados.json`](reportes/d3_resultados.json), [`reportes/d3_folds.csv`](reportes/d3_folds.csv), [`reportes/negativas_liberadas_resumen.json`](reportes/negativas_liberadas_resumen.json) y [`reportes/d3_perfil_liberadas.json`](reportes/d3_perfil_liberadas.json). Los registros de las corridas son [`logs/experimentos_d3_20261029_111253.log`](logs/experimentos_d3_20261029_111253.log) y [`logs/perfil_liberadas_20261029_132145.log`](logs/perfil_liberadas_20261029_132145.log).
+
+### Uso del modelo: validación por personal calificado
+
+Es preciso tomar en consideración que la PR-AUC mide la concordancia del modelo con la etiqueta construida a partir de los códigos de diagnóstico, y no con la presencia de eventos adversos reales. Con la prevalencia real, de cada 100 alertas del modelo vigente unas 60 tendrían evento según los códigos y unas 40 serían falsas alarmas, y el modelo detectaría 2 121 de cada 2 759 eventos codificados (Tabla 5). Por ello, el modelo cumple una función de tamizaje que orienta la revisión, pero no reemplaza la lectura de la epicrisis.
+
+A criterio del autor, el juicio clínico no se delega a la inteligencia artificial, dado que decidir si un evento ocurrió durante la atención exige interpretar al paciente singular en su contexto. Este criterio concuerda con la Directiva N.º 7-OGCyH-ESSALUD-2020 (Seguro Social de Salud [EsSalud], 2020), la cual asigna a la Oficina de Calidad de la IPRESS, o a quien haga sus veces, la validación de cada registro (artículos 17 y 19.1). Es decir, ese personal determina si el registro corresponde o no a un evento relacionado con la seguridad del paciente.
+
+De igual forma, Griffin y Resar (2009) recomiendan que el equipo de revisión con la herramienta de disparadores del IHI (*Global Trigger Tool*) esté formado por al menos tres personas. Se trata de dos revisores con formación clínica, entre los cuales los profesionales de enfermería con experiencia han sido los mejores revisores, y de un médico que valida los eventos adversos encontrados y su severidad (p. 7).
+
+Por consiguiente, se recomienda que toda epicrisis que el modelo marque como evento sea validada por personal calificado antes de notificarse como evento adverso o de pasar a la priorización GEMSES, tal como se hace en la revisión ciega de HE2 y HE3.
+
+Referencias:
+
+- Griffin, F. A. y Resar, R. K. (2009). *IHI Global Trigger Tool for measuring adverse events* (2.ª ed.). IHI Innovation Series white paper. Institute for Healthcare Improvement. https://www.ihi.org/resources/white-papers/ihi-global-trigger-tool-measuring-adverse-events
+- Seguro Social de Salud [EsSalud]. (2020). *Directiva de Gerencia General N.º 7-OGCyH-ESSALUD-2020 V.01: Registro, notificación y gestión de los eventos relacionados con la seguridad del paciente en ESSALUD*. Aprobada por la Resolución de Gerencia General N.º 402-GG-ESSALUD-2020, del 4 de marzo de 2020. Primera edición impresa: Lima, marzo de 2021.
 
 ---
 
