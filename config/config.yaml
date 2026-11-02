@@ -71,6 +71,32 @@ hiperparametros:            # Sprint 3, semana 7: búsqueda aleatoria y bayesian
     folds_mejores_minimo: 4         # la ajustada debe superar a la actual en al menos 4 de los 5 folds
     desviaciones_minimas: 1.0       # y la mejora media debe superar 1 desviación estándar de las diferencias por fold
 
+hiperparametros_pruning:    # Sprint 3, semana 8: la búsqueda de la semana 7 con pruning, más ensayos y artefactos
+                            # (src/experimentos_hp_pruning.py), según la lámina 21 del material de la semana 7. Se escribió antes de
+                            # correr la búsqueda. Mismo modelo (D2 con A+B+C), mismo espacio, mismos 3 folds y misma semilla (42)
+  n_ensayos: 30             # por método: el mínimo de la lámina 13 (de 30 a 100 ensayos, según el costo); la semana 7 usó 15
+  ensayos_iniciales_tpe: 10 # ensayos al azar antes de que el TPE aprenda (la lámina 7 sugiere de 10 a 20; la semana 7 usó 5)
+  pruner:                   # optuna.pruners.MedianPruner: corta el ensayo si su mejor valor intermedio queda por debajo de la
+                            # mediana de los ensayos completos de la misma búsqueda en el mismo fold
+    n_startup_trials: 5     # no corta hasta que la búsqueda tenga 5 ensayos completos
+    n_warmup_steps: 0       # puede cortar desde el primer fold
+    interval_steps: 1       # revisa después de cada fold
+  # valor intermedio que se informa después de cada fold: la PR-AUC media de los folds ya evaluados
+  max_segundos_por_ensayo: 600   # después de cada fold, corta el ensayo si ya superó este tiempo (el más lento de la semana 7: 510 s)
+  max_minutos_por_busqueda: 240  # límite total de cada búsqueda (timeout de Optuna): pasado ese tiempo no empieza ensayos nuevos
+  n_respaldo: 2             # configuraciones de respaldo: las 2 de mayor PR-AUC media en 3 folds, distintas de la ganadora, entre
+                            # los ensayos completos de las cuatro búsquedas (semanas 7 y 8); se confirman con los 5 folds del proyecto
+  importancia_min_sobre_cuantil: 5   # importancia de los hiperparámetros con el evaluador por defecto de Optuna 5.0.0 (PED-ANOVA) sobre
+                                     # los ensayos completos de las cuatro búsquedas; el cuantil objetivo se ajusta para dejar al menos
+                                     # 5 ensayos sobre él, como recomienda la documentación de Optuna
+  curva_fracciones: [0.1, 0.25, 0.5, 1.0]   # curva de aprendizaje de la ganadora: fracción de las filas de entrenamiento de cada uno
+                                             # de los 5 folds del proyecto (muestra al azar, semilla 42 + n.º de fold)
+  # Regla de decisión: la misma de la semana 7 (hiperparametros.regla). La candidata es la configuración con mayor PR-AUC media
+  # entre los ensayos completos de las dos búsquedas con pruning, y se confirma frente a la actual con los 5 folds del proyecto.
+  # El test se mide una sola vez y solo si la regla adopta la candidata (lámina 14: no optimizar mirando el test).
+  # Artefactos: la ganadora y los respaldos se reentrenan con todo train (filas de D2) y se guardan en models/ (fuera de git,
+  # porque el vocabulario sale de las notas de MIMIC-IV), con su hash en reportes/hp_pruning_resultados.json.
+
 importancia:                # Sprint 3, semana 7: importancia de variables (src/importancia_variables.py)
   # modelo: la configuración vigente (D2, A+B+C, C 1, A y B con 20 000 términos y min_df 3, balanced, sublinear_tf)
   particion: confirmacion   # los 5 folds del proyecto dentro de train (los de las semanas 5 a 7); no se usa test
