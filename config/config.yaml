@@ -110,3 +110,60 @@ importancia:                # Sprint 3, semana 7: importancia de variables (src/
     solo_letras: true       # sin dígitos ni el marcador de anonimización ___ (cada palabra solo con letras a-z)
     max_pct_mayuscula_inicial: 50   # posible nombre propio: alguna palabra del término va con mayúscula inicial en más de este %
     muestra_mayusculas: 10000       # epicrisis de train (al azar, semilla 42) en las que se mide el uso de mayúsculas
+
+he1_estratos:               # Sprint 3: HE1 por estratos (script por escribir). Prerregistro escrito el 05-11-2026, antes de calcular la
+                            # ROC-AUC de cualquier estrato. El diseño es el de la HE1 en la matriz de consistencia v4 (02-11-2026)
+  modelo: A+B+C             # el «modelo adoptado» de la matriz v4, entrenado con las filas de train de la variante D2
+  variante: D2
+  comparador: C             # el modelo de contexto sin texto (bloque C), entrenado con las mismas filas
+  configuracion:            # la actual: la de feature_engineering, la del lote de la revisión ciega (README, semana 7) y la del «modelo
+                            # adoptado» de la matriz v4 (ver la razón 2 de la decisión)
+    C: 1.0
+    A_max_features: 20000
+    A_min_df: 3
+    B_max_features: 20000
+    B_min_df: 3
+    class_weight: balanced
+    sublinear_tf: true
+  # Decisión del 05-11-2026: la HE1 se evalúa con la configuración actual y no con la candidata de la semana 8 (bayesiana #25), que la
+  # regla prerregistrada adoptó con una mejora media de +0.0014 en la PR-AUC de los 5 folds. Razones:
+  #  1) la hipótesis general se considera cumplida si se cumplen a la vez HE1, HE2 y HE3, y el lote de la revisión ciega de HE2 y HE3
+  #     se generó con la configuración actual y no se regenera (README, semana 7), de modo que las tres se refieren a la misma configuración;
+  #  2) la HE1 se formula sobre el «modelo adoptado» de la matriz v4, cuya nota da una ROC-AUC de 0.871 sin etiqueta dudosa y de 0.840 con
+  #     todas las epicrisis de prueba. Derivación: la matriz v4 se guardó el 02-11-2026 a las 12:08 (fecha de modificación del .docx y
+  #     del .pdf), antes de que empezara la corrida de la semana 8 (13:14, logs/experimentos_hp_pruning_20261102_131402.log), y 0.871 es
+  #     la ROC-AUC de la actual (0.8706), mientras que la candidata da 0.8699, que redondea a 0.870. Por tanto, ese modelo ya era la
+  #     configuración actual antes de que existiera la candidata;
+  #  3) a criterio del autor, la actual es más parsimoniosa: 40 091 atributos frente a 91 296 en el fold 1 de la confirmación con 5 folds.
+  # La ROC-AUC de test no es una razón de la elección, porque el test no se usa para optimizar (hiperparametros_pruning). Solo muestra
+  # que la diferencia global es mínima, 0.8706 con la actual y 0.8699 con la candidata sin etiqueta dudosa, y la candidata queda como
+  # análisis de sensibilidad.
+  particion: test           # los modelos se entrenan con train y se evalúan en test
+  etiqueta: sin_dudosa      # análisis principal: las 12 321 epicrisis de prueba sin etiqueta dudosa
+  estratos:
+    servicio_ingreso: servicio     # el primer curr_service de hosp/services según transfertime (src/eda_variables.py)
+    grupo_edad: ["18 a 44", "45 a 64", "65 a 79", "80 o más"]   # años, con los cortes de src/eda_variables.py
+    decil_largo: 10                # deciles del largo de la nota en caracteres (src/eda.py), calculados en la partición de prueba
+  min_epicrisis_estrato: 200       # solo se evalúan los estratos con 200 epicrisis o más
+  min_por_clase: 30                # y con al menos 30 de cada clase
+  criterio: limite_inferior_ic95_mayor_que_cero   # en cada estrato evaluable, el límite inferior del IC 95 % por paciente de la
+                                                  # diferencia de ROC-AUC (A+B+C menos C) es mayor que cero, es decir, el IC no incluye
+                                                  # el cero, y la HE1 se cumple si eso ocurre en todos los estratos evaluables (matriz
+                                                  # v4, indicador de la HE1; decisión 3 del EDA en src/eda.py)
+  sensibilidad:
+    todas_las_epicrisis: true      # las 14 085 epicrisis de prueba con la etiqueta original (matriz v4)
+    configuracion_candidata:       # la candidata de la semana 8 que la regla adoptó, bayesiana #25 (reportes/hp_pruning_resultados.json)
+      C: 1.8734194377493316
+      A_max_features: 60000
+      A_min_df: 3
+      B_max_features: 40000
+      B_min_df: 5
+      class_weight: ninguno
+      sublinear_tf: true
+  # Pendiente de definir antes de calcular, dado que la matriz v4 no lo fija:
+  #  - el número de remuestreos por paciente del IC 95 % (feature_engineering e hiperparametros usan 200);
+  #  - si el remuestreo es pareado (los mismos pacientes para A+B+C y para C en cada remuestreo) y si el IC es por percentiles, como el
+  #    del modelo de contexto del EDA (src/eda_variables.py);
+  #  - si los cortes de los deciles salen de las 14 085 epicrisis de prueba o de las 12 321 sin etiqueta dudosa;
+  #  - si los mínimos de 200 epicrisis y 30 por clase se cuentan de nuevo en cada análisis de sensibilidad;
+  #  - el bloque C de la sensibilidad con la candidata: con la regresión logística de la actual (C 1.0, balanced) o con la de la candidata.
