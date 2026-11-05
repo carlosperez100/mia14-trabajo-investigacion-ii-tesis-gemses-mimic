@@ -29,7 +29,7 @@ mil = lambda x: f"{int(round(x)):,}".replace(",", " ")
 def acumulado_completos(g):
     """Mejor PR-AUC acumulada contando solo los ensayos completos (un ensayo cortado no tiene la media de los 3 folds)."""
     v = g.sort_values("ensayo").apply(lambda r: r.pr_auc_media if r.get("estado", "completo") == "completo" else np.nan, axis=1)
-    return v.cummax().values
+    return v.cummax().ffill().values  # un ensayo cortado mantiene el mejor valor anterior en lugar de cortar la línea
 
 
 def fig_evolucion(R, ens, s7):
@@ -42,6 +42,13 @@ def fig_evolucion(R, ens, s7):
     gan = max(mej, key=lambda m: mej[m]["pr_auc_media"])
     dif = mej[gan]["pr_auc_media"] - ref
     sobre = int(((ens.estado == "completo") & (ens.pr_auc_media > ref)).sum())
+    altos = ens.pr_auc_media[ens.pr_auc_media >= ens.pr_auc_media.quantile(0.25)]
+    piso = min(ref, altos.min()) - 0.25 * (ens.pr_auc_media.max() - min(ref, altos.min()) + 1e-4)
+    bajo = ens.pr_auc_media[ens.pr_auc_media < piso]
+    poda = ens[ens.estado == "cortado por pruning"]
+    n_f1, n_f2 = int((poda.folds_evaluados == 1).sum()), int((poda.folds_evaluados == 2).sum())
+    donde = ("en el primer fold" if n_f2 == 0 else "en el segundo fold" if n_f1 == 0 else
+             f"en el primer fold ({n_f1} ensayos) o en el segundo ({n_f2})")
     izq = (f"Gráfico izquierdo. Eje x: número de ensayo de cada búsqueda ({int((s7.metodo == 'aleatoria').sum())} por método en la "
            f"semana 7 y {N} en la semana 8). Eje y: la "
            f"mejor PR-AUC media de 3 folds obtenida hasta ese ensayo, contando solo los ensayos completos. Las líneas discontinuas son las "
@@ -53,15 +60,19 @@ def fig_evolucion(R, ens, s7):
               "3 folds." if dif <= 0 else
               "Esto implica que la búsqueda encuentra una configuración por encima de la actual en los 3 folds, y que la diferencia debe "
               "confirmarse con los 5 folds antes de tomarla como mejora."))
-    der = (f"Gráfico derecho. Eje x: número de ensayo de la semana 8. Eje y: PR-AUC media de los folds que llegó a evaluar cada ensayo. "
-           f"Los puntos llenos son ensayos completos (3 folds) y los vacíos, ensayos cortados por el pruning, que se dibujan con el valor "
-           f"de los folds que alcanzaron a evaluar. Se cortaron {cortes.get('aleatoria', 0)} de {N} ensayos de la aleatoria y "
+    der = ("Gráfico derecho. Eje x: número de ensayo de la semana 8. Eje y: PR-AUC media de los folds que llegó a evaluar cada ensayo. "
+           "Los puntos llenos son ensayos completos (3 folds) y los vacíos, ensayos cortados por el pruning, que se dibujan con el valor "
+           "de los folds que alcanzaron a evaluar. "
+           + (f"Los {len(bajo)} ensayos con PR-AUC menor que {piso:.3f} (entre {bajo.min():.4f} y {bajo.max():.4f}) se dibujan sobre el "
+              f"borde inferior, para que no compriman la escala. " if len(bajo) else "")
+           + f"Se cortaron {cortes.get('aleatoria', 0)} de {N} ensayos de la aleatoria y "
            f"{cortes.get('bayesiana', 0)} de {N} de la bayesiana"
            + (f" ({por_tiempo} de ellos por tiempo y el resto por el pruning)" if por_tiempo else ", todos por el pruning")
            + f", y {sobre} ensayos completos superan a la actual. Desde el ensayo "
            f"{k0 + 1}, la bayesiana elige cada configuración a partir de los resultados anteriores. "
-           "Esto implica que los ensayos cortados por el pruning son los que ya iban por debajo de la mediana en el primer o en el "
-           "segundo fold, de modo que el presupuesto se concentra en las configuraciones que compiten con la actual.")
+           + (f"Esto implica que los ensayos cortados por el pruning son los que, {donde}, ya iban por debajo de la mediana de los ensayos "
+              "completos anteriores, de modo que los folds se concentran en las configuraciones que van por encima de esa mediana."
+              if len(poda) else ""))
     fig, pie, fr = con_pie(12.5, 4.4, [izq, der], 175)
     a1, a2 = fig.subplots(1, 2)
     for m in ("aleatoria", "bayesiana"):
@@ -72,8 +83,6 @@ def fig_evolucion(R, ens, s7):
     a1.axhline(ref, color=COLOR["actual"], ls=":", lw=1.2, label="configuración actual")
     a1.set(xlabel="n.º de ensayo", ylabel="mejor PR-AUC media acumulada (3 folds)", xticks=range(1, N + 1, 2 if N > 12 else 1))
     a1.set_title("Mejor resultado acumulado por búsqueda", fontsize=10); a1.legend(fontsize=7.5, loc="lower right"); a1.grid(alpha=0.3)
-    altos = ens.pr_auc_media[ens.pr_auc_media >= ens.pr_auc_media.quantile(0.25)]
-    piso = min(ref, altos.min()) - 0.25 * (ens.pr_auc_media.max() - min(ref, altos.min()) + 1e-4)
     for m, g in ens.groupby("metodo", sort=False):
         x = g.ensayo + (-0.12 if m == "aleatoria" else 0.12)
         c = g.estado == "completo"
@@ -81,9 +90,10 @@ def fig_evolucion(R, ens, s7):
         a2.scatter(x[~c], g.pr_auc_media[~c].clip(lower=piso), facecolors="white", edgecolors=COLOR[m], marker=MARCA[m], s=30,
                    linewidths=1.3, label=f"{m}: cortado", zorder=3)
     a2.axhline(ref, color=COLOR["actual"], ls=":", lw=1.2, label="configuración actual")
-    a2.set_ylim(piso - 0.0005, ens.pr_auc_media.max() + 0.25 * (ens.pr_auc_media.max() - piso))
+    # margen superior para la leyenda, que así no tapa ningún punto
+    a2.set_ylim(piso - 0.0005, ens.pr_auc_media.max() + 0.40 * (ens.pr_auc_media.max() - piso))
     a2.set(xlabel="n.º de ensayo (semana 8)", ylabel="PR-AUC media de los folds evaluados", xticks=range(1, N + 1, 2 if N > 12 else 1))
-    a2.set_title("Resultado de cada ensayo de la semana 8", fontsize=10); a2.legend(fontsize=7.5, loc="lower right", ncol=2)
+    a2.set_title("Resultado de cada ensayo de la semana 8", fontsize=10); a2.legend(fontsize=7.5, loc="upper left", ncol=3)
     a2.grid(alpha=0.3)
     return cerrar(fig, pie, fr)
 
@@ -101,8 +111,15 @@ def fig_costo(R, ens, s7):
               f"de ellos, se evaluaron {E['folds_evaluados']} de {E['folds_sin_pruning']} folds, y tomaron {E['segundos_semana8'] / 60:.1f} "
               f"minutos frente a {E['segundos_semana7'] / 60:.1f}. " if E["mismas_configuraciones_que_la_semana_7"] else "")
            + "Los minutos dependen también de la carga del equipo en cada corrida, mientras que el número de folds evaluados no.")
-    der = (f"Gráfico derecho. Eje y: número de ensayos de cada búsqueda de la semana 8 según su estado (completo, cortado después del "
-           f"primer fold o del segundo, o cortado por tiempo). En las dos búsquedas se evaluaron {A['folds_evaluados']} de los "
+    poda = ens.estado == "cortado por pruning"
+    n_est = {"completo": int((ens.estado == "completo").sum()),
+             "cortado después del primer fold": int((poda & (ens.folds_evaluados == 1)).sum()),
+             "cortado después del segundo fold": int((poda & (ens.folds_evaluados == 2)).sum()),
+             "cortado por tiempo": int((ens.estado == "cortado por tiempo").sum())}
+    est = [k for k, v in n_est.items() if v]
+    est_txt = est[0] if len(est) == 1 else ", ".join(est[:-1]) + " o " + est[-1]
+    der = (f"Gráfico derecho. Eje y: número de ensayos de cada búsqueda de la semana 8 según su estado ({est_txt}). En las dos "
+           f"búsquedas se evaluaron {A['folds_evaluados']} de los "
            f"{A['folds_sin_pruning']} folds que habrían requerido sin pruning las {A['configuraciones_evaluadas']} configuraciones distintas, "
            f"y se estima que el pruning ahorró unos {A['segundos_ahorrados_estimados'] / 60:.0f} minutos (cada fold no evaluado se estima "
            f"con el tiempo medio de los folds evaluados del mismo ensayo). "
@@ -139,9 +156,11 @@ def fig_costo(R, ens, s7):
                 a2.text(j, base[j] + v / 2, str(v), ha="center", va="center", fontsize=8,
                         color="white" if tono in ("#2a2a2a", "#8A8A8A") else "#222")
         base += n
-    a2.set(ylabel="n.º de ensayos (semana 8)", ylim=(0, N * 1.12))
+    # margen superior para la leyenda, que así no tapa las barras
+    a2.set(ylabel="n.º de ensayos (semana 8)", ylim=(0, N * 1.32))
     a2.yaxis.set_major_locator(MaxNLocator(integer=True))
-    a2.set_title("Estado de los ensayos de la semana 8", fontsize=10); a2.legend(fontsize=7.5, loc="upper right"); a2.grid(alpha=0.3, axis="y")
+    a2.set_title("Estado de los ensayos de la semana 8", fontsize=10); a2.legend(fontsize=7.5, loc="upper center", ncol=2)
+    a2.grid(alpha=0.3, axis="y")
     return cerrar(fig, pie, fr)
 
 
@@ -169,6 +188,15 @@ def fig_importancia(R):
     return cerrar(fig, pie, fr)
 
 
+def tramo_final(curva):
+    """Cambio de la PR-AUC de validación entre las dos fracciones mayores, fold por fold. La curva «sigue subiendo» si la media sube y
+    sube en todos los folds menos uno como máximo (el mismo criterio de 4 de 5 folds de la regla de decisión)."""
+    v = curva.pivot(index="fold", columns="fraccion", values="pr_auc_validacion")
+    d = v[v.columns[-1]] - v[v.columns[-2]]
+    k = int((d > 0).sum())
+    return {"media": float(d.mean()), "folds_sube": k, "n_folds": int(len(d)), "sigue_subiendo": bool(d.mean() > 0 and k >= len(d) - 1)}
+
+
 def fig_curva(R, curva):
     g = curva.groupby("fraccion").agg(n=("filas_entrenamiento", "mean"), tr=("pr_auc_entrenamiento", "mean"),
                                       tr_sd=("pr_auc_entrenamiento", "std"), va=("pr_auc_validacion", "mean"),
@@ -176,20 +204,17 @@ def fig_curva(R, curva):
     a, z = g.iloc[0], g.iloc[-1]
     pen = g.iloc[-2] if len(g) > 1 else a
     brecha = z.tr - z.va
-    sube = z.va - pen.va
+    s = tramo_final(curva)
     txt = (f"Eje x: número de filas con que se entrena el modelo, es decir, una fracción ({', '.join(f'{x:g}' for x in g.fraccion)}) de las "
            f"filas de entrenamiento de cada uno de los {curva.fold.nunique()} folds del proyecto. Eje y: PR-AUC media de los folds, en las "
            f"mismas filas de entrenamiento (naranja) y en las epicrisis de validación sin etiqueta dudosa (azul); la franja es ± 1 "
            f"desviación estándar entre folds. Con {mil(a.n)} filas, la PR-AUC es {a.tr:.4f} en entrenamiento y {a.va:.4f} en validación; "
            f"con {mil(z.n)} filas, {z.tr:.4f} y {z.va:.4f}, una brecha de {brecha:.4f}. Entre {mil(pen.n)} y {mil(z.n)} filas, la de "
-           f"validación sube {sube:+.4f}. "
-           + ("Esto implica que el modelo ajusta en entrenamiento bastante más de lo que generaliza, lo esperable en una regresión con "
-              "decenas de miles de términos, y que la validación todavía mejora al sumar filas, de modo que más datos etiquetados "
-              "ayudarían más que seguir ajustando hiperparámetros."
-              if sube > 0.002 else
-              "Esto implica que el modelo ajusta en entrenamiento bastante más de lo que generaliza, lo esperable en una regresión con "
-              "decenas de miles de términos, y que la validación casi no cambia al sumar filas, por lo que más datos del mismo tipo "
-              "aportarían poco."))
+           f"validación cambia {s['media']:+.4f} en promedio y sube en {s['folds_sube']} de {s['n_folds']} folds. "
+           f"Esto implica que el modelo ajusta en entrenamiento bastante más de lo que generaliza, y que "
+           + ("la validación todavía sube al sumar filas, es decir, la curva aún no se aplana."
+              if s["sigue_subiendo"] else
+              "la validación ya casi no cambia al sumar filas, es decir, la curva se aplana en el último tramo."))
     fig, pie, fr = con_pie(9.5, 4.0, [txt], 130)
     ax = fig.subplots()
     for col, sd, color, etiqueta in (("tr", "tr_sd", "#eb6834", "entrenamiento (las mismas filas)"),
@@ -223,8 +248,8 @@ def dibujar(R, ens, s7, curva, carpeta=None):
 if __name__ == "__main__":
     import matplotlib
     matplotlib.use("Agg")
-    leer = lambda n: pd.read_csv(REPORTES / n, keep_default_na=False)
-    ens = pd.read_csv(REPORTES / "hp_pruning_ensayos.csv", keep_default_na=False, na_values=[""])
+    leer = lambda n: pd.read_csv(REPORTES / n, keep_default_na=False, float_precision="round_trip")
+    ens = pd.read_csv(REPORTES / "hp_pruning_ensayos.csv", keep_default_na=False, na_values=[""], float_precision="round_trip")
     ens["reutilizado_de"] = ens.reutilizado_de.fillna("")
     dibujar(json.loads((REPORTES / "hp_pruning_resultados.json").read_text(encoding="utf-8")), ens, leer("hp_ensayos.csv"),
             pd.read_csv(REPORTES / "hp_pruning_curva.csv"))

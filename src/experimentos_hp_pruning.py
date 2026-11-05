@@ -37,6 +37,8 @@ Salidas: logs/experimentos_hp_pruning_<fecha>.log · logs/metrics_hp_pruning.txt
          reportes/hp_pruning_resultados.json · reportes/figuras/fig_hp_pruning_*.png · models/hp_pruning_*.joblib (fuera de git)
 Uso:  python src/experimentos_hp_pruning.py           (requiere la caché de python src/experimentos_hp.py --solo-conteos)
       python src/experimentos_hp_pruning.py --prueba  (corrida corta para revisar el flujo; escribe en data/interim/prueba_hp_pruning)
+Si la corrida se interrumpe, al repetirla se toman de las cachés los folds de la búsqueda (con su tiempo original) y las
+confirmaciones con 5 folds; el test, la curva y los modelos se calculan de nuevo.
 """
 import copy
 import json
@@ -81,6 +83,14 @@ def prm_de(fila):
 
 def clave_prm(prm):
     return json.dumps({k: (bool(v) if k == "sublinear_tf" else v) for k, v in prm.items()}, sort_keys=True)
+
+
+def leer_ensayos(ruta):
+    """CSV de ensayos. Con float_precision="round_trip", C se lee con todos sus decimales: el lector por defecto de pandas puede
+    cambiar el último dígito, y entonces una configuración de la semana 7 no se reconoce como igual a la misma de la semana 8."""
+    df = pd.read_csv(ruta, keep_default_na=False, na_values=[""], float_precision="round_trip")
+    df["reutilizado_de"] = df.reutilizado_de.fillna("")
+    return df
 
 
 def resumen_folds(folds):
@@ -142,6 +152,75 @@ def importancia(pool, E, minimo):
     return {"evaluador": "PedAnovaImportanceEvaluator (por defecto en Optuna 5.0.0)", "target_quantile": round(q, 4),
             "ensayos_sobre_el_cuantil": int(np.ceil(q * n)), "n_configuraciones": n,
             "importancias": {k: round(float(v), 4) for k, v in imp.items()}}
+
+
+def efecto_mismos_ensayos(s7, ens, n_folds):
+    """Los primeros ensayos de la aleatoria de la semana 8 frente a los de la semana 7. Con la misma semilla, el RandomSampler
+    propone las mismas configuraciones, de modo que la diferencia en folds evaluados y en tiempo es la que produce el pruning."""
+    s7a = s7[s7.metodo == "aleatoria"].sort_values("ensayo")
+    s8a = ens[(ens.metodo == "aleatoria") & (ens.ensayo <= len(s7a))].sort_values("ensayo")
+    mismas = len(s8a) == len(s7a) and all(clave_prm(prm_de(x)) == clave_prm(prm_de(y)) for x, y in
+                                          zip(s7a.to_dict("records"), s8a.to_dict("records")))
+    difs = [abs(float(x[f"pr_auc_fold{i}"]) - float(y[f"pr_auc_fold{i}"])) for x, y in zip(s7a.to_dict("records"), s8a.to_dict("records"))
+            for i in range(1, int(y["folds_evaluados"]) + 1)] if mismas else []
+    top5_7 = set(s7a.nlargest(5, "pr_auc_media").ensayo)
+    efecto = {"mismas_configuraciones_que_la_semana_7": bool(mismas), "n_ensayos": int(len(s8a)),
+              "cortados": int((s8a.estado != "completo").sum()),
+              "folds_evaluados": int(s8a.folds_evaluados.sum()), "folds_sin_pruning": int(n_folds * len(s8a)),
+              "segundos_semana7": round(float(s7a.segundos.sum()), 1), "segundos_semana8": round(float(s8a.segundos.sum()), 1),
+              "dif_maxima_pr_auc_por_fold": round(max(difs), 9) if difs else None,
+              "reproduce_folds": bool(difs) and max(difs) <= 1e-6,
+              "top5_semana7_cortados": sorted(int(e) for e in s8a[(s8a.ensayo.isin(top5_7)) & (s8a.estado != "completo")].ensayo),
+              "mejor_semana7": int(s7a.sort_values(["pr_auc_media", "ensayo"], ascending=[False, True]).iloc[0].ensayo)}
+    efecto["mejor_semana7_estado_en_semana8"] = str(s8a[s8a.ensayo == efecto["mejor_semana7"]].estado.iloc[0]) if mismas else None
+    return efecto
+
+
+def armar_pool(s7, comp):
+    """Configuraciones completas y distintas de las cuatro búsquedas (semanas 7 y 8): cada una con su primera aparición y las otras."""
+    pool, vistas = [], {}
+    for semana, df_ in ((7, s7[s7.reutilizado_de == ""]), (8, comp[comp.reutilizado_de == ""])):
+        for r in df_.to_dict("records"):
+            prm = prm_de(r)
+            k = clave_prm(prm)
+            origen = f"semana {semana} · {r['metodo']} #{int(r['ensayo'])}"
+            if k in vistas:
+                vistas[k]["tambien"].append(origen)
+                continue
+            vistas[k] = {"origen": origen, "tambien": [], "prm": prm, "pr_auc_media": float(r["pr_auc_media"]),
+                         "pr_auc_std": float(r["pr_auc_std"]), "segundos": float(r["segundos"]), "n_atributos": int(r["n_atributos"])}
+            pool.append(vistas[k])
+    return pool
+
+
+def ordenar_respaldo(pool, GAN, ACT, ref):
+    """Posibles respaldos de mayor a menor PR-AUC media en 3 folds, sin la ganadora; si se adoptó la candidata, entra la anterior."""
+    excluir = clave_prm(GAN)
+    orden = sorted([r for r in pool if clave_prm(r["prm"]) != excluir], key=lambda r: -r["pr_auc_media"])
+    if excluir != clave_prm(ACT):
+        orden = sorted(orden + [{"origen": "configuración anterior (referencia)", "tambien": [], "prm": ACT,
+                                 "pr_auc_media": ref["pr_auc_media"], "pr_auc_std": ref["pr_auc_std"],
+                                 "segundos": ref["segundos"], "n_atributos": ref["folds"][0]["n_atributos"]}],
+                       key=lambda r: -r["pr_auc_media"])
+    return orden
+
+
+def tabla_topk(pool, ACT, ref, GAN, CAND, respaldos, adopta):
+    """Tabla top-k: configuraciones completas de las semanas 7 y 8 y la referencia, de mayor a menor PR-AUC media en 3 folds."""
+    filas_k = [{"origen": r["origen"], "tambien": r["tambien"], "prm": r["prm"], "pr_auc_media": r["pr_auc_media"],
+                "pr_auc_std": r["pr_auc_std"], "segundos": r["segundos"], "n_atributos": r["n_atributos"]} for r in pool]
+    filas_k.append({"origen": "configuración actual (referencia, fuera del presupuesto)", "tambien": [], "prm": ACT,
+                    "pr_auc_media": ref["pr_auc_media"], "pr_auc_std": ref["pr_auc_std"], "segundos": ref["segundos"],
+                    "n_atributos": ref["folds"][0]["n_atributos"]})
+    rol_de = {clave_prm(GAN): "ganadora", **{clave_prm(r["parametros"]): r["rol"].replace("_", " ") for r in respaldos}}
+    if not adopta:
+        rol_de.setdefault(clave_prm(CAND), "candidata de la semana 8, no adoptada")
+    topk = pd.DataFrame([{"origen": r["origen"], "parametros": hp.texto_prm(r["prm"]), "pr_auc_media": round(r["pr_auc_media"], 4),
+                          "pr_auc_std": round(r["pr_auc_std"], 4), "segundos": r["segundos"], "n_atributos": r["n_atributos"],
+                          "rol": rol_de.get(clave_prm(r["prm"]), ""), "tambien_en": "; ".join(r["tambien"])}
+                         for r in filas_k]).sort_values("pr_auc_media", ascending=False).reset_index(drop=True)
+    topk.insert(0, "puesto", range(1, len(topk) + 1))
+    return topk
 
 
 def curva_aprendizaje(tr, y_tr, comun_tr, part_conf, carpeta, prm, P, S, modelo, fracciones, X_cols, log):
@@ -240,7 +319,7 @@ def main():
     (salida / "figuras").mkdir(parents=True, exist_ok=True)
     eda = json.loads((REPORTES / "eda_resumen.json").read_text(encoding="utf-8"))
     prev = float(eda["balance"]["prevalencia_real_con_epicrisis"])
-    s7 = pd.read_csv(REPORTES / "hp_ensayos.csv", keep_default_na=False)
+    s7 = leer_ensayos(REPORTES / "hp_ensayos.csv")
     R7 = json.loads((REPORTES / "hp_resultados.json").read_text(encoding="utf-8"))
     ACT = hp.actual(P)
     pr = Hp["pruner"]
@@ -370,24 +449,9 @@ def main():
              + f" · candidata: la de la {cand_m} ({hp.texto_prm(CAND)})")
 
     # ---------- efecto del pruning sobre los mismos ensayos: los 15 primeros de la aleatoria frente a la semana 7
-    s7a = s7[s7.metodo == "aleatoria"].sort_values("ensayo")
-    s8a = ens[(ens.metodo == "aleatoria") & (ens.ensayo <= len(s7a))].sort_values("ensayo")
-    mismas = len(s8a) == len(s7a) and all(clave_prm(prm_de(x)) == clave_prm(prm_de(y)) for x, y in
-                                          zip(s7a.to_dict("records"), s8a.to_dict("records")))
-    difs = [abs(float(x[f"pr_auc_fold{i}"]) - float(y[f"pr_auc_fold{i}"])) for x, y in zip(s7a.to_dict("records"), s8a.to_dict("records"))
-            for i in range(1, int(y["folds_evaluados"]) + 1)] if mismas else []
-    top5_7 = set(s7a.nlargest(5, "pr_auc_media").ensayo)
-    efecto = {"mismas_configuraciones_que_la_semana_7": bool(mismas), "n_ensayos": int(len(s8a)),
-              "cortados": int((s8a.estado != "completo").sum()),
-              "folds_evaluados": int(s8a.folds_evaluados.sum()), "folds_sin_pruning": int(n_folds * len(s8a)),
-              "segundos_semana7": round(float(s7a.segundos.sum()), 1), "segundos_semana8": round(float(s8a.segundos.sum()), 1),
-              "dif_maxima_pr_auc_por_fold": round(max(difs), 9) if difs else None,
-              "reproduce_folds": bool(difs) and max(difs) <= 1e-6,
-              "top5_semana7_cortados": sorted(int(e) for e in s8a[(s8a.ensayo.isin(top5_7)) & (s8a.estado != "completo")].ensayo),
-              "mejor_semana7": int(s7a.sort_values(["pr_auc_media", "ensayo"], ascending=[False, True]).iloc[0].ensayo)}
-    efecto["mejor_semana7_estado_en_semana8"] = str(s8a[s8a.ensayo == efecto["mejor_semana7"]].estado.iloc[0]) if mismas else None
-    log.info(f"efecto del pruning en los {len(s8a)} primeros ensayos de la aleatoria (mismas configuraciones que la semana 7): {efecto}"
-             + (" · no aplica en --prueba" if prueba else ""))
+    efecto = efecto_mismos_ensayos(s7, ens, n_folds)
+    log.info(f"efecto del pruning en los {efecto['n_ensayos']} primeros ensayos de la aleatoria (mismas configuraciones que la semana 7): "
+             f"{efecto}" + (" · no aplica en --prueba" if prueba else ""))
     # ahorro estimado en las dos búsquedas: cada fold no evaluado de un ensayo cortado se estima con el tiempo medio de sus folds evaluados
     unicos = ens[ens.reutilizado_de == ""]
     faltan = (n_folds - unicos.folds_evaluados) * unicos.segundos / unicos.folds_evaluados
@@ -427,25 +491,8 @@ def main():
         log.info("la regla no adopta la candidata: se mantiene la configuración actual y no se mide el test")
 
     # ---------- respaldo: las mejores configuraciones completas de las semanas 7 y 8, distintas de la ganadora
-    pool, vistas = [], {}
-    for semana, df_ in ((7, s7[s7.reutilizado_de == ""]), (8, comp[comp.reutilizado_de == ""])):
-        for r in df_.to_dict("records"):
-            prm = prm_de(r)
-            k = clave_prm(prm)
-            origen = f"semana {semana} · {r['metodo']} #{int(r['ensayo'])}"
-            if k in vistas:
-                vistas[k]["tambien"].append(origen)
-                continue
-            vistas[k] = {"origen": origen, "tambien": [], "prm": prm, "pr_auc_media": float(r["pr_auc_media"]),
-                         "pr_auc_std": float(r["pr_auc_std"]), "segundos": float(r["segundos"]), "n_atributos": int(r["n_atributos"])}
-            pool.append(vistas[k])
-    excluir = clave_prm(GAN)
-    respaldo_pool = sorted([r for r in pool if clave_prm(r["prm"]) != excluir], key=lambda r: -r["pr_auc_media"])
-    if GAN is not ACT:
-        respaldo_pool = sorted(respaldo_pool + [{"origen": "configuración anterior (referencia)", "tambien": [], "prm": ACT,
-                                                 "pr_auc_media": ref["pr_auc_media"], "pr_auc_std": ref["pr_auc_std"],
-                                                 "segundos": ref["segundos"], "n_atributos": ref["folds"][0]["n_atributos"]}],
-                               key=lambda r: -r["pr_auc_media"])
+    pool = armar_pool(s7, comp)
+    respaldo_pool = ordenar_respaldo(pool, GAN, ACT, ref)
     conf_gan = ev7("confirmacion", GAN)
     pg = np.array([f["pr_auc_comun"] for f in conf_gan["folds"]])
     respaldos = []
@@ -485,19 +532,7 @@ def main():
     seg_modelos = round(time.time() - t0, 1)
 
     # ---------- tabla top-k: configuraciones completas de las semanas 7 y 8 y la referencia
-    filas_k = [{"origen": r["origen"], "tambien": r["tambien"], "prm": r["prm"], "pr_auc_media": r["pr_auc_media"],
-                "pr_auc_std": r["pr_auc_std"], "segundos": r["segundos"], "n_atributos": r["n_atributos"]} for r in pool]
-    filas_k.append({"origen": "configuración actual (referencia, fuera del presupuesto)", "tambien": [], "prm": ACT,
-                    "pr_auc_media": ref["pr_auc_media"], "pr_auc_std": ref["pr_auc_std"], "segundos": ref["segundos"],
-                    "n_atributos": ref["folds"][0]["n_atributos"]})
-    rol_de = {clave_prm(GAN): "ganadora", **{clave_prm(r["parametros"]): r["rol"].replace("_", " ") for r in respaldos}}
-    if not regla["adopta_candidata"]:
-        rol_de.setdefault(clave_prm(CAND), "candidata de la semana 8, no adoptada")
-    topk = pd.DataFrame([{"origen": r["origen"], "parametros": hp.texto_prm(r["prm"]), "pr_auc_media": round(r["pr_auc_media"], 4),
-                          "pr_auc_std": round(r["pr_auc_std"], 4), "segundos": r["segundos"], "n_atributos": r["n_atributos"],
-                          "rol": rol_de.get(clave_prm(r["prm"]), ""), "tambien_en": "; ".join(r["tambien"])}
-                         for r in filas_k]).sort_values("pr_auc_media", ascending=False).reset_index(drop=True)
-    topk.insert(0, "puesto", range(1, len(topk) + 1))
+    topk = tabla_topk(pool, ACT, ref, GAN, CAND, respaldos, regla["adopta_candidata"])
     topk.to_csv(salida / "hp_pruning_topk.csv", index=False)
 
     # ---------- registro único de ensayos (lámina 16)

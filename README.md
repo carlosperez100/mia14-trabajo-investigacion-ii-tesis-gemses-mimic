@@ -49,7 +49,8 @@ notebooks/
  ├── 03_sprint2_semana6_variantes_datos.ipynb   # variantes de los datos y diagnósticos (semana 6)
  ├── 04_sprint3_semana7_hiperparametros.ipynb   # búsqueda de hiperparámetros, aleatoria y bayesiana (semana 7)
  ├── 05_sprint3_semana7_importancia_variables.ipynb   # importancia de variables del modelo vigente (semana 7)
- └── 06_sprint3_semana7_completo.ipynb   # semana 7 completa en un solo cuaderno ejecutado: hiperparámetros, importancia, equivalencia validada y variante D3
+ ├── 06_sprint3_semana7_completo.ipynb   # semana 7 completa en un solo cuaderno ejecutado: hiperparámetros, importancia, equivalencia validada y variante D3
+ └── 07_sprint3_semana8_hiperparametros_pruning.ipynb   # búsqueda con pruning, registro de ensayos, artefactos y curva de aprendizaje (semana 8)
 src/
  ├── run_pipeline.py          # orquestador: ingesta → preprocesado → eda → baseline → features
  ├── ingesta.py               # script de ingesta (idempotente, con hash)
@@ -65,14 +66,16 @@ src/
  ├── variantes_datos.py       # marcas de etiqueta dudosa y variantes D0, D1 y D2 (semana 6)
  ├── experimentos_datos.py    # variantes de los datos y diagnósticos del modelo (semana 6); figuras en figuras_datos.py
  ├── experimentos_hp.py       # búsqueda de hiperparámetros aleatoria y bayesiana, confirmación y test (semana 7); figuras en figuras_hp.py
+ ├── experimentos_hp_pruning.py  # la búsqueda con pruning por fold, respaldo, importancia de hiperparámetros, curva de aprendizaje y modelos (semana 8); figuras en figuras_hp_pruning.py
  ├── importancia_variables.py # importancia por permutación de bloques y variables, y coeficientes de términos filtrados (semana 7); figuras en figuras_imp.py
  ├── negativas_liberadas.py   # hospitalizaciones que libera la equivalencia validada como posibles negativas (variante D3, semana 7)
  ├── experimentos_d3.py       # D2 frente a D3 en los 5 folds y en test, con la evaluación común y la ampliada (semana 7)
  ├── perfil_liberadas.py      # perfil de las liberadas frente a las negativas y las positivas CIE-10 del corpus, sin modelo (semana 7)
  └── utils.py                 # configuración, logging y hash
 config/config.yaml            # semilla, split e hiperparámetros
-logs/                         # logs por etapa, metrics_baseline.txt, metrics_eda.txt, metrics_fe.txt, metrics_datos.txt, metrics_hp.txt, metrics_importancia.txt y metrics_d3.txt
+logs/                         # logs por etapa, metrics_baseline.txt, metrics_eda.txt, metrics_fe.txt, metrics_datos.txt, metrics_hp.txt, metrics_importancia.txt, metrics_d3.txt, metrics_hp_pruning.txt y hpo_runs.csv (registro de los ensayos de las semanas 7 y 8)
 reportes/                     # resultados en JSON y CSV, y figuras
+models/                       # modelos .joblib de la semana 8, fuera de git (SHA-256 en reportes/hp_pruning_resultados.json)
 slides/                       # presentación de resultados del sprint
 entregables/                  # entregables por semana (diseño del pipeline de la semana 2, matrices de consistencia de las semanas 3 y 7, roadmap y guion de la demo)
 docs/                         # GitHub Pages
@@ -988,6 +991,174 @@ Referencias:
 
 ---
 
+## 🎛️ Semana 8 · Sprint 3: búsqueda con *pruning*, registro de ensayos y artefactos
+
+El trabajo de esta semana está en la rama `sprint3-hiperparametros-pruning`. Las tablas y las figuras de esta sección también están en el cuaderno [`notebooks/07_sprint3_semana8_hiperparametros_pruning.ipynb`](notebooks/07_sprint3_semana8_hiperparametros_pruning.ipynb), el cual lee los resultados sin volver a entrenar.
+
+La semana 8 completa la búsqueda de la semana 7 con lo que pide la lámina 21 del material de esa semana (Rodríguez, 2026). Se trata de experimentos comparables entre la búsqueda aleatoria y la bayesiana con *pruning*, de registros y artefactos guardados, de una tabla *top-k* con un gráfico de evolución y del resumen del espacio, el presupuesto y la decisión. El *pruning*, también denominado poda de ensayos, consiste en detener un ensayo antes de terminarlo cuando sus resultados intermedios ya indican que no competirá con los mejores.
+
+### Diseño, fijado antes de correr
+El diseño se escribió en [`config/config.yaml`](config/config.yaml) (sección `hiperparametros_pruning`) y quedó en un *commit* anterior a la corrida. Antes de ese *commit*, el flujo se revisó con una corrida corta en una muestra de 4 000 epicrisis de *train* ([`logs/experimentos_hp_pruning_prueba_20261102_130424.log`](logs/experimentos_hp_pruning_prueba_20261102_130424.log)).
+
+- Modelo, datos y espacio: los de la semana 7 sin cambios, es decir, D2 con A+B+C, los siete hiperparámetros de la Tabla 1 y la PR-AUC media de 3 *folds* por paciente con semilla 42, en las epicrisis de validación sin etiqueta dudosa.
+- *Pruning* por *fold*: la regresión logística no tiene el *early stopping* nativo que la lámina 13 asocia a XGBoost, LightGBM y redes neuronales. Por ello, cada ensayo se evalúa *fold* por *fold* e informa a Optuna (Akiba et al., 2019) la PR-AUC media de los *folds* ya evaluados. El `MedianPruner` lo corta si su mejor valor intermedio queda por debajo de la mediana de los ensayos completos de la misma búsqueda en ese *fold*, una vez que hay 5 ensayos completos.
+- Presupuesto: 30 ensayos por método, el mínimo de la lámina 13, con 10 al azar antes del TPE, dentro de los 10 a 20 que sugiere la lámina 7. Cada ensayo tiene un límite de 600 s, revisado después de cada *fold*, y cada búsqueda uno de 240 minutos.
+- Mismos ensayos: con la misma semilla, los 15 primeros ensayos de la aleatoria repiten los de la semana 7, lo cual permite medir el efecto del *pruning* sobre las mismas configuraciones. Asimismo, los 10 primeros de la bayesiana coinciden con los 10 primeros de la aleatoria y se evaluaron una sola vez.
+- Iteraciones: como pide la lámina 15, se registra el número de iteraciones de la regresión (liblinear) en cada *fold*. Además, se registra si el ajuste convergió.
+- Regla y *test*: la regla es la de la semana 7. La candidata, es decir, la configuración completa de mayor PR-AUC media en las dos búsquedas, se confirma frente a la actual con los 5 *folds* del proyecto. A diferencia de la semana 7, el *test* se mide solo si la regla la adopta, después de aplicarla.
+- Respaldo: la lámina 20 pide elegir, junto con la ganadora, 1 o 2 configuraciones de respaldo. Se eligen las 2 de mayor PR-AUC media en 3 *folds*, distintas de la ganadora, entre los ensayos completos de las semanas 7 y 8, y se confirman con los 5 *folds*.
+
+### Control de reproducción
+La configuración actual, medida *fold* por *fold* en los 3 *folds* de la búsqueda, obtuvo una PR-AUC media de 0.8498 ± 0.0009, con una diferencia máxima por *fold* de 0 frente a la semana 7. Asimismo, los 15 primeros ensayos de la aleatoria repitieron las configuraciones de la semana 7, y sus *folds* evaluados reproducen los de esa semana, con una diferencia máxima de 0. En consecuencia, las diferencias que siguen se deben al *pruning* y al presupuesto, y no a un cambio en los datos o en el cálculo.
+
+### Corrida interrumpida y retomada
+La corrida comenzó el 2 de noviembre y su *log*, `logs/experimentos_hp_pruning_20261102_131402.log`, termina a las 21:59:48, después de 8.8 horas, con el control de la curva de aprendizaje. Hasta ese momento había hecho las dos búsquedas, la confirmación, el *test*, el respaldo y la curva, de modo que se detuvo al comenzar el último paso, el de los modelos. El registro de eventos de Windows del equipo anota un reinicio a las 22:01 (eventos 109, 6006 y 6005) y ningún apagado inesperado. A criterio del autor, ese reinicio detuvo la corrida, dado que el *log* termina poco antes. En ese *log*, un paso de la curva (*fold* 3, fracción 0.5) figura con 19 335 s, dado que coincidió con una suspensión del equipo entre las 16:06 y las 21:26, que consta en el mismo registro de eventos.
+
+La corrida se retomó el 4 de noviembre de 2026 con el mismo diseño y con el *script* corregido en la lectura de C, como se explica más adelante. Además, parte de su código se reorganizó en funciones, y el *script* se probó con `--prueba` antes de retomar la corrida (`logs/experimentos_hp_pruning_prueba_20261104_133609.log`). El *script* tomó de la caché los *folds* ya calculados de la búsqueda, con su tiempo original, y las confirmaciones con 5 *folds*. Luego calculó de nuevo el *test* y la curva, y por primera vez los modelos, como consta en `logs/experimentos_hp_pruning_20261104_133819.log`. Como se comprueba en la sección 3 del cuaderno, los 60 ensayos, la regla, el *test*, el respaldo y la curva coinciden con los del 2 de noviembre.
+
+Asimismo, en el *log* del 2 de noviembre el control de las mismas configuraciones dio falso, y la importancia contó 46 configuraciones distintas en lugar de 43. La causa fue la lectura de C en `reportes/hp_ensayos.csv`, cuyo último dígito cambiaba con el lector por defecto de pandas, de modo que algunas configuraciones de la semana 7 no se reconocían como iguales a las mismas de la semana 8. Se corrigió con una lectura exacta antes de retomar la corrida, y la corrección cambió ese control y la importancia de los hiperparámetros, pero no los ensayos, la decisión, el *test* ni el respaldo.
+
+### Resultados de la búsqueda
+Figura 8. Mejor resultado acumulado de cada búsqueda y resultado de cada ensayo de la semana 8
+
+![Mejor resultado acumulado y resultado de cada ensayo de la semana 8](reportes/figuras/fig_hp_pruning_evolucion.png)
+
+Fuente: elaboración propia a partir de [`reportes/hp_pruning_ensayos.csv`](reportes/hp_pruning_ensayos.csv) y [`reportes/hp_ensayos.csv`](reportes/hp_ensayos.csv). Las diferencias se calculan con los valores sin redondear.
+
+Como se aprecia en la Figura 8, la mejor configuración completa de la semana 8 salió de la búsqueda bayesiana, en el ensayo 25, con una PR-AUC media de 0.8515, es decir, 0.0018 por encima de la configuración actual en los mismos 3 *folds*. El mejor resultado de la semana 7 había sido 0.8480. Asimismo, 4 ensayos completos superan a la actual en los 3 *folds* y, como se fijó antes de correr, la mejor configuración debe confirmarse con los 5 *folds* (Tabla 15).
+
+Tabla 13. Las 10 configuraciones con mayor PR-AUC media en 3 *folds* (ensayos completos de las semanas 7 y 8 y la configuración actual)
+
+| Puesto | Ensayo | Hiperparámetros | PR-AUC (media ± desv.) | Tiempo (s) | Notas |
+|---|---|---|---|---|---|
+| 1 | semana 8 · bayesiana #25 | C 1.87 · A 60 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí | 0.8515 ± 0.0006 | 291 | ganadora |
+| 2 | semana 8 · aleatoria #24 | C 1.44 · A 60 000/3 · B 20 000/5 · balanced · sublinear_tf no | 0.8514 ± 0.0021 | 233 | respaldo 1 |
+| 3 | semana 8 · bayesiana #26 | C 1.51 · A 10 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí | 0.8513 ± 0.0009 | 224 | respaldo 2 |
+| 4 | semana 8 · aleatoria #25 | C 1.23 · A 40 000/2 · B 20 000/5 · balanced · sublinear_tf sí | 0.8500 ± 0.0008 | 216 | |
+| 5 | configuración actual (referencia) | C 1 · A 20 000/3 · B 20 000/3 · balanced · sublinear_tf sí | 0.8498 ± 0.0009 | 176 | |
+| 6 | semana 8 · bayesiana #27 | C 0.652 · A 60 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí | 0.8489 ± 0.0011 | 166 | |
+| 7 | semana 8 · bayesiana #29 | C 3.38 · A 60 000/2 · B 40 000/5 · sin pesos · sublinear_tf sí | 0.8489 ± 0.0004 | 328 | |
+| 8 | semana 7 · bayesiana #14 | C 2.32 · A 10 000/3 · B 10 000/2 · sin pesos · sublinear_tf no | 0.8480 ± 0.0024 | 202 | |
+| 9 | semana 8 · bayesiana #24 | C 3.22 · A 10 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí | 0.8476 ± 0.0006 | 302 | |
+| 10 | semana 7 · bayesiana #10 | C 1.23 · A 60 000/3 · B 10 000/2 · balanced · sublinear_tf sí | 0.8472 ± 0.0011 | 166 | |
+
+Fuente: elaboración propia a partir de [`reportes/hp_pruning_topk.csv`](reportes/hp_pruning_topk.csv).
+
+Como se aprecia en la Tabla 13, el primer puesto corresponde al ensayo 25 de la búsqueda bayesiana de la semana 8, con 0.8515. La tabla lleva el tiempo de cada configuración y, en las notas, su papel en la decisión (ganadora o respaldo).
+
+### Efecto del *pruning* en el costo
+Figura 9. Costo acumulado de cada búsqueda y estado de los ensayos de la semana 8
+
+![Costo acumulado y estado de los ensayos](reportes/figuras/fig_hp_pruning_costo.png)
+
+Fuente: elaboración propia a partir de [`reportes/hp_pruning_ensayos.csv`](reportes/hp_pruning_ensayos.csv) y [`reportes/hp_ensayos.csv`](reportes/hp_ensayos.csv).
+
+Tabla 14. Ensayos, *folds* y minutos de las búsquedas sin *pruning* (semana 7) y con *pruning* (semana 8)
+
+| Indicador | Semana 7 | Semana 8 |
+|---|---|---|
+| Ensayos por método (aleatoria / bayesiana) | 15 / 15 | 30 / 30 |
+| Ensayos cortados por el *pruning* o por tiempo (aleatoria / bayesiana) | 0 / 0 | 15 / 12 |
+| Configuraciones distintas evaluadas | 25 | 50 |
+| *Folds* evaluados en esas configuraciones | 75 | 102 de 150 |
+| Minutos de cómputo de la búsqueda | 70.6 | 121.3 |
+| Mismos 15 ensayos de la aleatoria: *folds* evaluados | 45 | 31 |
+| Mismos 15 ensayos de la aleatoria: minutos | 32.8 | 25.1 |
+| Mejor PR-AUC media de un ensayo completo (3 *folds*) | 0.8480 | 0.8515 |
+
+Fuente: elaboración propia a partir de [`reportes/hp_pruning_resultados.json`](reportes/hp_pruning_resultados.json) y [`reportes/hp_ensayos.csv`](reportes/hp_ensayos.csv). Los 70.6 minutos de la semana 7 suman solo sus 25 configuraciones distintas, mientras que los 73.2 que informa para la búsqueda la sección de la semana 7 del README incluyen además la evaluación de la configuración actual en los 3 *folds* (2.6 minutos).
+
+Como se aprecia en la Figura 9 y en la Tabla 14, se cortaron 15 de 30 ensayos de la aleatoria y 12 de 30 de la bayesiana, todos por el *pruning*. En las dos búsquedas se evaluaron 102 de los 150 *folds* que habrían requerido sin *pruning* las 50 configuraciones distintas. Con ello se estima un ahorro de unos 56 minutos, para lo cual cada *fold* no evaluado se valoró con el tiempo medio de los *folds* evaluados del mismo ensayo. Sobre los mismos 15 ensayos de la aleatoria, el *pruning* evaluó 31 de 45 *folds* y no cortó ninguno de los cinco que fueron los mejores en la semana 7. El máximo de iteraciones de la regresión fue de 53, frente al tope de 2 000, y todos los ajustes de la búsqueda convergieron.
+
+### Importancia de los hiperparámetros
+Se usó el evaluador por defecto de Optuna 5.0.0, es decir, PED-ANOVA (Watanabe et al., 2023), el cual compara la distribución de cada hiperparámetro en los mejores ensayos con su distribución en todos los ensayos. Se aplicó a las 43 configuraciones completas y distintas de las cuatro búsquedas, con un cuantil objetivo de 0.116, ajustado para dejar 5 configuraciones sobre él, dado que la documentación de Optuna recomienda al menos 5.
+
+Figura 10. Importancia de los hiperparámetros
+
+![Importancia de los hiperparámetros](reportes/figuras/fig_hp_pruning_importancia.png)
+
+Fuente: elaboración propia a partir de [`reportes/hp_pruning_resultados.json`](reportes/hp_pruning_resultados.json).
+
+Como se aprecia en la Figura 10, C obtiene la mayor importancia (0.83), seguido del máximo de bigramas (0.09). Este resultado concuerda con la Figura 2 de la semana 7, donde las medianas de la PR-AUC cambiaban sobre todo con C. A criterio del autor, el resultado se toma como orden de magnitud, porque la medida es relativa a los rangos probados.
+
+### Confirmación con los 5 *folds*, decisión y respaldo
+La candidata es la configuración completa con mayor PR-AUC media de las dos búsquedas, es decir, la del ensayo 25 de la bayesiana (C 1.87 · A 60 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí). Con los 5 *folds* del proyecto se confirmó frente a la actual y se midieron también las dos configuraciones de respaldo. Al respecto, el respaldo 1 es el ensayo 24 de la búsqueda aleatoria de la semana 8 (C 1.44 · A 60 000/3 · B 20 000/5 · balanced · sublinear_tf no). Asimismo, el respaldo 2 es el ensayo 26 de la búsqueda bayesiana de la semana 8 (C 1.51 · A 10 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí).
+
+Tabla 15. PR-AUC por *fold* de la configuración actual, la candidata y las de respaldo (validación cruzada de 5 *folds*)
+
+| *Fold* | Actual | Candidata | Respaldo 1 | Respaldo 2 |
+|---|---|---|---|---|
+| 1 | 0.8567 | 0.8587 | 0.8595 | 0.8585 |
+| 2 | 0.8527 | 0.8539 | 0.8551 | 0.8535 |
+| 3 | 0.8467 | 0.8487 | 0.8472 | 0.8484 |
+| 4 | 0.8542 | 0.8548 | 0.8558 | 0.8547 |
+| 5 | 0.8566 | 0.8575 | 0.8591 | 0.8576 |
+| Media | 0.8534 | 0.8547 | 0.8553 | 0.8545 |
+
+Fuente: elaboración propia a partir de [`reportes/hp_pruning_resultados.json`](reportes/hp_pruning_resultados.json). Las diferencias se calculan con los valores sin redondear.
+
+Como se aprecia en la Tabla 15, la candidata superó a la actual en 5 de 5 *folds*, con una diferencia media de +0.0014 y una desviación estándar de las diferencias de 0.0006. Por consiguiente, se cumplen las dos condiciones de la regla y la candidata reemplaza a la actual. El respaldo 1 supera a la ganadora en la PR-AUC media de 5 *folds* (0.8553 frente a 0.8547) y en 4 de 5 *folds*. Sin embargo, la regla prerregistrada se aplica solo a la candidata, por lo que esa diferencia se informa y no cambia la decisión. Además, aun si se le aplicara la regla, su diferencia media con la ganadora (+0.0006) no supera la desviación estándar de esas diferencias (0.0013), por lo que no cumpliría la segunda condición. En cuanto al tamaño, en el primer *fold* de la búsqueda la ganadora usa 87 534 atributos, frente a 67 534 del respaldo 1 y 50 091 del respaldo 2.
+
+Tabla 16. Medición en *test* de la configuración actual y de la candidata
+
+| Configuración | PR-AUC sin etiqueta dudosa | IC 95 % | PR-AUC con todas las epicrisis | ROC-AUC | Sensibilidad | Especificidad | Brier |
+|---|---|---|---|---|---|---|---|
+| Actual | 0.8671 | 0.8589–0.8749 | 0.8580 | 0.8706 | 0.7689 | 0.8038 | 0.1462 |
+| Candidata | 0.8670 | 0.8593–0.8745 | 0.8581 | 0.8699 | 0.7629 | 0.8110 | 0.1464 |
+
+Fuente: elaboración propia a partir de [`reportes/hp_pruning_resultados.json`](reportes/hp_pruning_resultados.json). La sensibilidad y la especificidad usan el umbral de 0.5, y el intervalo de confianza remuestrea pacientes 200 veces. El Brier es el error cuadrático medio de la probabilidad, en las epicrisis sin etiqueta dudosa. El *test* se calculó en la corrida del 2 de noviembre y de nuevo en la retomada, con los mismos valores.
+
+Como se aprecia en la Tabla 16, en *test* la candidata obtuvo una PR-AUC de 0.8670 sin etiqueta dudosa, frente a 0.8671 de la actual, es decir, una diferencia de -0.0001, con intervalos de confianza que se solapan. La configuración actual repite los valores de *test* de la semana 7. A criterio del autor, la mejora de la candidata es consistente entre *folds*, pero su magnitud (+0.0014 en validación cruzada) no se aprecia en *test*, por lo que el cambio de configuración no tiene efecto práctico.
+
+### Curva de aprendizaje y control del sobreajuste
+La lámina 16 pide guardar la curva de entrenamiento, y el sílabo pone en la semana 8 el control del sobreajuste (*overfitting*). A criterio del autor, en una regresión logística esa curva corresponde a la curva de aprendizaje, es decir, a la PR-AUC según el número de filas de entrenamiento. Para ello, la configuración ganadora se entrenó con las fracciones 0.1, 0.25, 0.5 y 1 de las filas de entrenamiento de cada uno de los 5 *folds* del proyecto. Luego, la PR-AUC se midió en esas mismas filas y en las epicrisis de validación sin etiqueta dudosa.
+
+Figura 11. Curva de aprendizaje de la configuración ganadora
+
+![Curva de aprendizaje de la configuración ganadora](reportes/figuras/fig_hp_pruning_curva.png)
+
+Fuente: elaboración propia a partir de [`reportes/hp_pruning_curva.csv`](reportes/hp_pruning_curva.csv). La brecha y las diferencias se calculan con los valores sin redondear.
+
+Como se aprecia en la Figura 11, con todas las filas la PR-AUC fue 0.9687 en entrenamiento y 0.8547 en validación, una brecha de 0.1140, mientras que con 3 920 filas la brecha fue de 0.1815. Entre 19 599 y 39 198 filas, la PR-AUC de validación cambió +0.0105 en promedio y subió en 5 de 5 *folds*. De esta manera, la curva todavía no se aplana. A criterio del autor, mientras eso ocurra, ampliar el número de epicrisis de entrenamiento tiene más recorrido que seguir ajustando hiperparámetros en este espacio.
+
+### Registro de ensayos y artefactos
+El registro [`logs/hpo_runs.csv`](logs/hpo_runs.csv) reúne los 90 ensayos de las semanas 7 y 8 con las columnas de la lámina 16 (`trial_id`, `params`, `seed`, `split_cfg`, `metric_mean`, `metric_std` y `tiempo_s`), además del método, si usó *pruning*, los *folds* evaluados, el estado y el máximo de iteraciones. El detalle por *fold* de la semana 8 está en [`reportes/hp_pruning_ensayos.csv`](reportes/hp_pruning_ensayos.csv), y el resumen de la corrida en [`logs/metrics_hp_pruning.txt`](logs/metrics_hp_pruning.txt).
+
+La ganadora y las de respaldo se reentrenaron con el *pipeline* de `src/features.py` en todas las filas de entrenamiento de D2 y se guardaron con `joblib` en `models/`. Como se aprecia en la Tabla 17, cada archivo lleva su huella SHA-256 y, en 2 000 filas de *train*, dio las mismas probabilidades que el modelo evaluado con la caché de conteos.
+
+Tabla 17. Modelos guardados (fuera de git)
+
+| Rol | Archivo | Hiperparámetros | MiB | SHA-256 (inicio) | Diferencia máxima con la caché |
+|---|---|---|---|---|---|
+| ganadora | `hp_pruning_ganadora.joblib` | C 1.87 · A 60 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí | 2.0 | `50e5c114f372b503…` | 1.8e-15 |
+| respaldo 1 | `hp_pruning_respaldo_1.joblib` | C 1.44 · A 60 000/3 · B 20 000/5 · balanced · sublinear_tf no | 1.5 | `33dd9f129c328a34…` | 1.4e-15 |
+| respaldo 2 | `hp_pruning_respaldo_2.joblib` | C 1.51 · A 10 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí | 1.1 | `6b6a0ab09bcf5e94…` | 2.3e-15 |
+
+Fuente: elaboración propia a partir de [`reportes/hp_pruning_resultados.json`](reportes/hp_pruning_resultados.json), donde están las huellas completas.
+
+Los modelos no se suben al repositorio, porque su vocabulario sale de las notas de MIMIC-IV y la licencia de PhysioNet no permite publicarlas. Tampoco se guardó el mejor modelo de cada ensayo, como sugiere la lámina 16, dado que serían decenas de modelos con ese mismo vocabulario. A criterio del autor, el registro de cada ensayo con su configuración, su semilla y su partición permite reconstruir cualquiera de ellos con el mismo *script*. Asimismo, a criterio del autor, el registro, la tabla *top-k* y las figuras cumplen en forma estática el papel del tablero de experimentos que el sílabo pone en la semana 8, sin las herramientas MLflow o W&B que menciona la lámina 16.
+
+### Tiempo de cómputo
+Las dos búsquedas sumaron 121.3 minutos de cálculo, es decir, la suma de los tiempos de sus ensayos (70.5 la aleatoria y 50.8 la bayesiana, sin los 10 ensayos que esta tomó de la aleatoria), frente a 70.6 minutos de la semana 7. Según el *log* del 2 de noviembre, la búsqueda aleatoria tomó 70.5 minutos de reloj y la bayesiana 50.9. En [`reportes/hp_pruning_resultados.json`](reportes/hp_pruning_resultados.json), en cambio, esos tiempos figuran con 0.1 s y 0.2 s, porque corresponden a la corrida retomada, que tomó las búsquedas de la caché. La corrida del 2 de noviembre se detuvo después de 8.8 horas, de las cuales 5.4 corresponden al paso de la curva que coincidió con la suspensión del equipo. La corrida retomada el 4 de noviembre de 2026 tomó 64.3 minutos, de los cuales 35.2 fueron de la curva de aprendizaje y 23.7 de los modelos. El resto, 5.4 minutos, corresponde a la carga de los datos y de las cachés y al *test*, que según las horas del *log* ocupó casi todo ese tiempo.
+
+### Decisión y siguiente paso
+- Se adopta la candidata, es decir, D2 con A+B+C, C 1.87 · A 60 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí. La regla prerregistrada la adoptó con los 5 *folds*, aunque en *test* su PR-AUC fue de 0.8670 frente a 0.8671 de la actual.
+- *Pruning*: con el mismo diseño se evaluaron 102 de 150 *folds*, y no se cortó ninguno de los cinco mejores ensayos de la búsqueda aleatoria de la semana 7, los cuales se repitieron en la semana 8.
+- Respaldo: el respaldo 1 es el ensayo 24 de la búsqueda aleatoria de la semana 8 y el respaldo 2 es el ensayo 26 de la búsqueda bayesiana de la semana 8, con los modelos guardados fuera de git.
+- Curva de aprendizaje: la curva todavía sube en el último tramo, por lo que, a criterio del autor, ampliar las epicrisis de entrenamiento tiene más recorrido que nuevas búsquedas en este espacio.
+- Revisión ciega: el lote no se regenera y HE2 y HE3 se refieren a la configuración con la que se muestreó.
+- Siguiente experimento del Sprint 3: evaluar el modelo por servicio, grupo de edad y decil de largo frente al modelo de contexto, y recalibrar las probabilidades a la prevalencia real.
+
+### Cómo reproducir la semana 8
+- Requisitos: los mismos de la semana 7 y la caché de conteos de `data/interim/cache_hp/`, que arma `python src/experimentos_hp.py --solo-conteos`.
+- Comando único: `python src/experimentos_hp_pruning.py`. Hace las dos búsquedas, la confirmación, el respaldo, la importancia, la curva de aprendizaje y los modelos, y escribe sus salidas en `reportes/`, `logs/` y `models/`.
+- Prueba y figuras: `python src/experimentos_hp_pruning.py --prueba` corre una versión corta en una muestra, escribe sus resultados en `data/interim/prueba_hp_pruning/` y deja su *log* en `logs/`. Las figuras se redibujan sin entrenar con `python src/figuras_hp_pruning.py`.
+- Caché: cada *fold* de la búsqueda queda en `data/interim/cache_hp/resultados_semana8.json` y cada confirmación con 5 *folds* en `data/interim/cache_hp/resultados.json`. Si la corrida se interrumpe, al repetir el comando se toman de ahí, con su tiempo original, y se calculan de nuevo el *test*, la curva y los modelos, como ocurrió con la corrida del 2 de noviembre. Para repetir la búsqueda desde cero se borra el primero.
+
+Referencias: Akiba, T., Sano, S., Yanase, T., Ohta, T. y Koyama, M. (2019). Optuna: A next-generation hyperparameter optimization framework. *KDD 2019*. Watanabe, S., Bansal, A. y Hutter, F. (2023). PED-ANOVA: Efficiently quantifying hyperparameter importance in arbitrary subspaces. *IJCAI 2023*. Rodríguez, G. (2026). *Búsqueda de hiperparámetros* [Diapositivas, material de la semana 7]. MIA-14, Universidad Nacional de Ingeniería. Las demás referencias están en el cuaderno.
+
+---
+
 ## 📌 Roadmap
 Las tareas, con responsable y plazo, están en los [issues](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/issues) y [milestones](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/milestones).
 - [x] Semana 1 → Diagnóstico, estructura del repositorio y plan del Sprint 1.
@@ -999,6 +1170,7 @@ Las tareas, con responsable y plazo, están en los [issues](https://github.com/c
 - [x] Semana 7 → Sprint 3, búsqueda de hiperparámetros aleatoria y bayesiana (Optuna) en la rama `sprint3-hiperparametros`: ninguna configuración supera a la actual y, por la regla prerregistrada, se mantiene D2 con A+B+C (PR-AUC 0.8534 en validación cruzada y 0.8671 en test).
 - [x] Semana 7 → importancia de variables en la rama `sprint3-importancia-variables`, con los 5 folds de train y sin test: palabras 0.1274, contexto 0.1106 y bigramas 0.0331 de caída de la PR-AUC al permutar cada bloque.
 - [x] Semana 7 → variante D3 en la rama `sprint3-etiqueta-d3`, con las negativas que libera la equivalencia validada. D3 cumple la regla en la evaluación ampliada (+0.0022 en 5 de 5 *folds*) y queda por debajo en la común (-0.0012). D2 marca como evento al 42.6 % de las liberadas, frente al 18.7 % de las negativas CIE-10 de la evaluación común. Se decidió mantener D2 como referencia, también para HE2 y HE3.
+- [x] Semana 8 → Sprint 3, búsqueda con *pruning* (MedianPruner por *fold*, 30 ensayos por método) en la rama `sprint3-hiperparametros-pruning`. La regla adopta la candidata (C 1.87 · A 60 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí) y en *test* obtiene una PR-AUC de 0.8670 frente a 0.8671 de la actual. Se evaluaron 102 de 150 *folds*, con registro en `logs/hpo_runs.csv`, *top-k*, importancia (PED-ANOVA), curva de aprendizaje y modelos con SHA-256 fuera de git.
 - [ ] Sprint 3 → Evaluación por servicio, grupo de edad y decil de largo frente al modelo de contexto, recalibración a la prevalencia de 27.6 % y explicación de logística frente a LinearSVC.
 
 ---

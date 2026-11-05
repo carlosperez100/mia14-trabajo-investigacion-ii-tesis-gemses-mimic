@@ -1,0 +1,110 @@
+# metrics_hp_pruning.txt · 2026-11-04T14:42:35 · modelo A+B+C con D2 · semilla 42 · Optuna 5.0.0 · scikit-learn 1.7.2
+protocolo: búsqueda: StratifiedGroupKFold(3, shuffle=True, random_state=42) por subject_id en train, evaluada fold por fold con MedianPruner; confirmación: StratifiedGroupKFold(5, shuffle=True, random_state=42) (los folds de las semanas 5 a 7); entrenan las filas de D2; métrica: PR-AUC media en las epicrisis de validación sin etiqueta dudosa; test solo si la regla adopta la candidata
+presupuesto: 30 ensayos por método · 10 al azar antes del TPE · pruner {'n_startup_trials': 5, 'n_warmup_steps': 0, 'interval_steps': 1} · máximo 600 s por ensayo y 240 min por búsqueda
+configuración actual: C=1 · A 20000/3 · B 20000/3 · class_weight=balanced · sublinear_tf=True
+referencia (actual, 3 folds): PR-AUC 0.8498 ± 0.0009 · control frente a la semana 7: {'pr_auc_semana7': [0.848753, 0.850137, 0.850421], 'pr_auc_esta_corrida': [0.848753, 0.850137, 0.850421], 'dif_maxima': 0.0, 'reproduce': True}
+
+ENSAYOS (uno por línea): método · n.º · parámetros · estado · folds · PR-AUC media de los folds evaluados · iteraciones · tiempo
+aleatoria #01 · C=0.07459 · A 10000/5 · B 20000/2 · class_weight=ninguno · sublinear_tf=False · completo · 3 fold(s) · PR-AUC 0.8158 · iteraciones ≤ 11 · 65 s
+aleatoria #02 · C=0.1445 · A 20000/5 · B 40000/3 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8288 · iteraciones ≤ 15 · 87 s
+aleatoria #03 · C=0.03335 · A 20000/5 · B 20000/3 · class_weight=balanced · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8008 · iteraciones ≤ 9 · 47 s
+aleatoria #04 · C=0.9761 · A 10000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8471 · iteraciones ≤ 22 · 145 s
+aleatoria #05 · C=0.001066 · A 10000/3 · B 10000/5 · class_weight=balanced · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.7583 · iteraciones ≤ 5 · 23 s
+aleatoria #06 · C=0.003963 · A 60000/3 · B 20000/2 · class_weight=balanced · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.7712 · iteraciones ≤ 5 · 9 s
+aleatoria #07 · C=0.01393 · A 60000/5 · B 40000/5 · class_weight=balanced · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.7858 · iteraciones ≤ 7 · 13 s
+aleatoria #08 · C=12.3 · A 10000/5 · B 10000/5 · class_weight=balanced · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8215 · iteraciones ≤ 38 · 331 s
+aleatoria #09 · C=0.02656 · A 20000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.7963 · iteraciones ≤ 9 · 16 s
+aleatoria #10 · C=1.471 · A 40000/5 · B 10000/3 · class_weight=balanced · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8469 · iteraciones ≤ 24 · 159 s
+aleatoria #11 · C=0.05074 · A 20000/3 · B 10000/3 · class_weight=ninguno · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.8079 · iteraciones ≤ 10 · 17 s
+aleatoria #12 · C=27.25 · A 10000/2 · B 20000/5 · class_weight=balanced · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8154 · iteraciones ≤ 44 · 146 s
+aleatoria #13 · C=0.04236 · A 40000/2 · B 40000/3 · class_weight=balanced · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8048 · iteraciones ≤ 11 · 21 s
+aleatoria #14 · C=0.009467 · A 10000/5 · B 10000/5 · class_weight=balanced · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.7818 · iteraciones ≤ 6 · 9 s
+aleatoria #15 · C=18.02 · A 60000/2 · B 20000/3 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8283 · iteraciones ≤ 41 · 420 s
+aleatoria #16 · C=11.14 · A 40000/3 · B 40000/3 · class_weight=balanced · sublinear_tf=False · completo · 3 fold(s) · PR-AUC 0.8423 · iteraciones ≤ 39 · 427 s
+aleatoria #17 · C=0.02708 · A 60000/5 · B 10000/5 · class_weight=ninguno · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.7973 · iteraciones ≤ 9 · 13 s
+aleatoria #18 · C=0.3815 · A 20000/5 · B 10000/5 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8418 · iteraciones ≤ 17 · 96 s
+aleatoria #19 · C=59.47 · A 10000/5 · B 20000/3 · class_weight=balanced · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8063 · iteraciones ≤ 46 · 167 s
+aleatoria #20 · C=0.007345 · A 60000/5 · B 20000/5 · class_weight=ninguno · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.7776 · iteraciones ≤ 6 · 11 s
+aleatoria #21 · C=0.08727 · A 60000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8185 · iteraciones ≤ 11 · 19 s
+aleatoria #22 · C=11.81 · A 40000/2 · B 40000/3 · class_weight=ninguno · sublinear_tf=False · completo · 3 fold(s) · PR-AUC 0.8418 · iteraciones ≤ 41 · 434 s
+aleatoria #23 · C=19.59 · A 40000/2 · B 20000/3 · class_weight=ninguno · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8266 · iteraciones ≤ 39 · 170 s
+aleatoria #24 · C=1.443 · A 60000/3 · B 20000/5 · class_weight=balanced · sublinear_tf=False · completo · 3 fold(s) · PR-AUC 0.8514 · iteraciones ≤ 25 · 233 s
+aleatoria #25 · C=1.233 · A 40000/2 · B 20000/5 · class_weight=balanced · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8500 · iteraciones ≤ 24 · 216 s
+aleatoria #26 · C=7.687 · A 40000/2 · B 20000/3 · class_weight=balanced · sublinear_tf=False · completo · 3 fold(s) · PR-AUC 0.8420 · iteraciones ≤ 35 · 433 s
+aleatoria #27 · C=0.01312 · A 40000/5 · B 40000/5 · class_weight=ninguno · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.7850 · iteraciones ≤ 7 · 23 s
+aleatoria #28 · C=0.001687 · A 20000/2 · B 40000/5 · class_weight=balanced · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.7635 · iteraciones ≤ 5 · 10 s
+aleatoria #29 · C=2.653 · A 60000/2 · B 10000/5 · class_weight=balanced · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8440 · iteraciones ≤ 28 · 265 s
+aleatoria #30 · C=70.72 · A 10000/5 · B 20000/5 · class_weight=balanced · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8045 · iteraciones ≤ 47 · 203 s
+bayesiana #01 · C=0.07459 · A 10000/5 · B 20000/2 · class_weight=ninguno · sublinear_tf=False · completo · 3 fold(s) · PR-AUC 0.8158 · iteraciones ≤ 11 · 65 s · igual a aleatoria #1 (reutilizado)
+bayesiana #02 · C=0.1445 · A 20000/5 · B 40000/3 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8288 · iteraciones ≤ 15 · 87 s · igual a aleatoria #2 (reutilizado)
+bayesiana #03 · C=0.03335 · A 20000/5 · B 20000/3 · class_weight=balanced · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8008 · iteraciones ≤ 9 · 47 s · igual a aleatoria #3 (reutilizado)
+bayesiana #04 · C=0.9761 · A 10000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8471 · iteraciones ≤ 22 · 145 s · igual a aleatoria #4 (reutilizado)
+bayesiana #05 · C=0.001066 · A 10000/3 · B 10000/5 · class_weight=balanced · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.7583 · iteraciones ≤ 5 · 23 s · igual a aleatoria #5 (reutilizado)
+bayesiana #06 · C=0.003963 · A 60000/3 · B 20000/2 · class_weight=balanced · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.7712 · iteraciones ≤ 5 · 9 s · igual a aleatoria #6 (reutilizado)
+bayesiana #07 · C=0.01393 · A 60000/5 · B 40000/5 · class_weight=balanced · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.7858 · iteraciones ≤ 7 · 13 s · igual a aleatoria #7 (reutilizado)
+bayesiana #08 · C=12.3 · A 10000/5 · B 10000/5 · class_weight=balanced · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8215 · iteraciones ≤ 38 · 331 s · igual a aleatoria #8 (reutilizado)
+bayesiana #09 · C=0.02656 · A 20000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.7963 · iteraciones ≤ 9 · 16 s · igual a aleatoria #9 (reutilizado)
+bayesiana #10 · C=1.471 · A 40000/5 · B 10000/3 · class_weight=balanced · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8469 · iteraciones ≤ 24 · 159 s · igual a aleatoria #10 (reutilizado)
+bayesiana #11 · C=23.01 · A 10000/3 · B 20000/2 · class_weight=ninguno · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8177 · iteraciones ≤ 41 · 149 s
+bayesiana #12 · C=2.933 · A 20000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8428 · iteraciones ≤ 29 · 217 s
+bayesiana #13 · C=0.05869 · A 40000/5 · B 10000/3 · class_weight=balanced · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8115 · iteraciones ≤ 11 · 19 s
+bayesiana #14 · C=2.73 · A 40000/5 · B 10000/3 · class_weight=balanced · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8437 · iteraciones ≤ 29 · 218 s
+bayesiana #15 · C=0.05867 · A 60000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8115 · iteraciones ≤ 10 · 19 s
+bayesiana #16 · C=0.2853 · A 10000/3 · B 10000/3 · class_weight=ninguno · sublinear_tf=False · completo · 3 fold(s) · PR-AUC 0.8377 · iteraciones ≤ 16 · 88 s
+bayesiana #17 · C=0.6424 · A 60000/2 · B 10000/3 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8456 · iteraciones ≤ 20 · 128 s
+bayesiana #18 · C=0.1588 · A 10000/2 · B 20000/5 · class_weight=ninguno · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8303 · iteraciones ≤ 14 · 26 s
+bayesiana #19 · C=0.5481 · A 10000/5 · B 10000/5 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8451 · iteraciones ≤ 19 · 112 s
+bayesiana #20 · C=93.22 · A 40000/5 · B 10000/3 · class_weight=ninguno · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8057 · iteraciones ≤ 53 · 219 s
+bayesiana #21 · C=21.35 · A 10000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=False · cortado por pruning · 1 fold(s) · PR-AUC 0.8206 · iteraciones ≤ 43 · 167 s
+bayesiana #22 · C=0.6674 · A 60000/2 · B 10000/3 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8458 · iteraciones ≤ 20 · 144 s
+bayesiana #23 · C=0.08684 · A 10000/3 · B 10000/2 · class_weight=ninguno · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8198 · iteraciones ≤ 12 · 24 s
+bayesiana #24 · C=3.218 · A 10000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8476 · iteraciones ≤ 31 · 302 s
+bayesiana #25 · C=1.873 · A 60000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8515 · iteraciones ≤ 30 · 291 s
+bayesiana #26 · C=1.506 · A 10000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8513 · iteraciones ≤ 26 · 224 s
+bayesiana #27 · C=0.6522 · A 60000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8489 · iteraciones ≤ 21 · 166 s
+bayesiana #28 · C=0.1167 · A 60000/3 · B 40000/5 · class_weight=balanced · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8237 · iteraciones ≤ 14 · 33 s
+bayesiana #29 · C=3.38 · A 60000/2 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · completo · 3 fold(s) · PR-AUC 0.8489 · iteraciones ≤ 31 · 328 s
+bayesiana #30 · C=20.25 · A 60000/2 · B 40000/3 · class_weight=ninguno · sublinear_tf=True · cortado por pruning · 1 fold(s) · PR-AUC 0.8345 · iteraciones ≤ 36 · 175 s
+
+estados por búsqueda: {'aleatoria': {'COMPLETE': 15, 'PRUNED': 15}, 'bayesiana': {'COMPLETE': 18, 'PRUNED': 12}}
+efecto del pruning sobre los mismos ensayos (aleatoria, semanas 7 y 8): {'mismas_configuraciones_que_la_semana_7': True, 'n_ensayos': 15, 'cortados': 7, 'folds_evaluados': 31, 'folds_sin_pruning': 45, 'segundos_semana7': 1969.6, 'segundos_semana8': 1508.2, 'dif_maxima_pr_auc_por_fold': 0.0, 'reproduce_folds': True, 'top5_semana7_cortados': [], 'mejor_semana7': 4, 'mejor_semana7_estado_en_semana8': 'completo'}
+ahorro estimado en las dos búsquedas: {'configuraciones_evaluadas': 50, 'folds_evaluados': 102, 'folds_sin_pruning': 150, 'segundos_calculados': 7277.0, 'segundos_ahorrados_estimados': 3359.4}
+
+MEJOR POR MÉTODO (ensayos completos)
+  aleatoria: ensayo #24 · C=1.443 · A 60000/3 · B 20000/5 · class_weight=balanced · sublinear_tf=False · PR-AUC 0.8514 ± 0.0021
+  bayesiana: ensayo #25 · C=1.873 · A 60000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8515 ± 0.0006
+  candidata: la de la búsqueda bayesiana (igual a la de la semana 7: False)
+
+CONFIRMACIÓN (5 folds del proyecto; PR-AUC en las epicrisis sin etiqueta dudosa)
+  actual    0.8567 · 0.8527 · 0.8467 · 0.8542 · 0.8566 · media 0.8534 ± 0.0041
+  candidata 0.8587 · 0.8539 · 0.8487 · 0.8548 · 0.8575 · media 0.8547 ± 0.0039
+  diferencias (candidata − actual): [0.002029, 0.001167, 0.00203, 0.00063, 0.000896] · folds mejores 5/5 · media +0.0014 · desv. 0.0006
+  regla: criterio de folds True · criterio de desviación True → se adopta la candidata
+  test: {'actual': {'comun': {'pr_auc': 0.8671, 'f1': 0.7779, 'recall': 0.7689, 'especificidad': 0.8038, 'roc_auc': 0.8706, 'vpp_prevalencia_real': 0.5989, 'pr_auc_ic95_pacientes': [0.8589, 0.8749], 'brier': 0.1462}, 'completa': {'pr_auc': 0.858, 'f1': 0.7584, 'recall': 0.7189, 'especificidad': 0.795, 'roc_auc': 0.8398, 'vpp_prevalencia_real': 0.572, 'pr_auc_ic95_pacientes': [0.8493, 0.8664]}}, 'candidata': {'comun': {'pr_auc': 0.867, 'f1': 0.7772, 'recall': 0.7629, 'especificidad': 0.811, 'roc_auc': 0.8699, 'vpp_prevalencia_real': 0.606, 'pr_auc_ic95_pacientes': [0.8593, 0.8745], 'brier': 0.1464}, 'completa': {'pr_auc': 0.8581, 'f1': 0.7577, 'recall': 0.7138, 'especificidad': 0.803, 'roc_auc': 0.8397, 'vpp_prevalencia_real': 0.5799, 'pr_auc_ic95_pacientes': [0.8489, 0.8664]}}}
+
+RESPALDO
+  respaldo_1: semana 8 · aleatoria #24 · C=1.443 · A 60000/3 · B 20000/5 · class_weight=balanced · sublinear_tf=False · PR-AUC 3 folds 0.8514 · 5 folds 0.8553 ± 0.0049 · mejor que la ganadora en 4 de 5 folds
+  respaldo_2: semana 8 · bayesiana #26 · C=1.506 · A 10000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 3 folds 0.8513 · 5 folds 0.8545 ± 0.0040 · mejor que la ganadora en 1 de 5 folds
+
+importancia de los hiperparámetros: {'evaluador': 'PedAnovaImportanceEvaluator (por defecto en Optuna 5.0.0)', 'target_quantile': 0.1163, 'ensayos_sobre_el_cuantil': 5, 'n_configuraciones': 43, 'importancias': {'C': 0.8337, 'B_max_features': 0.0918, 'B_min_df': 0.0322, 'A_max_features': 0.0239, 'A_min_df': 0.0147, 'sublinear_tf': 0.0037, 'class_weight': 0.0}}
+
+curva de aprendizaje: control {'pr_auc_validacion_fraccion_1': [0.858725, 0.853905, 0.848747, 0.854819, 0.857523], 'pr_auc_confirmacion': [0.858725, 0.853905, 0.848747, 0.854819, 0.857523], 'dif_maxima': 3.37e-07, 'reproduce': True} (detalle en reportes/hp_pruning_curva.csv)
+
+MODELOS GUARDADOS (fuera de git)
+  ganadora: models/hp_pruning_ganadora.joblib · 1.96 MB · sha256 50e5c114f372b503da2df6de32b71fab7a3d0db3b69aeabb478d0a6c8766821c · control {'filas': 2000, 'dif_maxima': 1.7763568394002505e-15, 'iguales': True}
+  respaldo_1: models/hp_pruning_respaldo_1.joblib · 1.54 MB · sha256 33dd9f129c328a34305a1ee9f8cf7a8f697e36c68dd69a1f30bed3317126ebce · control {'filas': 2000, 'dif_maxima': 1.4432899320127035e-15, 'iguales': True}
+  respaldo_2: models/hp_pruning_respaldo_2.joblib · 1.07 MB · sha256 6b6a0ab09bcf5e948f66a9e7bd7d312439029102da9963dcebcaa1f1c2efefbc · control {'filas': 2000, 'dif_maxima': 2.3037127760972e-15, 'iguales': True}
+
+TOP 10 (configuraciones completas de las semanas 7 y 8 y la referencia)
+   1. semana 8 · bayesiana #25 · C=1.873 · A 60000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8515 ± 0.0006 · 291 s · ganadora
+   2. semana 8 · aleatoria #24 · C=1.443 · A 60000/3 · B 20000/5 · class_weight=balanced · sublinear_tf=False · PR-AUC 0.8514 ± 0.0021 · 233 s · respaldo 1
+   3. semana 8 · bayesiana #26 · C=1.506 · A 10000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8513 ± 0.0009 · 224 s · respaldo 2
+   4. semana 8 · aleatoria #25 · C=1.233 · A 40000/2 · B 20000/5 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8500 ± 0.0008 · 216 s
+   5. configuración actual (referencia, fuera del presupuesto) · C=1 · A 20000/3 · B 20000/3 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8498 ± 0.0009 · 176 s
+   6. semana 8 · bayesiana #27 · C=0.6522 · A 60000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8489 ± 0.0011 · 166 s
+   7. semana 8 · bayesiana #29 · C=3.38 · A 60000/2 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8489 ± 0.0004 · 328 s
+   8. semana 7 · bayesiana #14 · C=2.318 · A 10000/3 · B 10000/2 · class_weight=ninguno · sublinear_tf=False · PR-AUC 0.8480 ± 0.0024 · 202 s
+   9. semana 8 · bayesiana #24 · C=3.218 · A 10000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True · PR-AUC 0.8476 ± 0.0006 · 302 s
+  10. semana 7 · bayesiana #10 · C=1.23 · A 60000/3 · B 10000/2 · class_weight=balanced · sublinear_tf=True · PR-AUC 0.8472 ± 0.0011 · 166 s
+
+tiempos (s): {'busqueda_aleatoria_reloj': 0.1, 'busqueda_bayesiana_reloj': 0.2, 'referencia': 175.6, 'confirmacion': 0.0, 'curva': 2109.7, 'modelos': 1423.2, 'esta_corrida': 3856.4}

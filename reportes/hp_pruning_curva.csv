@@ -1,0 +1,21 @@
+fold,fraccion,filas_entrenamiento,pr_auc_entrenamiento,pr_auc_validacion,roc_auc_validacion,segundos,ruta
+1,0.1,3889,0.988614,0.812542,0.821192,56.3,pipeline de features.py
+1,0.25,9722,0.983116,0.834181,0.840531,85.4,pipeline de features.py
+1,0.5,19444,0.977328,0.848108,0.850676,163.3,pipeline de features.py
+1,1.0,38888,0.968476,0.858725,0.860638,114.4,caché de conteos
+2,0.1,3920,0.99002,0.804727,0.812891,51.5,pipeline de features.py
+2,0.25,9801,0.983872,0.829752,0.83515,85.5,pipeline de features.py
+2,0.5,19602,0.976792,0.844914,0.848128,150.1,pipeline de features.py
+2,1.0,39203,0.969117,0.853905,0.856454,122.3,caché de conteos
+3,0.1,3931,0.991308,0.798662,0.813154,66.6,pipeline de features.py
+3,0.25,9828,0.983663,0.823021,0.832907,85.7,pipeline de features.py
+3,0.5,19657,0.977546,0.837888,0.845097,153.6,pipeline de features.py
+3,1.0,39314,0.969012,0.848747,0.856183,130.9,caché de conteos
+4,0.1,3927,0.989622,0.812499,0.821891,59.0,pipeline de features.py
+4,0.25,9817,0.984801,0.832018,0.839956,80.4,pipeline de features.py
+4,0.5,19634,0.978628,0.843402,0.850848,144.1,pipeline de features.py
+4,1.0,39267,0.968556,0.854819,0.860578,101.9,caché de conteos
+5,0.1,3932,0.990755,0.814165,0.820014,49.4,pipeline de features.py
+5,0.25,9830,0.983925,0.835674,0.838646,87.8,pipeline de features.py
+5,0.5,19660,0.97754,0.847135,0.848405,161.7,pipeline de features.py
+5,1.0,39320,0.968565,0.857523,0.859475,159.6,caché de conteos

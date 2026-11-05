@@ -1,0 +1,45 @@
+puesto,origen,parametros,pr_auc_media,pr_auc_std,segundos,n_atributos,rol,tambien_en
+1,semana 8 · bayesiana #25,C=1.873 · A 60000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True,0.8515,0.0006,290.7,87534,ganadora,
+2,semana 8 · aleatoria #24,C=1.443 · A 60000/3 · B 20000/5 · class_weight=balanced · sublinear_tf=False,0.8514,0.0021,232.7,67534,respaldo 1,
+3,semana 8 · bayesiana #26,C=1.506 · A 10000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True,0.8513,0.0009,223.9,50091,respaldo 2,
+4,semana 8 · aleatoria #25,C=1.233 · A 40000/2 · B 20000/5 · class_weight=balanced · sublinear_tf=True,0.85,0.0008,216.2,60091,,
+5,"configuración actual (referencia, fuera del presupuesto)",C=1 · A 20000/3 · B 20000/3 · class_weight=balanced · sublinear_tf=True,0.8498,0.0009,175.6,40091,,
+6,semana 8 · bayesiana #27,C=0.6522 · A 60000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True,0.8489,0.0011,166.0,87534,,
+7,semana 8 · bayesiana #29,C=3.38 · A 60000/2 · B 40000/5 · class_weight=ninguno · sublinear_tf=True,0.8489,0.0004,328.0,100091,,
+8,semana 7 · bayesiana #14,C=2.318 · A 10000/3 · B 10000/2 · class_weight=ninguno · sublinear_tf=False,0.848,0.0024,201.5,20091,,
+9,semana 8 · bayesiana #24,C=3.218 · A 10000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=True,0.8476,0.0006,302.1,50091,,
+10,semana 7 · bayesiana #10,C=1.23 · A 60000/3 · B 10000/2 · class_weight=balanced · sublinear_tf=True,0.8472,0.0011,165.8,57534,,
+11,semana 7 · aleatoria #4,C=0.9761 · A 10000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=True,0.8471,0.0014,140.6,20091,,semana 8 · aleatoria #4
+12,semana 7 · aleatoria #10,C=1.471 · A 40000/5 · B 10000/3 · class_weight=balanced · sublinear_tf=True,0.8469,0.001,163.5,46241,,semana 8 · aleatoria #10
+13,semana 7 · bayesiana #7,C=2.864 · A 20000/3 · B 20000/5 · class_weight=ninguno · sublinear_tf=True,0.8465,0.0004,238.5,40091,,
+14,semana 8 · bayesiana #22,C=0.6674 · A 60000/2 · B 10000/3 · class_weight=ninguno · sublinear_tf=True,0.8458,0.0013,144.4,70091,,
+15,semana 8 · bayesiana #17,C=0.6424 · A 60000/2 · B 10000/3 · class_weight=ninguno · sublinear_tf=True,0.8456,0.0013,128.2,70091,,
+16,semana 8 · bayesiana #19,C=0.5481 · A 10000/5 · B 10000/5 · class_weight=ninguno · sublinear_tf=True,0.8451,0.0015,111.8,20091,,
+17,semana 8 · aleatoria #29,C=2.653 · A 60000/2 · B 10000/5 · class_weight=balanced · sublinear_tf=True,0.844,0.0011,264.7,70091,,
+18,semana 8 · bayesiana #14,C=2.73 · A 40000/5 · B 10000/3 · class_weight=balanced · sublinear_tf=True,0.8437,0.0011,217.5,46241,,
+19,semana 8 · bayesiana #12,C=2.933 · A 20000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=True,0.8428,0.0011,216.6,30091,,
+20,semana 8 · aleatoria #16,C=11.14 · A 40000/3 · B 40000/3 · class_weight=balanced · sublinear_tf=False,0.8423,0.0012,426.8,80091,,
+21,semana 8 · aleatoria #26,C=7.687 · A 40000/2 · B 20000/3 · class_weight=balanced · sublinear_tf=False,0.842,0.0012,433.3,60091,,
+22,semana 8 · aleatoria #22,C=11.81 · A 40000/2 · B 40000/3 · class_weight=ninguno · sublinear_tf=False,0.8418,0.0012,433.6,80091,,
+23,semana 8 · aleatoria #18,C=0.3815 · A 20000/5 · B 10000/5 · class_weight=ninguno · sublinear_tf=True,0.8418,0.0014,95.6,30091,,
+24,semana 7 · bayesiana #11,C=4.576 · A 60000/3 · B 10000/2 · class_weight=balanced · sublinear_tf=True,0.839,0.0014,278.1,57534,,
+25,semana 8 · bayesiana #16,C=0.2853 · A 10000/3 · B 10000/3 · class_weight=ninguno · sublinear_tf=False,0.8377,0.0027,87.7,20091,,
+26,semana 7 · bayesiana #13,C=0.2635 · A 60000/3 · B 10000/2 · class_weight=balanced · sublinear_tf=True,0.8369,0.0013,94.0,57534,,
+27,semana 7 · bayesiana #15,C=8.588 · A 10000/3 · B 10000/2 · class_weight=ninguno · sublinear_tf=False,0.836,0.0023,351.0,20091,,
+28,semana 7 · aleatoria #2,C=0.1445 · A 20000/5 · B 40000/3 · class_weight=ninguno · sublinear_tf=True,0.8288,0.0008,87.0,60091,,semana 8 · aleatoria #2
+29,semana 7 · bayesiana #8,C=0.1618 · A 60000/3 · B 10000/5 · class_weight=ninguno · sublinear_tf=False,0.8287,0.0024,76.1,57534,,
+30,semana 7 · aleatoria #15,C=18.02 · A 60000/2 · B 20000/3 · class_weight=ninguno · sublinear_tf=True,0.8283,0.0003,437.8,80091,,semana 8 · aleatoria #15
+31,semana 7 · bayesiana #12,C=59.66 · A 60000/3 · B 40000/2 · class_weight=ninguno · sublinear_tf=True,0.8268,0.0004,508.2,87534,,
+32,semana 7 · bayesiana #6,C=11.81 · A 10000/2 · B 10000/5 · class_weight=ninguno · sublinear_tf=True,0.8222,0.0022,334.6,20091,,
+33,semana 7 · aleatoria #8,C=12.3 · A 10000/5 · B 10000/5 · class_weight=balanced · sublinear_tf=True,0.8215,0.0021,308.0,20091,,semana 8 · aleatoria #8
+34,semana 7 · aleatoria #1,C=0.07459 · A 10000/5 · B 20000/2 · class_weight=ninguno · sublinear_tf=False,0.8158,0.0015,62.3,30091,,semana 8 · aleatoria #1
+35,semana 7 · aleatoria #12,C=27.25 · A 10000/2 · B 20000/5 · class_weight=balanced · sublinear_tf=True,0.8157,0.0004,455.5,30091,,
+36,semana 7 · aleatoria #11,C=0.05074 · A 20000/3 · B 10000/3 · class_weight=ninguno · sublinear_tf=False,0.8082,0.0013,48.9,30091,,
+37,semana 7 · aleatoria #13,C=0.04236 · A 40000/2 · B 40000/3 · class_weight=balanced · sublinear_tf=True,0.8042,0.0006,58.9,80091,,
+38,semana 7 · aleatoria #3,C=0.03335 · A 20000/5 · B 20000/3 · class_weight=balanced · sublinear_tf=True,0.8008,0.0007,48.7,40091,,semana 8 · aleatoria #3
+39,semana 7 · aleatoria #9,C=0.02656 · A 20000/3 · B 40000/5 · class_weight=ninguno · sublinear_tf=False,0.7954,0.0012,50.2,60091,,
+40,semana 7 · aleatoria #7,C=0.01393 · A 60000/5 · B 40000/5 · class_weight=balanced · sublinear_tf=False,0.7843,0.0014,36.6,76241,,
+41,semana 7 · aleatoria #14,C=0.009467 · A 10000/5 · B 10000/5 · class_weight=balanced · sublinear_tf=False,0.7802,0.0015,27.0,20091,,
+42,semana 7 · aleatoria #6,C=0.003963 · A 60000/3 · B 20000/2 · class_weight=balanced · sublinear_tf=False,0.7692,0.0018,24.4,67534,,
+43,semana 7 · bayesiana #9,C=0.001516 · A 10000/2 · B 10000/3 · class_weight=ninguno · sublinear_tf=True,0.7611,0.0019,21.1,20091,,
+44,semana 7 · aleatoria #5,C=0.001066 · A 10000/3 · B 10000/5 · class_weight=balanced · sublinear_tf=True,0.7583,0.0019,20.2,20091,,semana 8 · aleatoria #5
