@@ -1,0 +1,15 @@
+# Lista blanca del contexto de construcción (prototipo/Dockerfile): se excluye todo y se incluye solo lo que la
+# imagen necesita, incluida la configuración de Streamlit de prototipo/.streamlit/. Nunca entran data/ con MIMIC-IV,
+# modelos entrenados, bases locales, CSV dejados en prototipo/ ni el .env.
+*
+!prototipo/
+!src/
+!config/config.yaml
+!data/catalogos/
+**/__pycache__
+**/*.joblib
+**/*.ficha.json
+**/*.sqlite
+**/*.sqlite-journal
+prototipo/**/*.csv
+!prototipo/datos_demo/epicrisis_demo.csv

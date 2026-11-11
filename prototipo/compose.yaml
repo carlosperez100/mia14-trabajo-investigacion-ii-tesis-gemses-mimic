@@ -1,0 +1,18 @@
+# Prototipo local (no probado: en la máquina de desarrollo no hay Docker).
+# Desde la raíz del repositorio:  docker compose -f prototipo/compose.yaml up --build
+# Publica el puerto solo en 127.0.0.1. La base, la bitácora y el modelo de demostración quedan en el volumen “datos”.
+# Para usar la tabla de impactos del Anexo N.° 02 o el modelo local, se montan sus carpetas en modo de solo lectura y
+# se fijan PROTOTIPO_IMPACTOS_CSV, PROTOTIPO_MODELO y PROTOTIPO_MODELO_SHA256 (ver .env.example).
+services:
+  prototipo:
+    build:
+      context: ..
+      dockerfile: prototipo/Dockerfile
+    ports:
+      - "127.0.0.1:8501:8501"
+    environment:
+      PROTOTIPO_DATOS: /datos
+    volumes:
+      - datos:/datos
+volumes:
+  datos:

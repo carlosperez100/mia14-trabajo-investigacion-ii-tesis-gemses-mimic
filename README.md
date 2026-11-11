@@ -72,6 +72,8 @@ src/
  ├── experimentos_d3.py       # D2 frente a D3 en los 5 folds y en test, con la evaluación común y la ampliada (semana 7)
  ├── perfil_liberadas.py      # perfil de las liberadas frente a las negativas y las positivas CIE-10 del corpus, sin modelo (semana 7)
  └── utils.py                 # configuración, logging y hash
+prototipo/                    # prototipo del sistema: detección, revisión y Matriz de Priorización GEMSES (ver prototipo/README.md)
+tests/                        # 39 pruebas del prototipo (pytest)
 config/config.yaml            # semilla, split e hiperparámetros
 logs/                         # logs por etapa, metrics_baseline.txt, metrics_eda.txt, metrics_fe.txt, metrics_datos.txt, metrics_hp.txt, metrics_importancia.txt, metrics_d3.txt, metrics_hp_pruning.txt y hpo_runs.csv (registro de los ensayos de las semanas 7 y 8)
 reportes/                     # resultados en JSON y CSV, y figuras
@@ -1160,6 +1162,24 @@ Referencias: Akiba, T., Sano, S., Yanase, T., Ohta, T. y Koyama, M. (2019). Optu
 
 ---
 
+## 🩺 Prototipo del sistema (rama `sprint4-prototipo`)
+
+El prototipo integra en una aplicación local la detección de la epicrisis con un posible evento adverso sin código, la revisión de cada caso por una persona y la priorización de los ERSP (eventos relacionados con la seguridad del paciente) confirmados. La priorización usa la Matriz de Priorización GEMSES, calculada según los num. 19.9 a 19.13 y el Anexo N.° 03 de la Directiva N.° 7-OGCyH-ESSALUD-2020 V.01.
+
+La Matriz solo recibe los eventos que el revisor confirmó, como se recomienda en la sección “Uso del modelo: validación por personal calificado”, salvo los ERSP inventados que carga la demostración. Esta usa epicrisis inventadas y un modelo entrenado con ellas, por lo que sus resultados no tienen valor clínico.
+
+A criterio del autor, los modelos entrenados con MIMIC-IV no se publican, dado que su vocabulario proviene de las notas y publicarlos equivaldría a compartir parte de los datos. Por ello, la aplicación abre el modelo local desde la máquina del investigador y solo si su huella SHA-256 coincide con la de su ficha y con la fijada en el `.env`.
+
+```bash
+pip install -r prototipo/requirements.txt
+python -m prototipo.modelo_demo
+streamlit run prototipo/app.py
+```
+
+Los comandos se ejecutan desde la raíz del repositorio, y la aplicación queda disponible en el navegador en http://127.0.0.1:8501. El recorrido de la demostración, el contrato de entrada y salida, los criterios aplicados donde la Directiva no resuelve, la gobernanza y las limitaciones se describen en [prototipo/README.md](prototipo/README.md).
+
+---
+
 ## 📌 Roadmap
 Las tareas, con responsable y plazo, están en los [issues](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/issues) y [milestones](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/milestones).
 - [x] Semana 1 → Diagnóstico, estructura del repositorio y plan del Sprint 1.
@@ -1172,7 +1192,9 @@ Las tareas, con responsable y plazo, están en los [issues](https://github.com/c
 - [x] Semana 7 → importancia de variables en la rama `sprint3-importancia-variables`, con los 5 folds de train y sin test: palabras 0.1274, contexto 0.1106 y bigramas 0.0331 de caída de la PR-AUC al permutar cada bloque.
 - [x] Semana 7 → variante D3 en la rama `sprint3-etiqueta-d3`, con las negativas que libera la equivalencia validada. D3 cumple la regla en la evaluación ampliada (+0.0022 en 5 de 5 *folds*) y queda por debajo en la común (-0.0012). D2 marca como evento al 42.6 % de las liberadas, frente al 18.7 % de las negativas CIE-10 de la evaluación común. Se decidió mantener D2 como referencia, también para HE2 y HE3.
 - [x] Semana 8 → Sprint 3, búsqueda con *pruning* (MedianPruner por *fold*, 30 ensayos por método) en la rama `sprint3-hiperparametros-pruning`. La regla adopta la candidata (C 1.87 · A 60 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí) y en *test* obtiene una PR-AUC de 0.8670 frente a 0.8671 de la actual. Se decidió evaluar la HE1 con la actual, que es la del lote de la revisión ciega y la de la matriz v4, y con la candidata como análisis de sensibilidad. Se evaluaron 102 de 150 *folds*, con registro en `logs/hpo_runs.csv`, *top-k*, importancia (PED-ANOVA), curva de aprendizaje y modelos con SHA-256 fuera de git.
+- [x] Prototipo del sistema en la rama `sprint4-prototipo`: detección, revisión por una persona y Matriz de Priorización GEMSES en una aplicación local, con la demostración sobre epicrisis inventadas y 39 pruebas.
 - [ ] Sprint 3 → Evaluación por servicio, grupo de edad y decil de largo frente al modelo de contexto, recalibración a la prevalencia de 27.6 % y explicación de logística frente a LinearSVC.
+- [ ] Prototipo → entrenar el modelo local con MIMIC-IV y usarlo en la aplicación.
 
 ---
 

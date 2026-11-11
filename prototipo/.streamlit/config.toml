@@ -1,0 +1,23 @@
+# Prototipo local: solo atiende en esta máquina (127.0.0.1), no abre el navegador por su cuenta y no envía
+# estadísticas de uso. Streamlit lee este archivo desde la carpeta del script (prototipo/.streamlit/), con prioridad
+# sobre ~/.streamlit y sobre la carpeta desde donde se arranca. En el contenedor, la dirección se cambia en la orden de
+# arranque (prototipo/Dockerfile) y el puerto se publica solo en 127.0.0.1 (prototipo/compose.yaml).
+[server]
+address = "127.0.0.1"
+port = 8501
+headless = true
+enableXsrfProtection = true
+maxUploadSize = 50
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "viewer"
+# En el navegador, un error no controlado muestra solo el tipo de excepción y un mensaje genérico; el mensaje completo,
+# que podría repetir texto, se imprime solo en la consola.
+showErrorDetails = "type"
+
+[theme]
+base = "light"
+primaryColor = "#1F4E79"

@@ -1,0 +1,171 @@
+id_epicrisis,texto,edad,horas_emergencia,n_servicios,estancia_dias,n_traslados,n_unidades,dias_uci,n_medicamentos,n_cultivos,sexo,tipo_ingreso,procedencia,seguro,servicio,servicio_alta,destino_alta,servicio_quirurgico,uci,codigos_cie,version_cie
+DEMO-01,"Invented discharge summary for demonstration. No real patient.
+
+Service: ORTHOPAEDICS
+
+Chief Complaint: Right hip pain.
+
+Major Surgical or Invasive Procedure: Right total hip arthroplasty.
+
+History of Present Illness: A 78-year-old woman with long-standing right hip osteoarthritis and limited mobility despite physical therapy and joint injections was admitted for an elective right total hip arthroplasty.
+
+Brief Hospital Course: The patient underwent a right total hip arthroplasty under spinal anesthesia without intraoperative complications. On postoperative day 2 she had an unwitnessed fall from bed at night while trying to reach the bathroom and was found on the floor by the nurse. She reported left wrist pain, and an x-ray showed a displaced left distal radius fracture, which was reduced and splinted by the orthopaedic team. A bed alarm and fall precautions were started. The hip incision remained clean and dry, and she progressed with physical therapy using a walker.
+
+Discharge Diagnosis: Right hip osteoarthritis status post total hip arthroplasty. Left distal radius fracture after a fall in the hospital.
+
+Discharge Disposition: Extended care facility.
+
+Discharge Condition: Stable, ambulating with a walker.
+",78,,1,6.4,2,2,0,24,0,Mujer,ELECTIVE,PHYSICIAN REFERRAL,Medicare,ORTHO,ORTHO,SKILLED NURSING FACILITY,1,0,M16.11; Z96.641; I10,10
+DEMO-02,"Invented discharge summary for demonstration. No real patient.
+
+Service: MEDICINE
+
+Chief Complaint: Shortness of breath.
+
+History of Present Illness: A 71-year-old man with ischemic cardiomyopathy (ejection fraction 30%) presented with one week of progressive dyspnea on exertion, two-pillow orthopnea and bilateral leg swelling after running out of his diuretic.
+
+Brief Hospital Course: He was treated with intravenous furosemide with good urine output, net negative 4 liters over three days, and his breathing returned to baseline. Creatinine remained stable. Home medications were resumed, including his beta blocker and ACE inhibitor, and he was counseled on a low-salt diet and daily weights. There were no complications during the admission.
+
+Discharge Diagnosis: Acute on chronic systolic heart failure exacerbation due to medication nonadherence.
+
+Discharge Disposition: Home with services.
+
+Discharge Condition: Good.
+",71,6.5,1,3.8,1,1,0,14,0,Hombre,EW EMER.,EMERGENCY ROOM,Medicare,CMED,CMED,HOME HEALTH CARE,0,0,I50.23; I25.5,10
+DEMO-03,"Invented discharge summary for demonstration. No real patient.
+
+Service: MEDICINE
+
+Chief Complaint: Right leg redness and swelling.
+
+History of Present Illness: A 64-year-old man with type 2 diabetes presented with three days of spreading redness, warmth and swelling of the right lower leg with fever.
+
+Brief Hospital Course: Blood cultures were negative. He was started on intravenous vancomycin and cefazolin for cellulitis. On hospital day 4 his creatinine rose from 0.9 to 2.4 mg/dL with a vancomycin trough of 32. This was attributed to vancomycin-induced acute kidney injury; vancomycin was held, he received intravenous fluids, and the antibiotic was changed to oral cephalexin. Creatinine improved to 1.3 mg/dL by discharge. The cellulitis improved and the leg swelling decreased.
+
+Discharge Diagnosis: Right lower extremity cellulitis. Acute kidney injury secondary to vancomycin, improving.
+
+Discharge Disposition: Home.
+
+Discharge Condition: Stable.
+",64,8.0,1,7.2,1,1,0,21,3,Hombre,EW EMER.,EMERGENCY ROOM,Private,MED,MED,HOME,0,0,L03.115; N17.9; E11.9,10
+DEMO-04,"Invented discharge summary for demonstration. No real patient.
+
+Service: SURGERY
+
+Chief Complaint: Right upper quadrant pain.
+
+Major Surgical or Invasive Procedure: Laparoscopic cholecystectomy. Bedside incision and drainage of the umbilical port site.
+
+History of Present Illness: A 52-year-old woman with recurrent biliary colic and gallstones on ultrasound was admitted from clinic for a laparoscopic cholecystectomy.
+
+Brief Hospital Course: The cholecystectomy was completed laparoscopically. On postoperative day 3 she developed fever, and the umbilical port site became red and tender with purulent drainage, consistent with a surgical site infection. The wound was opened at the bedside, drained and packed, and she was treated with intravenous cefazolin followed by oral antibiotics. Wound cultures grew methicillin-sensitive Staphylococcus aureus. She was afebrile for 48 hours before discharge, and visiting nurse wound care was arranged.
+
+Discharge Diagnosis: Symptomatic cholelithiasis status post laparoscopic cholecystectomy. Superficial surgical site infection of the umbilical port.
+
+Discharge Disposition: Home with services.
+
+Discharge Condition: Stable.
+",52,,1,5.1,2,2,0,19,2,Mujer,ELECTIVE,CLINIC REFERRAL,Private,SURG,SURG,HOME HEALTH CARE,1,0,K80.20; T81.41XA; B95.61,10
+DEMO-05,"Invented discharge summary for demonstration. No real patient.
+
+Service: MEDICAL INTENSIVE CARE
+
+Chief Complaint: Fever and confusion.
+
+History of Present Illness: An 81-year-old woman from a nursing home presented with fever, hypotension and confusion; the urinalysis was positive and she was admitted to the intensive care unit with septic shock from a urinary source.
+
+Brief Hospital Course: She required norepinephrine for two days and was treated with vancomycin and piperacillin-tazobactam until urine cultures grew pan-sensitive Escherichia coli, when antibiotics were narrowed to ceftriaxone. She developed acute kidney injury on hospital day 2 in the setting of persistent hypotension and vancomycin exposure; creatinine peaked at 2.8 mg/dL and improved with fluids and resolution of shock. Her mental status returned to baseline.
+
+Discharge Diagnosis: Septic shock due to Escherichia coli urinary tract infection. Acute kidney injury, multifactorial, resolving.
+
+Discharge Disposition: Extended care facility.
+
+Discharge Condition: Stable.
+",81,5.0,1,8.3,3,2,3.1,28,5,Mujer,EW EMER.,EMERGENCY ROOM,Medicare,MED,MED,SKILLED NURSING FACILITY,0,1,R65.21; N17.9; B96.20,10
+DEMO-06,"Invented discharge summary for demonstration. No real patient.
+
+Service: MEDICINE
+
+Chief Complaint: Black stools and dizziness.
+
+Major Surgical or Invasive Procedure: Upper endoscopy with clipping of a duodenal ulcer. Right internal jugular central venous catheter placement. Right chest tube placement.
+
+History of Present Illness: A 69-year-old man taking ibuprofen for knee pain presented with two days of melena and lightheadedness; hemoglobin was 6.8 g/dL on arrival.
+
+Brief Hospital Course: He received two units of packed red blood cells and underwent upper endoscopy, which showed a bleeding duodenal ulcer that was clipped. Because peripheral access was poor, a right internal jugular central line was placed; shortly afterwards he became short of breath, and a chest x-ray showed an iatrogenic right pneumothorax after the line placement. A chest tube was placed, the lung re-expanded, and the tube was removed on hospital day 4. Hemoglobin remained stable on a twice-daily proton pump inhibitor, and ibuprofen was stopped.
+
+Discharge Diagnosis: Upper gastrointestinal bleed from a duodenal ulcer. Iatrogenic pneumothorax after central line placement, resolved.
+
+Discharge Disposition: Home.
+
+Discharge Condition: Good.
+",69,7.5,1,5.6,2,2,1.2,17,0,Hombre,EW EMER.,EMERGENCY ROOM,Medicare,MED,MED,HOME,0,1,K26.4; D62,10
+DEMO-07,"Invented discharge summary for demonstration. No real patient.
+
+Service: ORTHOPAEDICS
+
+Chief Complaint: Left knee pain.
+
+Major Surgical or Invasive Procedure: Left total knee arthroplasty.
+
+History of Present Illness: A 66-year-old woman with severe left knee osteoarthritis and failed conservative management was admitted for an elective left total knee arthroplasty.
+
+Brief Hospital Course: She underwent a left total knee arthroplasty under spinal anesthesia and tolerated the procedure well. Pain was controlled with oral medications and a nerve block. She received enoxaparin for venous thromboembolism prophylaxis and worked with physical therapy twice daily, reaching 90 degrees of flexion. The postoperative course was uneventful.
+
+Discharge Diagnosis: Left knee osteoarthritis status post total knee arthroplasty.
+
+Discharge Disposition: Home with services.
+
+Discharge Condition: Good.
+",66,,1,2.9,2,2,0,16,0,Mujer,ELECTIVE,PHYSICIAN REFERRAL,Private,ORTHO,ORTHO,HOME HEALTH CARE,1,0,M17.12; Z96.652,10
+DEMO-08,"Invented discharge summary for demonstration. No real patient.
+
+Service: MEDICINE
+
+Chief Complaint: Shortness of breath and wheezing.
+
+History of Present Illness: An 84-year-old man with severe COPD on home oxygen and limited mobility presented with increased wheezing and sputum production.
+
+Brief Hospital Course: He was treated with nebulized bronchodilators, intravenous methylprednisolone and azithromycin, and required bilevel positive airway pressure for the first two days. His skin was intact on admission. On hospital day 6 nursing found a new stage 3 pressure ulcer over the sacrum. Wound care nursing was consulted, a pressure-redistribution mattress was ordered, and turning every two hours was reinforced. His breathing improved to his baseline oxygen requirement.
+
+Discharge Diagnosis: COPD exacerbation. Hospital-acquired stage 3 sacral pressure ulcer.
+
+Discharge Disposition: Extended care facility.
+
+Discharge Condition: Stable.
+",84,9.0,1,11.5,2,2,2.0,26,2,Hombre,EW EMER.,EMERGENCY ROOM,Medicare,MED,MED,SKILLED NURSING FACILITY,0,1,J44.1; Z99.81,10
+DEMO-09,"Invented discharge summary for demonstration. No real patient.
+
+Service: MEDICINE
+
+Chief Complaint: Foot wound.
+
+History of Present Illness: A 58-year-old man with type 2 diabetes on insulin glargine was admitted for intravenous antibiotics for a diabetic foot infection.
+
+Brief Hospital Course: The foot infection improved with intravenous ampicillin-sulbactam and local wound care. On hospital day 3 he received his evening dose of insulin glargine twice because of a medication administration error during a change of shift. Early the next morning he was diaphoretic and confused, with a fingerstick glucose of 38 mg/dL, and was treated with intravenous D50 with prompt recovery. The event was reported to pharmacy, and a double check for insulin administration was implemented on the unit. Glucose remained between 110 and 180 mg/dL afterwards.
+
+Discharge Diagnosis: Diabetic foot infection. Hypoglycemia after a duplicated insulin dose, resolved.
+
+Discharge Disposition: Home.
+
+Discharge Condition: Good.
+",58,,1,6.0,1,1,0,18,2,Hombre,URGENT,CLINIC REFERRAL,Medicaid,MED,MED,HOME,0,0,E11.621; L08.9; E11.649,10
+DEMO-10,"Invented discharge summary for demonstration. No real patient.
+
+Service: ORTHOPAEDICS
+
+Chief Complaint: Right hip pain after a fall at home.
+
+Major Surgical or Invasive Procedure: Right hip hemiarthroplasty.
+
+History of Present Illness: A 75-year-old woman tripped over a rug at home and was found to have a displaced right femoral neck fracture.
+
+Brief Hospital Course: Within minutes of the first preoperative dose of intravenous cefazolin she developed diffuse hives, wheezing and a blood pressure of 70/40. This was an anaphylactic reaction to cefazolin, treated with intramuscular epinephrine, intravenous diphenhydramine and methylprednisolone, with full recovery. Surgery was postponed by one day and performed with clindamycin prophylaxis without further problems. Her allergy list was updated to include cefazolin.
+
+Discharge Diagnosis: Right femoral neck fracture status post hemiarthroplasty. Anaphylaxis to cefazolin.
+
+Discharge Disposition: Rehabilitation facility.
+
+Discharge Condition: Stable.
+",75,4.0,1,5.0,2,2,0,20,0,Mujer,EW EMER.,EMERGENCY ROOM,Medicare,ORTHO,ORTHO,REHAB,1,0,S72.001A; T88.6XXA; Z88.1,10

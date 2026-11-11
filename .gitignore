@@ -28,3 +28,6 @@ data/interim/*
 *.pkl
 # los logs del pipeline SÍ se versionan (evidencia del sprint)
 !logs/*.log
+.pytest_cache/
+*.ficha.json
+*.sqlite-journal
