@@ -167,3 +167,30 @@ he1_estratos:               # Sprint 3: HE1 por estratos (script por escribir). 
   #  - si los cortes de los deciles salen de las 14 085 epicrisis de prueba o de las 12 321 sin etiqueta dudosa;
   #  - si los mínimos de 200 epicrisis y 30 por clase se cuentan de nuevo en cada análisis de sensibilidad;
   #  - el bloque C de la sensibilidad con la candidata: con la regresión logística de la actual (C 1.0, balanced) o con la de la candidata.
+
+he1_enmienda_1:             # Enmienda 1 de he1_estratos (fda6828), registrada el 12-11-2026, antes de ejecutar el script de la HE1 y
+                            # antes de abrir los resultados de la revisión ciega. Texto completo: docs/enmienda_1_prerregistro.md
+  criterio: global          # el criterio por estrato de he1_estratos pasa a sensibilidad
+  analisis_principal: sin_dudosa                 # las 12 321 epicrisis de prueba sin etiqueta dudosa
+  diferencia_minima_roc_auc: 0.05                # relevancia, a criterio del autor (A+B+C menos C)
+  limite_inferior_ic95_mayor_que: 0.0            # IC 95 % por paciente de la diferencia global
+  estabilidad:
+    semillas: [43, 44, 45, 46, 47]               # cinco particiones por paciente adicionales (42 + n.º de partición)
+    criterio: limite_inferior_ic95_mayor_que_cero_en_todas   # ambos modelos se reentrenan en cada partición
+  ic95:
+    metodo: percentiles
+    remuestreos_pacientes: 2000
+    pareado: true                                # los mismos pacientes para A+B+C y para C en cada remuestreo
+  deciles_largo: por_analisis                    # cortes en el conjunto de prueba de cada análisis (12 321 o 14 085)
+  minimos_por_analisis: true                     # 200 epicrisis y 30 por clase, contados de nuevo en cada sensibilidad
+  bloque_c_con_candidata: regresion_de_la_candidata   # C 1.8734 y sin pesos, igual que la candidata
+  hipotesis_general: [HE1, HE2]                  # la HE2 de la matriz v4 (VPP) pasa al OE3 sin umbral; la HE3 de la v4 es la HE2
+  decision_confirmatoria: HE2                    # la HE1 no es ciega respecto de su dirección (0.864, 0.760 y 0.8706 conocidos)
+  he2_margen_ausencia_diferencia: 0.10           # si la HE2 no se cumple: ausencia de diferencia relevante solo si el límite
+                                                 # superior del IC 95 % de Newcombe es menor que 0.10; si no, no concluyente
+  adjudicacion: prevalece_segundo_evaluador      # en las 100 con doble lectura, consenso sin conocer la marca; sin acuerdo, el 2.º
+  segundo_evaluador:
+    credencial_hasta: 2026-11-30                 # si no la tiene, se invita a otro evaluador clínico con credencial propia
+    sin_kappa_si_nadie_al: 2026-12-31            # entonces la referencia es la lectura del investigador en las 241
+  oe4_proceso: Hospitalizacion                   # num. 19.6; el servicio al ingreso es atributo y sensibilidad (num. 19.7)
+  cortes_impacto: enmienda_2                     # se registran antes de abrir los resultados de la revisión ciega
