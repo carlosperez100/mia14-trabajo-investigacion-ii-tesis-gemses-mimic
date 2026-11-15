@@ -196,3 +196,25 @@ he1_enmienda_1:             # Enmienda 1 de he1_estratos (fda6828), registrada e
     sin_kappa_si_nadie_al: 2026-12-31            # entonces la referencia es la lectura del investigador en las 241
   proceso_gemses: Hospitalizacion                # num. 19.6; el servicio al ingreso, como aproximación al del num. 19.7, es atributo y sensibilidad
   cortes_impacto: enmienda_2                     # se registran antes de abrir los resultados de la revisión ciega
+
+revision_ciega_enmienda_2:  # Enmienda 2, registrada el 15-11-2026 (decisión del 14-11), antes de ejecutar el script de la HE1 y
+                            # antes de abrir los resultados de la revisión ciega. Texto completo: docs/enmienda_2_prerregistro.md
+                            # Sustituye las claves adjudicacion, segundo_evaluador y cortes_impacto de he1_enmienda_1.
+  evaluadores: 1                                 # solo el investigador; el segundo evaluador previsto no podrá obtener su credencial
+  motivo_sin_otro_evaluador: sin_otro_evaluador_clinico_con_credencial_ni_que_pueda_tramitarla   # no se espera el 30-11 ni el 31-12
+  segunda_lectura: false                         # sin lectura de las 100 previstas (63 + 37)
+  adjudicacion: no_aplica
+  segundo_evaluador: ninguno
+  referencia_he2_vpp_gemses: lectura_del_investigador   # en las 241 epicrisis, sin recalcular con otra lectura
+  kappa_interevaluador: no_se_informa            # tampoco los acuerdos positivo y negativo; se declara como limitación
+  rerevision_intraevaluador:
+    epicrisis: 30                                # revisadas de nuevo a ciegas; kappa de Cohen intraevaluador
+    seleccion: muestreo_aleatorio_simple         # entre las 241, sin usar la clave de la muestra
+    funcion: numpy_random_default_rng_choice_sin_reemplazo   # numpy.random.default_rng(42).choice(..., 30, replace=False)
+    semilla: 42
+    orden_de_entrada: note_id_ascendente         # identificadores de MIMIC-IV-Note
+    inicio: dos_semanas_despues_de_terminar_las_241   # y, por tanto, al menos dos semanas después de la primera lectura de cada una
+    presentacion: orden_aleatorio_sin_marca_ni_primer_veredicto
+    referencia_en_las_30: primera_lectura        # la segunda solo para el kappa, sin adjudicar sus discrepancias
+  apertura_resultados: despues_de_la_rerevision  # Tabla 18 del informe parcial
+  cortes_impacto: enmienda_3                     # se registran antes de abrir los resultados de la revisión ciega
