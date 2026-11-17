@@ -218,3 +218,49 @@ revision_ciega_enmienda_2:  # Enmienda 2, registrada el 15-11-2026 (decisión de
     referencia_en_las_30: primera_lectura        # la segunda solo para el kappa, sin adjudicar sus discrepancias
   apertura_resultados: despues_de_la_rerevision  # Tabla 18 del informe parcial
   cortes_impacto: enmienda_3                     # se registran antes de abrir los resultados de la revisión ciega
+
+muestra_enmienda_3:         # Enmienda 3, registrada el 17-11-2026 (decisión del 16-11; tamaño fijado el 17-11), antes de ejecutar el
+                            # script de la HE1 y antes de abrir los resultados de la revisión ciega. Texto completo:
+                            # docs/enmienda_3_prerregistro.md. Fija los tamaños, que antes no figuraban en este archivo, y
+                            # sustituye las claves cortes_impacto, apertura_resultados y referencia_he2_vpp_gemses de
+                            # revision_ciega_enmienda_2. El script de la ampliación no lee esta sección.
+  detecciones: 385                               # antes 151; n = 1.96^2 * 0.5 * 0.5 / 0.05^2 = 384.16, hacia arriba
+  controles: 230                                 # antes 90; 90 * 385 / 151 = 229.47, hacia arriba
+  epicrisis: 615                                 # 241 ya sorteadas y 374 nuevas (234 detecciones y 140 controles)
+  otra_ampliacion: no_prevista                   # cualquier cambio del tamaño exige una nueva enmienda
+  margen_de_error: 0.05                          # antes 0.08; Naing et al. (2006, p. 10)
+  marco:
+    marcadas: 15731
+    no_marcadas: 83200
+  pesos:                                         # 15731/385 y 83200/230; antes 104.18 y 924.44 (razón 8.87; ahora 8.85)
+    deteccion: 40.86
+    control: 361.74
+  regla_de_la_ampliacion:
+    regla: mismas_semillas_del_sorteo_original   # DataFrame.sample sin reemplazo y con semilla entera: prefijo de una permutación
+    semilla_detecciones: 42
+    semilla_controles: 77
+    comprobaciones_previas: [marco_15731_y_83200, primeros_151_y_90_iguales_a_los_ya_sorteados_y_a_la_clave,
+                             ningun_caso_nuevo_en_la_clave, probabilidades_guardadas_iguales_a_las_de_la_clave]   # entre otras
+    puntaje_del_modelo_adoptado: no_se_recalcula   # se usan las probabilidades guardadas al generar el lote original
+    puntaje_del_modelo_de_contexto: se_calcula_para_los_casos_nuevos
+    casos_ya_sorteados: conservan_identificador_orden_y_veredictos
+    semilla_mezcla_casos_nuevos: 2028
+    identificadores_nuevos: HE4-242_a_HE4-615    # el identificador indica el bloque, no el grupo
+    orden_de_lectura: aleatorio_dentro_de_cada_bloque_y_bloque_anadido_despues_del_primero
+    archivos_de_la_rerevision: no_se_tocan
+    sha256_script_del_sorteo: 211f47ec5606457b4dfef0a3cf3c54a5216c3dd83ae540607057543ff79ba3d3
+    sha256_script_de_la_ampliacion: 0473848a38c35dfa938114f29e25750bbcd82bdad5e80fd6cf013bb5e240006f
+  referencia_he2_vpp_gemses: lectura_del_investigador   # en las 615 epicrisis, con los pesos nuevos
+  sensibilidad:                                  # descriptiva; no decide la HE2
+    cortes: [primer_sorteo_241_frente_a_anadidos_374, leidos_antes_de_la_decision_140_frente_a_leidos_despues]
+    se_informa: [p1, p0, diferencia_con_ic95_de_newcombe, vpp_con_ic95_de_wilson]
+    comparacion_entre_partes: sin_prueba_de_hipotesis   # una discrepancia se informa como limitación
+  lectura_incompleta: exige_nueva_enmienda       # si no se completa la primera lectura de las 615
+  rerevision_intraevaluador: sin_cambios         # las 30 son de las 241 primeras; la espera corre desde el final de esas 241
+  apertura_resultados: despues_de_la_primera_lectura_de_las_615_y_de_la_rerevision
+  enmienda_4:                                    # se registra antes de abrir los resultados de la revisión ciega
+    - descripcion_del_sorteo_de_la_rerevision
+    - tratamiento_del_veredicto_no_se_puede_determinar
+    - descripcion_completa_de_la_aplicacion_de_revision
+    - cortes_impacto
+  cortes_impacto: enmienda_4
