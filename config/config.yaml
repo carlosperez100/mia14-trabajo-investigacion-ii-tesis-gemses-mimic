@@ -264,3 +264,79 @@ muestra_enmienda_3:         # Enmienda 3, registrada el 17-11-2026 (decisión de
     - descripcion_completa_de_la_aplicacion_de_revision
     - cortes_impacto
   cortes_impacto: enmienda_4
+
+lectura_enmienda_4:         # Enmienda 4, registrada el 19-11-2026, antes de reanudar la lectura en el caso HE4-141 y antes de
+                            # abrir los resultados de la revisión ciega. Texto completo: docs/enmienda_4_prerregistro.md.
+                            # Sustituye las claves enmienda_4 y cortes_impacto de muestra_enmienda_3.
+  rige_desde: HE4-141                            # primera lectura; la segunda se registra en la enmienda 5
+  leidos_con_la_forma_anterior: 140              # sus veredictos no se corrigen
+  aplicacion_de_revision: sin_cambios            # tampoco su ayuda en pantalla; donde difiere, rige la enmienda
+  condiciones_del_evento: [dano_E_o_mayor, no_intencional, nexo_C3_o_C4, atencion_de_este_episodio]
+  episodio:
+    definicion: del_ingreso_al_alta_sin_importar_las_unidades
+    emergencia_del_mismo_hospital_antes_del_ingreso: dentro
+    otro_hospital_antes_del_traslado: fuera
+    dano_de_una_atencion_anterior: veredicto_No
+    codigo_PREVIO: solo_si_cumple_las_demas_condiciones
+    se_informa: candidatos_y_epicrisis_con_PREVIO_por_grupo_desde_HE4-141
+    sensibilidad_contando_PREVIO_como_evento: no_se_hace
+    en_los_140_primeros: declaracion_del_investigador_sin_registro
+  lectura:
+    idioma: traduccion_encendida_y_original_en_los_pasos_1_y_3
+    resaltado: apagado
+    donde: nota_completa_en_todos_los_casos      # el extracto corta las secciones con subtítulos o no las muestra
+    secciones_en_orden: [motivo_de_consulta, procedimiento_mayor, evolucion, diagnosticos_al_alta, condicion_al_alta]
+    limite_de_cada_seccion: de_su_titulo_al_titulo_de_la_seccion_siguiente   # un subtítulo interno no la cierra
+    tambien_en_el_original: [motivo_de_consulta, procedimiento_mayor, diagnosticos_al_alta, condicion_al_alta]
+    nota_entera: si_falta_alguna_de_las_cinco_secciones
+    comprobacion_en_el_original: todo_candidato  # hecho, tiempo, causa y duda; si difieren, vale el original
+    caso_guardado: no_se_reabre_para_cambiar_el_veredicto
+    uso_de_la_nota_completa: no_lo_registra_la_aplicacion
+  codigo_del_candidato:
+    orden_de_las_condiciones: [dano, intencion, nexo, episodio]   # lleva el código de la primera que no cumple
+    codigos_Si: [C4, C3]
+    codigos_No: [C2, C1, SIN-DANO, PREVISTO, NEGADO, PREVIO]
+    codigos_ND: [ND-1, ND-2, ND-3, ND-4, ND-5, ND-IDIOMA]
+    sin_candidato: SC
+  registro_en_las_notas:
+    linea_de_un_candidato: seccion_codigo_evidencia_marcas
+    linea_de_un_evento_Si: seccion_codigo_evidencia_area_dia_marcas
+    secciones: [MOT, PROC, EVOL, DX, COND, NOTA]
+    evidencia: de_3_a_8_palabras_seguidas_copiadas_del_original
+    marcas: [NC, TRAD]                           # NC: se leyó otra parte de la nota, además de las cinco secciones
+    varios_eventos: principal_en_los_campos_del_caso_y_hasta_5_adicionales
+    orden_de_las_lineas_Si: el_de_la_aplicacion_con_el_principal_primero
+    notas: solo_en_el_equipo_del_investigador
+  area_y_dia_del_evento:                         # descriptivos; no entran en la HE1 ni en la HE2
+    desde: HE4-141
+    area: [EMER, UCI, UCIN, HOSP, SOP, APRO, OTRA]
+    area_es: donde_estaba_el_paciente_cuando_aparecio_el_dano
+    dia: [DH_con_numero, DPO_con_numero]         # sin espacio; si la nota da los dos, DH
+    sin_dato: NODICE
+    fechas_de_calendario: no_se_anotan
+    se_informa: conteos_por_area_y_por_dia_despues_de_abrir_los_resultados
+  programa_de_comprobacion:
+    cuando: durante_la_lectura_y_antes_de_abrir_los_resultados
+    verifica: [formato_de_cada_linea, codigo_acorde_con_el_veredicto, evidencia_presente_en_el_original, area_y_dia_en_cada_evento_Si]
+    informa: [numero_de_casos_que_cumplen, identificadores_de_los_casos_con_error]
+    no_informa: [conteos_por_codigo, conteos_por_veredicto]
+    casos_con_error: no_se_reabren_ni_se_corrigen      # su veredicto cuenta; no entran en los conteos por sección, código, marca, área ni día
+    errores_se_informan: por_grupo_despues_de_abrir_los_resultados
+    sha256: enmienda_5
+  no_se_puede_determinar:
+    motivos: [ND-1, ND-2, ND-3, ND-4, ND-5, ND-IDIOMA]   # ND-IDIOMA no está en el manual; vale también sin candidato
+    analisis_principal: cuenta_como_sin_evento
+    sensibilidad: sin_esos_casos
+    se_informa: numero_por_motivo_y_por_grupo_desde_HE4-141
+  rerevision_intraevaluador:
+    estado: no_empieza_antes_de_la_enmienda_5
+    regla_si_se_anaden_epicrisis:
+      marco: HE4-242_a_HE4-615_en_orden_ascendente
+      funcion: DataFrame_sample_sin_reemplazo
+      semilla: 2029
+      se_toman: las_primeras_en_el_numero_que_fije_la_enmienda_5
+      no_usa: [clave, veredictos]
+      se_ejecuta: despues_del_registro_de_la_enmienda_5
+      registrada: antes_de_leer_HE4-242
+  enmienda_5: [rerevision, descripcion_completa_de_la_aplicacion_de_revision, cortes_impacto, tiempo_de_lectura, sesgo_por_senales, epicrisis_35_con_codigo_no_alcanzado, congelamiento_del_protocolo, precisiones_de_interpretacion]
+  cortes_impacto: enmienda_5
