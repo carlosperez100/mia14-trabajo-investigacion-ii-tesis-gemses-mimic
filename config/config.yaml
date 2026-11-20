@@ -340,3 +340,73 @@ lectura_enmienda_4:         # Enmienda 4, registrada el 19-11-2026, antes de rea
       registrada: antes_de_leer_HE4-242
   enmienda_5: [rerevision, descripcion_completa_de_la_aplicacion_de_revision, cortes_impacto, tiempo_de_lectura, sesgo_por_senales, epicrisis_35_con_codigo_no_alcanzado, congelamiento_del_protocolo, precisiones_de_interpretacion]
   cortes_impacto: enmienda_5
+
+analisis_enmienda_5:        # Enmienda 5, registrada el 19-11-2026, antes de empezar la re-revisión y antes de abrir los
+                            # resultados de la revisión ciega. Texto completo: docs/enmienda_5_prerregistro.md.
+                            # Sustituye las claves rerevision_intraevaluador, enmienda_5 y cortes_impacto de
+                            # lectura_enmienda_4, y la clave rerevision_intraevaluador de revision_ciega_enmienda_2
+                            # y de muestra_enmienda_3.
+  rerevision_intraevaluador:
+    epicrisis: 60
+    ya_sorteadas:
+      numero: 30                                 # HE4R-01 a HE4R-30, del 26-10-2026, antes de cualquier lectura
+      marco: las_241_primeras
+      funcion: DataFrame_sample_sin_reemplazo
+      semilla: 2027
+      usa_el_grupo: false
+      sha256_script: 211f47ec5606457b4dfef0a3cf3c54a5216c3dd83ae540607057543ff79ba3d3
+    anadidas:
+      numero: 30                                 # HE4R-31 a HE4R-60
+      marco: HE4-242_a_HE4-615_en_orden_ascendente
+      funcion: DataFrame_sample_sin_reemplazo
+      semilla: 2029
+      se_toman: las_30_primeras
+      no_usa: [clave, veredictos]
+      se_ejecuta: despues_del_registro_de_esta_enmienda
+      sha256_script: 07e7ea4751a3f3c12ae9b4ade937dc8c20a77388630bb0cae5602e2437695d8a
+    espera: dos_semanas_desde_el_final_de_la_primera_lectura_de_su_bloque   # 241 para las primeras; 615 para las añadidas
+    forma_de_lectura: procedimiento_de_la_enmienda_4
+    presentacion: a_ciegas_sin_veredicto_ni_notas_de_la_primera_lectura   # primero las 30 ya sorteadas y después las 30 añadidas
+    medidas: [kappa_de_cohen_con_ic95, porcentaje_de_acuerdo, matriz_de_tres_categorias]
+    kappa_principal: dos_categorias              # con evento y sin evento; el ND cuenta como sin evento
+    kappa_complementario: tres_categorias
+    ic_del_kappa: error_estandar_de_cohen_1960
+    estratos: [primera_lectura_anterior_a_la_enmienda_4, primera_lectura_posterior]   # 14 y 46 epicrisis
+    confiabilidad_intraevaluador: la_del_segundo_estrato
+    intervalo_entre_lecturas: mediana_y_rango_por_estrato
+    segunda_lectura_se_usa_para: [confiabilidad, sesgo_por_senales]
+    referencia_he2_vpp_gemses: primera_lectura
+  interpretacion_he2: eventos_identificados_por_la_evaluacion_del_investigador
+  margen_de_error_0.05: vale_para_el_vpp_de_las_detecciones   # no es la precisión de la diferencia de la HE2
+  sesgo_por_senales:                             # descriptivo; no decide la HE2
+    cortes: [leidos_antes_de_la_enmienda_4_140, leidos_despues]
+    rerevision: cambios_No_a_Si_y_Si_a_No_en_el_primer_estrato   # por grupo, después de abrir
+  tiempo_de_lectura:
+    descripcion: mediana_y_cuartiles_por_forma_de_lectura_y_por_veredicto   # por grupo, después de abrir
+    diferencias: diferencia_de_medianas_con_ic95_de_percentiles_y_2000_remuestreos_de_casos
+    se_comparan: [formas_de_lectura, casos_con_evento_y_sin_evento, grupos_despues_de_abrir]
+    terciles: dentro_de_cada_forma_de_lectura
+    exclusion_por_tiempo: ninguna
+  impacto:
+    fuente: anexo_02_de_la_directiva             # los cuatro indicadores del evento
+    pesos: [0.40, 0.20, 0.15, 0.25]              # num. 19.11
+    impacto_impreso: solo_sensibilidad
+    cortes_impacto: no_hacen_falta
+    estancia_y_uci: no_se_convierten_ni_se_informan   # la validación de los impactos queda para una fase posterior
+    eventos_que_entran: principal_y_adicionales_con_identificador_del_anexo
+    eventos_fuera_del_anexo: se_informan_aparte_y_no_entran_en_la_matriz
+    indice_de_frecuencia: divisor_de_la_enmienda_1_todos_los_eventos_confirmados_del_proceso
+    evento_6024: valores_del_anexo_4_7_7_8       # impacto 6.05
+  epicrisis_35_con_codigo_no_alcanzado:
+    poblacion: se_quedan
+    sensibilidad: he2_y_vpp_sin_las_que_esten_en_la_muestra
+    cruce: despues_de_la_primera_lectura_y_de_la_rerevision
+  congelamiento:
+    protocolo: [fda6828, enmiendas_1_a_5, plan_del_17-11-2026]
+    sha256_pdf_del_plan: f8d2216386c34542d02cbe6192e49cb4c903c6797ecd9ed6987b38559aa83f96
+    aplicacion_de_revision: {fecha: 2026-10-27, sha256: 556768326de6813ac2ea80557c7dfbe5bf94000cfe50781d412ba399739b90c9}
+    programa_de_comprobacion: {version: "1.1", fecha: 2026-11-19, sha256: 8f2ac4cf33d5b4acb229a3e84584310faaa417693208892ca0e88406e482c46b}
+    calculos: ninguno_antes_de_terminar_la_primera_lectura_y_la_rerevision
+    antes_de_abrir: huellas_de_los_archivos_de_respuestas_y_de_eventos_adicionales_y_del_script_del_analisis
+  apertura_resultados: despues_de_la_primera_lectura_de_las_615_y_de_la_rerevision_de_60
+  otro_cambio: exige_nueva_enmienda
