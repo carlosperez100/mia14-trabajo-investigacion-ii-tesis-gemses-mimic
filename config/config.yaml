@@ -410,3 +410,101 @@ analisis_enmienda_5:        # Enmienda 5, registrada el 19-11-2026, antes de emp
     antes_de_abrir: huellas_de_los_archivos_de_respuestas_y_de_eventos_adicionales_y_del_script_del_analisis
   apertura_resultados: despues_de_la_primera_lectura_de_las_615_y_de_la_rerevision_de_60
   otro_cambio: exige_nueva_enmienda
+
+interfaz_enmienda_6:        # Enmienda 6, registrada el 20-11-2026, antes de leer el caso HE4-141 y antes de abrir los
+                            # resultados de la revisión ciega. Texto completo: docs/enmienda_6_prerregistro.md.
+                            # Sustituye, de lectura_enmienda_4, las claves aplicacion_de_revision, registro_en_las_notas
+                            # y programa_de_comprobacion, las claves idioma, resaltado, donde y uso_de_la_nota_completa
+                            # de lectura y la clave sin_candidato de codigo_del_candidato. Sustituye, de la clave
+                            # congelamiento de analisis_enmienda_5, las claves aplicacion_de_revision,
+                            # programa_de_comprobacion, protocolo y antes_de_abrir. Precisa la clave tiempo_de_lectura
+                            # de analisis_enmienda_5. Las dos secciones se conservan sin cambios como registro.
+  rige_desde: HE4-141                            # primera lectura; también las 60 epicrisis de la re-revisión
+  leidos_con_la_version_anterior: 140            # sus respuestas no se modifican; las columnas nuevas quedan vacías
+  origen: recomendacion_de_la_asesora_del_20-11-2026
+  aplicacion_de_revision:
+    version: "2.0"
+    fecha: 2026-11-20
+    sha256: e9ec06159cd9fbf9c285096c2c279a2123fbf9fb240f904d3fbfd1c37f66dabb
+    version_anterior: {fecha: 2026-10-27, sha256: 556768326de6813ac2ea80557c7dfbe5bf94000cfe50781d412ba399739b90c9}
+    catalogo_del_anexo_02_sha256: 219fc20b1cb70b3db9a95e0da07549463f323f29d28c0a10a6c4ed413835dfe4
+    tabla_de_impactos_sha256: ba36303ac72a0d850599a4ff4bfbcfa81bf4dc3ff4741a0ba316fe859f1de19b
+    entorno: {python: "3.13.9", pandas: "2.3.3", streamlit: "1.51.0"}
+    probada_con: textos_inventados               # no se ha ejecutado con epicrisis de la muestra
+  no_cambian: [muestra, orden_de_presentacion, cegamiento, tres_veredictos, catalogo_del_anexo_02, impacto_del_anexo_02, identificadores_de_los_casos]
+  lectura:
+    procedimiento: el_de_la_enmienda_4           # pasos, cuatro preguntas, regla del veredicto y comprobación en el original
+    texto: nota_completa_siempre                 # ya no hay extracto
+    resaltado: no_existe
+    vista_por_defecto: original_y_traduccion_lado_a_lado   # desplazamiento conjunto en proporción al largo
+    otras_vistas: [solo_el_original, solo_la_traduccion]
+    vista_que_se_guarda: la_elegida_al_guardar   # no las usadas antes
+    caso_sin_traduccion: no_se_lee_hasta_tenerla   # la aplicación mostraría solo el original
+    casos_con_traduccion: {muestra: 615_de_615, rerevision: 60_de_60, comprobado: 2026-11-20}
+    se_informa_el_numero_de_casos_con_cada_vista: true
+    comprobacion_en_el_original: en_el_cuadro_del_original   # ya no se apaga la traducción
+  pregunta: la_epicrisis_documenta_al_menos_un_evento_adverso_que_cumple_los_criterios_operacionales_del_estudio
+  encabezado: revision_ciega_de_la_HE2           # el prefijo HE4 de los casos no nombra una hipótesis del plan vigente
+  registro_del_caso:
+    secciones: [MOT, PROC, EVOL, DX, COND]       # cada una: leida_completa o no_existe
+    otras_partes: [leidas, no_hizo_falta]        # equivale a la marca NC; leidas es obligatorio si falta una sección o hay un candidato
+    marca_TRAD: por_caso
+    No_sin_candidato: marca_propia               # equivale al código SC
+    confianza: valor_por_omision_intermedia
+  registro_del_evento_Si:                        # el principal y hasta 5 adicionales
+    campos: [evento_del_anexo_02, naturaleza, nexo, gravedad, evidencia_del_dano, evidencia_del_nexo, area, dia]
+    nexo: [C3, C4]
+    gravedad: [E, F, G, H, I]                    # definiciones del manual de anotación
+    episodio_actual: obligatorio_en_el_evento_principal   # no se registra en los adicionales
+    area: [EMER, UCI, UCIN, HOSP, SOP, APRO, OTRA, NODICE]
+    dia: [DH_con_numero, DPO_con_numero, NODICE] # el número no tiene valor por omisión
+    evento_fuera_del_anexo: descripcion_naturaleza_y_cuatro_indicadores
+  otros_candidatos:                              # los que no llegan a Sí; archivo propio
+    tope_por_epicrisis: 10                       # si hay más, los diez primeros en el orden de la nota y el total en las notas
+    campos: [seccion, codigo, evidencia]         # un candidato con ND-1 puede ir sin evidencia
+    codigos_No: [C2, C1, SIN-DANO, PREVISTO, NEGADO, PREVIO]
+    codigos_ND: [ND-1, ND-2, ND-3, ND-4, ND-5, ND-IDIOMA]
+    No_con_un_candidato_ND: no_se_guarda
+  no_se_puede_determinar:
+    motivos: [ND-1, ND-2, ND-3, ND-4, ND-5, ND-IDIOMA]
+    fragmento_con_su_seccion: obligatorio_salvo_ND-1
+    conteo_por_motivo: el_del_motivo_del_caso
+    si_hubo_candidato: no_se_registra
+  evidencia:
+    regla: de_3_a_8_palabras_seguidas_copiadas_del_original
+    comprobacion: literal_con_palabras_enteras   # no distingue mayúsculas ni saltos de renglón
+    seccion_marcada_como_inexistente: no_se_acepta
+    no_comprueba: [que_sostenga_el_dano_o_el_nexo, que_este_en_la_seccion_declarada]
+    queda: solo_en_el_equipo_del_investigador    # también las copias de respaldo
+  guardado:
+    no_guarda_con: [dato_obligatorio_vacio, evidencia_que_no_cumple_su_regla, codigo_que_no_corresponde_al_veredicto, registro_sin_confirmar]
+    caso_guardado: no_se_modifica                # ya no hay modo para verificar de nuevo
+    marca_de_version_en_cada_caso: E6            # separa las dos formas de lectura
+    escritura: archivo_completo_o_ninguno        # si falla, repone los archivos; si no puede reponer un auxiliar, lo avisa
+    respaldo: copia_antes_de_cada_guardado
+    al_abrir: se_detiene_si_un_archivo_no_se_lee_o_si_el_de_respuestas_tiene_repetidos_o_le_faltan_casos
+    archivo_de_respuestas_ausente: se_detiene_si_hay_copias_de_respaldo_y_lo_crea_vacio_si_no_las_hay
+    botones_de_cambio_de_caso_con_datos_sin_guardar: bloqueados_salvo_pedido_expreso
+    archivos_de_respuestas: no_se_editan_fuera_de_la_aplicacion
+    reposicion_desde_un_respaldo: se_registran_fecha_razon_y_huellas
+  tiempo_de_lectura:
+    medida: suma_de_las_visitas_al_caso_en_la_misma_sesion   # antes, la visita en que se guardó; incluye llenar el formulario
+    aviso: menos_de_2_minutos_sin_impedir_guardar
+    estimacion_en_pantalla: mediana_de_los_casos_de_la_version_2_desde_5_casos   # sin veredicto ni grupo
+    analisis: el_de_la_enmienda_5
+  rerevision: version_2_con_otro_lote_y_otros_archivos_de_respuestas
+  control_del_registro:
+    durante_la_lectura: la_aplicacion_al_guardar
+    programa_de_comprobacion_de_la_enmienda_4: no_se_aplica_a_los_casos_de_la_version_2
+    conteos_de_control_de_la_enmienda_5: se_mantienen_para_las_140_primeras
+    antes_de_abrir: programa_que_verifica_las_reglas_sobre_los_archivos_de_respuestas   # sin mostrar texto clínico; aún no escrito
+    antes_de_leer_el_caso_HE4-141: se_comprueba_la_huella_del_archivo_instalado
+    informa: [numero_de_casos_que_cumplen, identificadores_de_los_que_no, tres_conteos_de_control_de_las_140_primeras]
+    no_informa: [conteos_por_codigo, conteos_por_veredicto]
+    caso_que_no_cumple: no_se_reabre             # su veredicto cuenta; no entra en los conteos descriptivos
+  se_informa: [conteos_de_la_enmienda_4, tipo_de_nexo, gravedad, secciones_inexistentes]   # descriptivos; por grupo después de abrir
+  formas_de_lectura: [los_140_primeros_con_la_version_anterior, desde_HE4-141_con_la_version_2_y_el_procedimiento]
+  congelamiento:
+    protocolo: [fda6828, enmiendas_1_a_6, plan_del_17-11-2026]
+    antes_de_abrir: huellas_de_los_archivos_de_respuestas_de_eventos_adicionales_y_de_otros_candidatos_del_programa_de_verificacion_y_del_script_del_analisis
+  otro_cambio: exige_nueva_enmienda
