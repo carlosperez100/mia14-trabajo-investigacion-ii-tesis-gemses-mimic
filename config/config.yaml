@@ -508,3 +508,46 @@ interfaz_enmienda_6:        # Enmienda 6, registrada el 20-11-2026, antes de lee
     protocolo: [fda6828, enmiendas_1_a_6, plan_del_17-11-2026]
     antes_de_abrir: huellas_de_los_archivos_de_respuestas_de_eventos_adicionales_y_de_otros_candidatos_del_programa_de_verificacion_y_del_script_del_analisis
   otro_cambio: exige_nueva_enmienda
+
+analisis_enmienda_7:        # Enmienda 7, registrada el 24-11-2026, después de la primera lectura y antes de la re-revisión y de
+                            # abrir los resultados de la revisión ciega. Texto completo: docs/enmienda_7_prerregistro.md.
+                            # Precisa el pasaje de la sección 3.1.3 del plan del 17-11-2026 sobre los tramos del puntaje y
+                            # las secciones 2.4 y 2.6 de la Enmienda 5 (claves tiempo_de_lectura.exclusion_por_tiempo e
+                            # impacto.eventos_fuera_del_anexo de analisis_enmienda_5). Sustituye la clave otro_cambio de
+                            # analisis_enmienda_5 y, en interfaz_enmienda_6, la clave protocolo de congelamiento y la
+                            # clave otro_cambio. Las dos secciones se conservan sin cambios como registro.
+  origen: revision_del_protocolo_al_escribir_el_programa_del_analisis_del_22-11-2026
+  tramos_del_puntaje:                            # plan 3.1.3; descriptivo, no decide la HE2
+    definicion: terciles_del_puntaje_dentro_de_cada_estrato   # decisión con cinco premisas (E7 2.2); ningún texto del protocolo la impone ni la contradice
+    se_forman_en: las_615_epicrisis_revisadas    # plan 3.1.3; no en el marco
+    corte: 0.5                                   # fijado antes del sorteo (plan 3.1.2); los tramos no lo cruzan
+    orden: puntaje_de_la_clave_de_menor_a_mayor  # un empate se ordena por el número del caso
+    estratos:
+      - {grupo: detecciones, puntaje: 0.5_o_mas, epicrisis_revisadas: 385, epicrisis_del_marco: 15731, casos_por_tramo: [129, 128, 128]}
+      - {grupo: controles, puntaje: menor_de_0.5, epicrisis_revisadas: 230, epicrisis_del_marco: 83200, casos_por_tramo: [77, 77, 76]}
+    peso: epicrisis_del_marco_del_estrato_entre_las_revisadas   # 15 731/385 y 83 200/230 (plan 4.7)
+    por_tramo: [puntaje_menor, puntaje_mayor, epicrisis_revisadas, con_al_menos_un_evento_confirmado, proporcion_con_ic95_wilson, epicrisis_del_marco_representadas, estimado_en_el_marco, intervalo_del_estimado]
+    no_se_puede_determinar: cuenta_como_sin_evento   # como en la HE2 (plan 4.7)
+    estimado_en_el_marco: suma_de_los_pesos_de_las_epicrisis_con_evento
+    intervalo_del_estimado: epicrisis_representadas_por_cada_limite_de_wilson   # toma como fijo el tamaño representado; sin corrección por población finita
+    suma_de_los_tramos: primer_dato_descriptivo_de_la_seccion_4.7   # su intervalo sigue siendo el del método delta; los de los tramos no se suman
+    comparacion_entre_tramos: ninguna            # sin prueba de hipótesis ni de tendencia (como E3 2.3); sin ajuste por multiplicidad, porque no se contrasta ninguna hipótesis
+    comprobacion_antes_de_abrir: puntaje_de_la_clave_del_lado_del_corte_de_su_grupo   # después de las dos lecturas; sin unir los veredictos
+    se_calculan: al_abrir_los_resultados
+    agrupamiento_por_paciente: no_se_toma_en_cuenta   # limitación 9 de E7 2.4
+  precisiones_del_analisis:
+    casos_sin_tiempo: fuera_solo_de_los_terciles_y_de_la_descripcion_del_tiempo   # única excepción a E5 2.4; preventiva; se informa cuántos, por forma
+    tiempo_que_no_es_numero_finito_o_es_negativo: detiene_antes_de_abrir
+    casos_fuera_de_alcance: no_cuentan           # filas que no son de los 615 ni de los 60; columna en_alcance del archivo de respuestas: todo valor distinto de true, 1, sí o si, sin distinguir mayúsculas; preventiva; se informa cuántos
+    caso_de_la_muestra_o_de_la_rerevision_fuera_de_alcance: detiene_antes_de_abrir
+    evento_fuera_del_anexo: OTRO_solo_o_seguido_de_un_caracter_que_no_es_letra_de_la_A_a_la_Z_ni_numero   # sin distinguir mayúsculas; también en las 140 primeras
+    ensayo_antes_de_registrar_las_huellas: comprobaciones_previas_salvo_huellas_y_verificacion_sin_unir_los_veredictos_con_la_clave   # después de las dos lecturas; sin conteos por veredicto ni por grupo
+    si_el_ensayo_falla: se_registra_por_escrito_en_el_repositorio_antes_de_abrir   # si exige cambiar lo registrado, nueva enmienda (E7 2.5); las respuestas no se editan fuera de la aplicación
+    huella_del_programa_del_analisis: se_registra_despues_de_escribir_en_el_programa_el_commit_de_esta_enmienda
+  cambios_posteriores:                           # E7 2.5; sustituye la última oración de E5 2.8 y de E6 3, y las claves otro_cambio de analisis_enmienda_5 y de interfaz_enmienda_6
+    mejora: se_informa_aparte_como_no_prerregistrada_y_se_compara_con_lo_registrado   # ninguna reemplaza un análisis registrado
+    cambio_de_lo_registrado: solo_si_un_error_una_informacion_que_falta_o_un_hecho_imprevisto_impide_ejecutarlo   # decisión del protocolo (E7 2.5); tipos de desviación descritos en Lakens (2024)
+    antes_de_abrir: nueva_enmienda_con_su_razon
+    despues_de_abrir: desviacion_declarada_en_el_informe_final
+  congelamiento:
+    protocolo: [fda6828, enmiendas_1_a_7, plan_del_17-11-2026]
