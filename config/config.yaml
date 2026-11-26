@@ -551,3 +551,69 @@ analisis_enmienda_7:        # Enmienda 7, registrada el 24-11-2026, después de 
     despues_de_abrir: desviacion_declarada_en_el_informe_final
   congelamiento:
     protocolo: [fda6828, enmiendas_1_a_7, plan_del_17-11-2026]
+
+he1_enmienda_8:             # Enmienda 8, registrada el 26-11-2026, antes de ejecutar el script de la HE1 (src/he1_contraste.py,
+                            # en el mismo commit). Texto completo: docs/enmienda_8_prerregistro.md. Completa he1_estratos
+                            # (fda6828) y he1_enmienda_1 con los detalles de ejecución que no fijan y con lo que se hace si algo
+                            # falla. No cambia criterios, umbrales, semillas, definiciones ni configuraciones. Precisa la
+                            # clave protocolo de congelamiento de analisis_enmienda_7, que se conserva sin cambios como registro.
+  registrada: 2026-11-26                         # fecha de registro, AAAA-MM-DD; el contraste real se detiene con por_fijar
+  version_del_script: "1.4 (25-11-2026)"
+  sha256_del_script: eaf250a5e65f1021e87ffb3ad39009a9d368446e5c13d2b8e74e5796bdeb3c92         # de src/he1_contraste.py con finales de línea LF; el contraste real la comprueba
+  huellas_de_los_datos:                          # E8 2.4.1; SHA-256 de los archivos que lee el script; el contraste real se detiene si no coinciden
+    dataset: 1dbe9db8c54ac0f4aec6c7999e72b0c13bf793965186c6f4b78ef3b862a6bed8     # data/processed/dataset.parquet
+    particion: a252913516c7fe62e88293cd6327dfa118a2df00ffb02f67c47d998418ef17a4   # data/processed/splits.csv (la misma de reportes/preprocesado_resumen.json)
+    dominio: 9baac1eca5dc26add754563e4029d55ea6fe7df75f8a3e71d2b2a35c8757d50e     # data/interim/dominio_hadm.parquet
+    marcas: 8ae6c55d23ae8b691dbda493bdac140e06d4dc59c6318c3b06e12b560c088ead      # data/interim/variantes_datos.parquet
+  origen: revision_del_script_de_la_HE1_del_24-11-2026_y_el_25-11-2026
+  aplicacion_de_lo_registrado:                   # E8 2.2: se sigue de lo registrado, sin decisión nueva
+    particiones: filas_d2_de_su_entrenamiento_y_su_prueba_sin_etiqueta_dudosa   # he1_estratos y E1 2.1
+    estratos_y_etiqueta_original: solo_en_la_particion_del_proyecto              # he1_estratos, E1 2.1 (numeral 3) y 2.2 (numeral 2)
+  particiones_adicionales: paso_6_de_preprocesado_con_la_semilla_de_cada_particion   # E8 2.3.1; GroupShuffleSplit por paciente, test_size 0.20; el número de epicrisis de prueba varía y se informa
+  semilla_de_la_regresion_y_del_remuestreo: 42  # E8 2.3.2; en todas las particiones: solo cambia la partición
+  regresion_del_modelo_de_contexto:              # E8 2.3.3 y 2.2.3
+    solver: liblinear                            # la del modelo adoptado en src/features.py
+    max_iter: 2000
+    C_y_pesos: los_de_cada_configuracion        # candidata: C 1.8734 y sin pesos (E1 2.2.4); actual: C 1.0 y balanced (se deriva, E8 2.2.3)
+  remuestreo_con_una_sola_clase:                 # E8 2.3.4
+    regla: se_reemplaza_por_otro                 # hasta completar los 2 000 registrados; se informa cuántos se reemplazaron
+    tope_de_sorteos: el_doble_de_los_remuestreos_registrados
+    si_no_se_completan: el_ic_no_se_calcula_y_la_condicion_que_lo_usa_no_se_cumple
+  estrato_sin_dato:                              # E8 2.3.5
+    forma: servicio_faltante_o_edad_faltante_o_fuera_de_los_cortes
+    criterio_por_estrato: no_entra               # se informa con los mismos mínimos
+  candidata: tres_condiciones_y_estratos_y_etiqueta_original_en_la_particion_42   # E8 2.3.6; sensibilidad, no decide la HE1
+  condicion_1: diferencia_sin_redondear          # E8 2.3.7
+  publicacion_de_los_estratos:                   # E8 2.3.8; regla de datos y MIN_CELDA de src/eda_variables.py
+    de_un_evaluable_se_publica: [numero_de_epicrisis, con_evento, sin_evento, pacientes, cifras]
+    de_un_no_evaluable_se_publica: [numero_de_epicrisis, motivo]   # sin conteos por clase
+    agrupar_si_tienen_menos_de: 50
+    del_grupo_se_publica: su_total_de_epicrisis  # como epicrisis_en_categorias_no_publicadas del análisis exploratorio
+  orden_del_calculo: la_actual_completa_y_escrita_antes_de_la_candidata   # E8 2.3.9; reportes/he1_resultados_actual.json y reportes/he1.json
+  control_de_reproduccion:                       # E8 2.4.1; A+B+C en la prueba, sin etiqueta dudosa y con todas
+    metricas: [roc_auc, pr_auc]
+    tolerancia: 0.0001                           # frente a los cuatro decimales de reportes/hp_pruning_resultados.json
+  si_falla_un_control: no_se_calcula_nada_y_la_causa_se_registra_antes_de_otro_intento   # E8 2.4.2; si resolverla cambia lo registrado, nueva enmienda (E7 2.5)
+  marca_de_inicio:                               # E8 2.4.3
+    archivo: reportes/he1_inicio.json
+    creacion: solo_si_no_existe                  # dos ejecuciones simultáneas no la escriben las dos
+    guarda: [commit, commit_de_registro, remoto, version, registro, huellas_de_los_datos, huellas_del_codigo, versiones]
+  registro_de_cada_intento: se_sube_a_github_con_lo_que_escribio_antes_de_otro_intento   # E8 2.4.2 y 2.4.4; el contraste real se detiene si el de un intento anterior no está en git
+  corte_despues_de_la_marca_de_inicio:           # E8 2.4.5 y 2.4.6
+    repeticiones: 1
+    archivo_de_la_repeticion: reportes/he1_repeticion.json
+    que_es_un_corte: [registro_sin_linea_de_cierre, KeyboardInterrupt, MemoryError, OSError]   # sin cierre: por ejemplo, corte de energía; cualquier OSError, como falta de espacio o un archivo bloqueado
+    no_se_repite_tras: [error_inesperado, alto_despues_de_la_marca]
+    exige: [registro_y_archivos_del_intento_en_github, unico_registro_con_la_marca, mismo_commit_de_registro, mismo_remoto, mismas_huellas_de_codigo_datos_y_versiones, reproducir_las_cifras_del_registro]
+    si_el_corte_fue_en_la_candidata: solo_se_calcula_la_candidata
+    si_la_repeticion_no_termina:
+      se_declara: desviacion_en_el_informe_final
+      sin_resultados_de_la_actual: he1_no_contrastada_hasta_una_nueva_enmienda
+      sin_la_candidata: he1_decidida_con_la_actual_y_candidata_no_calculada
+  error_del_codigo_despues_de_la_marca: nueva_enmienda_con_el_script_corregido_y_lo_que_hace_con_la_marca   # E8 2.4.7; informa también las cifras del intento fallido
+  sello: commit_en_una_rama_de_github_comprobado_con_git_ls_remote              # E8 2.4.8; el código queda publicado antes de que exista ningún resultado
+  repositorio_de_github: carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic   # E8 2.4.8; el remoto origin debe ser este repositorio
+  sin_cambios_desde_el_registro: codigo_referencias_y_secciones_de_config_del_calculo   # E8 2.4.8; desde el commit de registro hasta la ejecución; los resultados llevan los dos commits
+  congelamiento:                                 # E8 2.6
+    protocolo: [fda6828, enmiendas_1_a_8, plan_del_17-11-2026]
+    precisa: analisis_enmienda_7.congelamiento.protocolo     # que se conserva sin cambios como registro
