@@ -1,0 +1,62 @@
+# Semana 11 · Sprint 4: mejora del modelo con otro algoritmo y otra arquitectura (src/experimentos_semana11.py).
+# Se escribió el 26-11-2026, antes de correr los experimentos. Va en un archivo aparte para no tocar config/config.yaml, que
+# lleva el prerregistro de la tesis (secciones he1_estratos y he1_enmienda_1 a he1_enmienda_8).
+#
+# Enunciado del docente (Teachlr, «Entregable semana 11», fecha límite 27-11-2026, 08:00 pm): mejorar el modelo con mejores
+# datasets, más feature engineering o más optimización de hiperparámetros; si los modelos no mejoran, probar otro algoritmo u
+# otra arquitectura.
+#
+# Punto de partida: en la semana 8, la optimización de hiperparámetros mejoró la PR-AUC media en 0.0014 en validación cruzada y en
+# test quedó en 0.8670 frente a 0.8671 de la configuración actual (reportes/hp_pruning_resultados.json). Por eso esta semana
+# prueba otro algoritmo y otra arquitectura, con los mismos datos y los mismos atributos.
+#
+# Relación con la tesis: según la Enmienda 7, sección 2.5 (commit 93b96eb), ninguna mejora reemplaza un análisis registrado; una
+# mejora se informa aparte, rotulada como análisis no prerregistrado, y se compara con el análisis registrado. Estos experimentos
+# no cambian el modelo del lote de la revisión ciega ni el de la HE1.
+
+semana11_mejora:
+  referencia: actual              # D2 con A+B+C y la configuración actual: regresión logística (liblinear, balanced, C 1.0),
+                                  # A y B con 20 000 términos y min_df 3, sublinear_tf. Es el modelo de la HE1 y del lote.
+  variante: D2                    # filas de entrenamiento de la semana 6 (src/variantes_datos.py)
+  n_folds: 5                      # los 5 folds del proyecto: StratifiedGroupKFold(5, shuffle=True, random_state=42) por paciente
+  metrica: pr_auc_comun           # PR-AUC en las epicrisis de validación sin etiqueta dudosa; también se informa la ROC-AUC
+  test: no                        # el test no se mide esta semana. La HE1 se calcula en las 12 321 epicrisis de prueba sin
+                                  # etiqueta dudosa, y su contraste registrado (Enmienda 8, commit dc43b22) aún no se ejecuta.
+  control: la referencia debe reproducir, fold por fold, la confirmación de la semana 8 (diferencia máxima 1e-9)
+
+  experimentos:
+    E1_nblr:                      # otro algoritmo: regresión logística sobre rasgos con la razón de log-conteos de Naive Bayes
+      descripcion: >
+        Bloques A y B pasados a presencia (1 si el término aparece en la nota). Cada columna se multiplica por
+        r = log((p / |p|1) / (q / |q|1)), con p = alfa + suma de las filas con evento y q = alfa + suma de las filas sin
+        evento, calculados solo con las filas de entrenamiento del fold. El bloque C entra sin cambios. Clasificador: la
+        misma regresión logística de la referencia.
+      alfa: 1.0
+      columnas: las de la configuración actual (A 20 000/3, B 20 000/3)
+    E2_fusion_tardia:             # otra arquitectura: dos etapas en lugar de un solo modelo lineal con todos los bloques juntos
+      descripcion: >
+        Etapa 1: la regresión logística de la referencia con solo el texto (A+B, TF-IDF de la configuración actual).
+        Su puntaje de entrenamiento se obtiene fuera de fold, con StratifiedGroupKFold(3, shuffle=True, random_state=42)
+        por paciente dentro de las filas de entrenamiento del fold, para que la segunda etapa no aprenda de un puntaje
+        sobreajustado. Etapa 2: HistGradientBoostingClassifier con el bloque C y el logit del puntaje del texto. En
+        validación, la etapa 1 se entrena con todas las filas de entrenamiento del fold.
+      folds_internos: 3
+      hgb:                        # valores fijos, sin búsqueda
+        learning_rate: 0.05
+        max_iter: 300
+        max_leaf_nodes: 31
+        min_samples_leaf: 50
+        l2_regularization: 1.0
+        early_stopping: false
+        class_weight: balanced
+        random_state: 42
+      nota_idf: >
+        En los folds internos, el vocabulario y el IDF son los del fold externo (se calculan sin etiquetas), y solo la
+        regresión se ajusta en cada fold interno.
+
+  regla:                          # la regla prerregistrada de las semanas 7 y 8 (config.yaml, hiperparametros.regla)
+    folds_mejores_minimo: 4       # el experimento debe superar a la referencia en al menos 4 de los 5 folds
+    desviaciones_minimas: 1.0     # y la mejora media debe superar 1 desviación estándar de las diferencias por fold
+  decision: >
+    Un experimento que cumpla la regla queda como candidato del curso, y su test se mide después del contraste de la HE1,
+    como análisis no prerregistrado (Enmienda 7, sección 2.5). Si ninguno la cumple, se mantiene la referencia.
