@@ -1160,6 +1160,62 @@ Referencias: Akiba, T., Sano, S., Yanase, T., Ohta, T. y Koyama, M. (2019). Optu
 
 ---
 
+## 🧭 Semana 11 · Sprint 4: mejora del modelo con otro algoritmo y otra arquitectura
+Rama `sprint4-semana11-mejora-modelo` · cuaderno [`notebooks/08_sprint4_semana11_mejora_modelo.ipynb`](notebooks/08_sprint4_semana11_mejora_modelo.ipynb)
+
+El enunciado de la semana 11 pide mejorar el modelo con mejores datos, más ingeniería de atributos o más optimización de hiperparámetros. Si los modelos no mejoran, permite probar otro algoritmo u otra arquitectura. Los tres primeros caminos ya se recorrieron. Los atributos se probaron en la semana 5, las variantes de los datos (D0 a D3) en las semanas 6 y 7, y los hiperparámetros en las semanas 7 y 8. En la semana 8, la búsqueda de hiperparámetros no cambió el *test* (PR-AUC 0.8670 frente a 0.8671 de la configuración actual). Por ello, esta semana se probaron otro algoritmo y otra arquitectura. Se usaron los mismos datos, los mismos bloques y el mismo vocabulario.
+
+### Diseño, fijado antes de correr
+El diseño está en [`config/semana11_mejora.yaml`](config/semana11_mejora.yaml) y se registró en el *commit* 2aa27ee, antes de la corrida completa. La prueba del flujo, con un *fold* y una muestra de filas, corrió 39 segundos antes de ese *commit*, con los mismos parámetros, y su *log* también se publica. El diseño va en un archivo aparte para no tocar `config/config.yaml`, que lleva el prerregistro de la tesis.
+- Referencia: la configuración actual de la tesis, es decir, D2 con A+B+C y regresión logística (C 1.0, pesos balanceados; A y B con 20 000 términos, frecuencia mínima 3 y TF-IDF sublineal). Es la del lote de la revisión ciega y la que usa la HE1. La ganadora de la semana 8 queda en la HE1 como análisis de sensibilidad, y también se compara con los experimentos.
+- E1, otro algoritmo: NB-LR. La presencia de cada término de A y B se multiplica por la razón de log-conteos de Naive Bayes, calculada en las filas de entrenamiento de cada *fold* (Wang y Manning, 2012, pp. 90-91). El bloque C y la regresión, con C 1.0, son los de la referencia.
+- E2, otra arquitectura: fusión tardía en dos etapas. La regresión con solo el texto da un puntaje fuera de *fold*, con 3 *folds* internos por paciente, y un *HistGradientBoostingClassifier* con valores fijos lo combina con el bloque C.
+
+La evaluación es la de las semanas 5 a 8. Se usan los 5 *folds* del proyecto por paciente, con la semilla 42, solo en *train*, y la PR-AUC se mide en las epicrisis de validación sin etiqueta dudosa. La regla es la prerregistrada en la semana 7: al menos 4 de 5 *folds* mejores y una mejora media mayor que una desviación estándar de las diferencias por *fold*. La referencia reprodujo, *fold* por *fold*, la confirmación de la semana 8, con una diferencia máxima de 0.
+
+El diseño fija que el *test* no se mide esta semana. La razón es que la HE1 se calcula en la partición de prueba, y su contraste, registrado en la Enmienda 8 (*commit* dc43b22), todavía no se ejecuta. Si un experimento cumpliera la regla, su *test* se mediría después de ese contraste.
+
+### Resultados
+Como se aprecia en la Tabla 18, ninguno de los dos experimentos superó a la referencia. La diferencia media de PR-AUC fue de -0.0009 en E2 y de -0.0490 en E1, y los dos quedaron por debajo en los 5 *folds*.
+
+Tabla 18. Experimentos de la semana 11 frente a la referencia (5 *folds*, sin etiqueta dudosa)
+
+| Modelo | PR-AUC media (desviación) | ROC-AUC media | Diferencia media de PR-AUC | Desviación de las diferencias | *Folds* por debajo | Cumple la regla |
+|---|---|---|---|---|---|---|
+| Referencia: logística A+B+C | 0.8534 (0.0041) | 0.8582 | | | | |
+| E1: NB-LR | 0.8044 (0.0042) | 0.8037 | -0.0490 | 0.0013 | 5 de 5 | no |
+| E2: fusión tardía | 0.8525 (0.0036) | 0.8575 | -0.0009 | 0.0008 | 5 de 5 | no |
+
+Fuente: elaboración propia a partir de [`reportes/semana11_resultados.json`](reportes/semana11_resultados.json) y [`reportes/semana11_folds.csv`](reportes/semana11_folds.csv).
+
+Figura 12. PR-AUC por *fold* de la referencia y de los dos experimentos
+
+![PR-AUC por fold de la semana 11](reportes/figuras/fig_semana11_folds.png)
+
+Fuente: elaboración propia a partir de [`reportes/semana11_folds.csv`](reportes/semana11_folds.csv).
+
+En la Figura 12 se observa que las líneas de la referencia y de E2 casi se superponen, mientras que E1 queda unos 0.05 por debajo en todos los *folds*.
+
+Frente a la ganadora de la semana 8 (C 1.87 · A 60 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí), la distancia es mayor. La diferencia media es de -0.0023 en E2 y de -0.0504 en E1, y los dos quedan por debajo en los 5 *folds*. El detalle está en la Tabla 4 del cuaderno.
+
+La corrida tomó 23.2 minutos: 7.7 la referencia, 10.4 E1 y 4.9 E2. El resto corresponde a la carga y la preparación de los datos.
+
+### Decisión y siguiente paso
+- Ningún experimento cumple la regla, ni frente a la configuración actual ni frente a la ganadora de la semana 8. Por ello, no cambia ninguna configuración.
+- El resultado de E1 vale para NB-LR con C 1.0 y sin normalizar, y no descarta otras versiones. La presencia multiplicada por r no se normaliza por el largo de la nota, a diferencia del TF-IDF de la referencia, y C fue el hiperparámetro de mayor importancia en la semana 8.
+- Según la Enmienda 7, sección 2.5 (*commit* 93b96eb), ninguna mejora reemplaza un análisis registrado. Estos experimentos no cambian la configuración de la revisión ciega ni la de la HE1, y no usan la partición de prueba.
+
+Se recomienda probar E1 con la presencia normalizada por fila y con C buscado en *folds* internos, como variante registrada antes de correr. La interpolación β no es prioridad, porque Wang y Manning (2012) informan que, en documentos largos, NBSVM rinde casi igual con β entre ¼ y 1 (p. 93). También se recomienda ampliar las epicrisis de entrenamiento, porque la curva de aprendizaje de la semana 8 todavía sube. Las nuevas deben quedar fuera de la partición de prueba y de las 98 931 epicrisis de pacientes fuera del corpus, de las que sale la revisión ciega. Por último, queda por probar un modelo neuronal, como un *transformer* preentrenado con textos clínicos.
+
+### Cómo reproducir la semana 11
+- Requisitos: los de la semana 8 y la caché de conteos de los 5 *folds* de confirmación en `data/interim/cache_hp/`, que arma `python src/experimentos_hp.py --solo-conteos`.
+- Comando único: `python src/experimentos_semana11.py`. Con `--prueba` corre un *fold* con una muestra de filas y escribe en `data/interim/prueba_semana11/`.
+- Los resultados publicados se obtuvieron con el *script* del *commit* 2aa27ee.
+
+Referencias: Wang, S. y Manning, C. D. (2012). Baselines and bigrams: Simple, good sentiment and topic classification. En *Proceedings of the 50th Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers)* (pp. 90-94). https://aclanthology.org/P12-2018/ Las demás referencias están en el cuaderno.
+
+---
+
 ## 📌 Roadmap
 Las tareas, con responsable y plazo, están en los [issues](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/issues) y [milestones](https://github.com/carlosperez100/mia14-trabajo-investigacion-ii-tesis-gemses-mimic/milestones).
 - [x] Semana 1 → Diagnóstico, estructura del repositorio y plan del Sprint 1.
@@ -1172,6 +1228,7 @@ Las tareas, con responsable y plazo, están en los [issues](https://github.com/c
 - [x] Semana 7 → importancia de variables en la rama `sprint3-importancia-variables`, con los 5 folds de train y sin test: palabras 0.1274, contexto 0.1106 y bigramas 0.0331 de caída de la PR-AUC al permutar cada bloque.
 - [x] Semana 7 → variante D3 en la rama `sprint3-etiqueta-d3`, con las negativas que libera la equivalencia validada. D3 cumple la regla en la evaluación ampliada (+0.0022 en 5 de 5 *folds*) y queda por debajo en la común (-0.0012). D2 marca como evento al 42.6 % de las liberadas, frente al 18.7 % de las negativas CIE-10 de la evaluación común. Se decidió mantener D2 como referencia, también para HE2 y HE3.
 - [x] Semana 8 → Sprint 3, búsqueda con *pruning* (MedianPruner por *fold*, 30 ensayos por método) en la rama `sprint3-hiperparametros-pruning`. La regla adopta la candidata (C 1.87 · A 60 000/3 · B 40 000/5 · sin pesos · sublinear_tf sí) y en *test* obtiene una PR-AUC de 0.8670 frente a 0.8671 de la actual. Se decidió evaluar la HE1 con la actual, que es la del lote de la revisión ciega y la de la matriz v4, y con la candidata como análisis de sensibilidad. Se evaluaron 102 de 150 *folds*, con registro en `logs/hpo_runs.csv`, *top-k*, importancia (PED-ANOVA), curva de aprendizaje y modelos con SHA-256 fuera de git.
+- [x] Semana 11 → Sprint 4, otro algoritmo (NB-LR) y otra arquitectura (fusión tardía con *HistGradientBoosting*) en la rama `sprint4-semana11-mejora-modelo`, con los 5 folds y sin test: ninguno cumple la regla, ni frente a la configuración actual (diferencia media de PR-AUC -0.0490 y -0.0009) ni frente a la ganadora de la semana 8 (-0.0504 y -0.0023), y no cambia ninguna configuración.
 - [ ] Sprint 3 → Evaluación por servicio, grupo de edad y decil de largo frente al modelo de contexto, recalibración a la prevalencia de 27.6 % y explicación de logística frente a LinearSVC.
 
 ---

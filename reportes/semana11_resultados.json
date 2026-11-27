@@ -1,0 +1,118 @@
+{
+  "etapa": "experimentos_semana11",
+  "generado": "2026-11-26T19:33:01",
+  "prueba": false,
+  "semilla": 42,
+  "sklearn": "1.7.2",
+  "diseno": "config/semana11_mejora.yaml",
+  "referencia": {
+    "C": 1.0,
+    "A_max_features": 20000,
+    "A_min_df": 3,
+    "B_max_features": 20000,
+    "B_min_df": 3,
+    "class_weight": "balanced",
+    "sublinear_tf": true
+  },
+  "protocolo": "StratifiedGroupKFold(5, shuffle=True, random_state=42) por subject_id en train (los folds de las semanas 5 a 8); entrenan las filas de D2; métrica: PR-AUC en las epicrisis de validación sin etiqueta dudosa; test sin medir",
+  "filas_test_descartadas": 14085,
+  "resumen": {
+    "referencia": {
+      "pr_auc_comun": {
+        "media": 0.853394,
+        "std": 0.004093
+      },
+      "roc_auc_comun": {
+        "media": 0.858198,
+        "std": 0.002638
+      },
+      "pr_auc_completa": {
+        "media": 0.847699,
+        "std": 0.004258
+      },
+      "segundos": 461.0
+    },
+    "E1_nblr": {
+      "pr_auc_comun": {
+        "media": 0.804358,
+        "std": 0.004172
+      },
+      "roc_auc_comun": {
+        "media": 0.803652,
+        "std": 0.002498
+      },
+      "pr_auc_completa": {
+        "media": 0.80537,
+        "std": 0.003646
+      },
+      "segundos": 625.7
+    },
+    "E2_fusion_tardia": {
+      "pr_auc_comun": {
+        "media": 0.852492,
+        "std": 0.003572
+      },
+      "roc_auc_comun": {
+        "media": 0.857505,
+        "std": 0.001938
+      },
+      "pr_auc_completa": {
+        "media": 0.846941,
+        "std": 0.003828
+      },
+      "segundos": 292.9
+    }
+  },
+  "regla": {
+    "E1_nblr": {
+      "diferencias_por_fold": [
+        -0.048584,
+        -0.047725,
+        -0.048803,
+        -0.051213,
+        -0.048852
+      ],
+      "folds_mejores": 0,
+      "n_folds": 5,
+      "dif_media": -0.049035,
+      "dif_std": 0.001299,
+      "razon_media_sobre_std": -37.742,
+      "criterio_folds": false,
+      "criterio_desviacion": false,
+      "adopta_candidata": false,
+      "roc_auc_diferencias_por_fold": [
+        -0.054583,
+        -0.053903,
+        -0.054781,
+        -0.055552,
+        -0.053911
+      ]
+    },
+    "E2_fusion_tardia": {
+      "diferencias_por_fold": [
+        -0.001962,
+        -0.000247,
+        -3.7e-05,
+        -0.001624,
+        -0.00064
+      ],
+      "folds_mejores": 0,
+      "n_folds": 5,
+      "dif_media": -0.000902,
+      "dif_std": 0.00085,
+      "razon_media_sobre_std": -1.061,
+      "criterio_folds": false,
+      "criterio_desviacion": false,
+      "adopta_candidata": false,
+      "roc_auc_diferencias_por_fold": [
+        -0.000915,
+        0.000885,
+        -0.000416,
+        -0.002425,
+        -0.000595
+      ]
+    }
+  },
+  "decision": "ningún experimento cumple la regla; se mantiene la referencia",
+  "segundos_corrida": 1392.9
+}

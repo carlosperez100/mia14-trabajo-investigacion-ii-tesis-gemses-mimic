@@ -1,0 +1,27 @@
+2026-11-26 19:09:48 | experimentos_semana11 | INFO | log -> logs\experimentos_semana11_20261126_190948.log
+2026-11-26 19:09:48 | experimentos_semana11 | INFO | referencia: D2 con A+B+C · C=1 · A 20000/3 · B 20000/3 · class_weight=balanced · sublinear_tf=True · clasificador LogisticRegression(class_weight='balanced', max_iter=2000, random_state=42,
+                   solver='liblinear')
+2026-11-26 19:09:48 | experimentos_semana11 | INFO | E1: NB-LR con alfa 1.0 · E2: fusión tardía, 3 folds internos, HGB {'learning_rate': 0.05, 'max_iter': 300, 'max_leaf_nodes': 31, 'min_samples_leaf': 50, 'l2_regularization': 1.0, 'early_stopping': False, 'class_weight': 'balanced', 'random_state': 42}
+2026-11-26 19:09:48 | experimentos_semana11 | INFO | REGLA (semanas 7 y 8): al menos 4 de 5 folds mejores y mejora media mayor que 1.0 desviación estándar de las diferencias por fold · el test no se mide
+2026-11-26 19:09:50 | experimentos_semana11 | INFO | variables de dominio: se reutiliza dominio_hadm.parquet
+2026-11-26 19:09:50 | experimentos_semana11 | INFO | variantes de datos: se reutiliza variantes_datos.parquet
+2026-11-26 19:09:51 | experimentos_semana11 | INFO | train 55,915 (entrenan 48,998 filas de D2; evaluación común 48,998) · 14,085 filas de test descartadas sin usarse
+2026-11-26 19:11:29 | experimentos_semana11 | INFO | fold 1 · referencia: PR-AUC 0.856697 · ROC-AUC 0.860198 · 88 s · control semana 8 0.0e+00
+2026-11-26 19:13:17 | experimentos_semana11 | INFO | fold 1 · E1_nblr: PR-AUC 0.808113 · ROC-AUC 0.805615 · 108 s
+2026-11-26 19:14:11 | experimentos_semana11 | INFO | fold 1 · E2_fusion_tardia: PR-AUC 0.854735 · ROC-AUC 0.859283 · 54 s
+2026-11-26 19:15:48 | experimentos_semana11 | INFO | fold 2 · referencia: PR-AUC 0.852738 · ROC-AUC 0.855599 · 97 s · control semana 8 0.0e+00
+2026-11-26 19:18:05 | experimentos_semana11 | INFO | fold 2 · E1_nblr: PR-AUC 0.805013 · ROC-AUC 0.801696 · 137 s
+2026-11-26 19:19:04 | experimentos_semana11 | INFO | fold 2 · E2_fusion_tardia: PR-AUC 0.852491 · ROC-AUC 0.856484 · 59 s
+2026-11-26 19:20:37 | experimentos_semana11 | INFO | fold 3 · referencia: PR-AUC 0.846717 · ROC-AUC 0.855069 · 93 s · control semana 8 0.0e+00
+2026-11-26 19:22:42 | experimentos_semana11 | INFO | fold 3 · E1_nblr: PR-AUC 0.797914 · ROC-AUC 0.800287 · 125 s
+2026-11-26 19:23:51 | experimentos_semana11 | INFO | fold 3 · E2_fusion_tardia: PR-AUC 0.846680 · ROC-AUC 0.854653 · 69 s
+2026-11-26 19:25:35 | experimentos_semana11 | INFO | fold 4 · referencia: PR-AUC 0.854189 · ROC-AUC 0.860479 · 105 s · control semana 8 0.0e+00
+2026-11-26 19:27:28 | experimentos_semana11 | INFO | fold 4 · E1_nblr: PR-AUC 0.802976 · ROC-AUC 0.804926 · 112 s
+2026-11-26 19:28:24 | experimentos_semana11 | INFO | fold 4 · E2_fusion_tardia: PR-AUC 0.852566 · ROC-AUC 0.858053 · 56 s
+2026-11-26 19:29:42 | experimentos_semana11 | INFO | fold 5 · referencia: PR-AUC 0.856627 · ROC-AUC 0.859646 · 78 s · control semana 8 0.0e+00
+2026-11-26 19:32:05 | experimentos_semana11 | INFO | fold 5 · E1_nblr: PR-AUC 0.807774 · ROC-AUC 0.805735 · 143 s
+2026-11-26 19:33:00 | experimentos_semana11 | INFO | fold 5 · E2_fusion_tardia: PR-AUC 0.855986 · ROC-AUC 0.859051 · 55 s
+2026-11-26 19:33:01 | experimentos_semana11 | INFO | E1_nblr: diferencias de PR-AUC por fold [-0.048584, -0.047725, -0.048803, -0.051213, -0.048852] · cumple la regla: False
+2026-11-26 19:33:01 | experimentos_semana11 | INFO | E2_fusion_tardia: diferencias de PR-AUC por fold [-0.001962, -0.000247, -3.7e-05, -0.001624, -0.00064] · cumple la regla: False
+2026-11-26 19:33:01 | experimentos_semana11 | INFO | DECISIÓN: ningún experimento cumple la regla; se mantiene la referencia
+2026-11-26 19:33:01 | experimentos_semana11 | INFO | listo en 23.2 min → reportes
