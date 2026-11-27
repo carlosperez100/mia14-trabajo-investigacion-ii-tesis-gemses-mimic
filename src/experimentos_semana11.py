@@ -16,7 +16,8 @@ arquitectura con los mismos datos y atributos. El diseño está en config/semana
 
 Datos y partición: los de src/experimentos_hp.py (los 5 folds del proyecto, StratifiedGroupKFold por paciente, semilla 42; entrenan
 las filas de D2; la PR-AUC se mide en las epicrisis de validación sin etiqueta dudosa). Usa la caché de conteos de los 5 folds de
-confirmación (data/interim/cache_hp/confirmacion_k5_f*). El test no se mide ni se lee: sus filas se descartan al cargar los datos.
+confirmación (data/interim/cache_hp/confirmacion_k5_f*). El test no se mide: sus filas se cargan con el dataset y se descartan
+antes de cualquier cálculo.
 Control: la referencia reproduce, fold por fold, la confirmación de la semana 8 (reportes/hp_pruning_resultados.json).
 Regla: la de las semanas 7 y 8 (al menos 4 de 5 folds mejores y mejora media mayor que 1 desviación estándar de las diferencias).
 
@@ -26,6 +27,7 @@ Uso:  python src/experimentos_semana11.py            (requiere la caché de pyth
       python src/experimentos_semana11.py --prueba   (un fold y una muestra de filas; escribe en data/interim/prueba_semana11)
 Si la corrida se interrumpe, al repetirla se toman de data/interim/semana11_folds.json los folds ya evaluados.
 """
+import hashlib
 import json
 import sys
 import time
@@ -151,6 +153,9 @@ def main():
     D = yaml.safe_load((RAIZ / "config" / "semana11_mejora.yaml").read_text(encoding="utf-8"))["semana11_mejora"]
     E1, E2, REGLA = D["experimentos"]["E1_nblr"], D["experimentos"]["E2_fusion_tardia"], D["regla"]
     assert D["variante"] == H["variante"] and D["n_folds"] == H["n_folds_confirmacion"] and D["test"] is False
+    assert REGLA == H["regla"], "la regla de semana11_mejora.yaml debe ser la de config.yaml (hiperparametros.regla)"
+    # huella del diseño: si cambian alfa, los folds internos o el HGB, la caché de folds no se reutiliza
+    HUELLA = hashlib.sha256(json.dumps(D["experimentos"], sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()[:12]
     ACT = hp.actual(P)
     clf = hp.modelo_oficial(ACT, P, S, H["modelo"]).named_steps["clf"]
     log.info(f"referencia: D2 con A+B+C · {hp.texto_prm(ACT)} · clasificador {clf}")
@@ -198,7 +203,7 @@ def main():
             a, b = a[ftr], b[fva]
         y_tr, yb, cb = y[a], y[b], comun[b]
         for e in EXPERIMENTOS:
-            k = json.dumps({"v": VERSION, "fold": i, "experimento": e})
+            k = json.dumps({"v": VERSION, "diseno": HUELLA, "fold": i, "experimento": e})
             if k in memo:
                 folds.append(memo[k])
                 log.info(f"fold {i} · {e}: tomado de la caché ({memo[k]['pr_auc_comun']:.6f})")

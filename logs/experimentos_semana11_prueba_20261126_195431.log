@@ -1,0 +1,15 @@
+2026-11-26 19:54:31 | experimentos_semana11_prueba | INFO | log -> logs\experimentos_semana11_prueba_20261126_195431.log
+2026-11-26 19:54:32 | experimentos_semana11_prueba | INFO | referencia: D2 con A+B+C · C=1 · A 20000/3 · B 20000/3 · class_weight=balanced · sublinear_tf=True · clasificador LogisticRegression(class_weight='balanced', max_iter=2000, random_state=42,
+                   solver='liblinear')
+2026-11-26 19:54:32 | experimentos_semana11_prueba | INFO | E1: NB-LR con alfa 1.0 · E2: fusión tardía, 3 folds internos, HGB {'learning_rate': 0.05, 'max_iter': 300, 'max_leaf_nodes': 31, 'min_samples_leaf': 50, 'l2_regularization': 1.0, 'early_stopping': False, 'class_weight': 'balanced', 'random_state': 42}
+2026-11-26 19:54:32 | experimentos_semana11_prueba | INFO | REGLA (semanas 7 y 8): al menos 4 de 5 folds mejores y mejora media mayor que 1.0 desviación estándar de las diferencias por fold · el test no se mide
+2026-11-26 19:54:34 | experimentos_semana11_prueba | INFO | variables de dominio: se reutiliza dominio_hadm.parquet
+2026-11-26 19:54:34 | experimentos_semana11_prueba | INFO | variantes de datos: se reutiliza variantes_datos.parquet
+2026-11-26 19:54:34 | experimentos_semana11_prueba | INFO | train 55,915 (entrenan 48,998 filas de D2; evaluación común 48,998) · 14,085 filas de test descartadas sin usarse
+2026-11-26 19:54:46 | experimentos_semana11_prueba | INFO | fold 1 · referencia: PR-AUC 0.799812 · ROC-AUC 0.815672 · 4 s
+2026-11-26 19:54:50 | experimentos_semana11_prueba | INFO | fold 1 · E1_nblr: PR-AUC 0.773250 · ROC-AUC 0.796508 · 3 s
+2026-11-26 19:54:56 | experimentos_semana11_prueba | INFO | fold 1 · E2_fusion_tardia: PR-AUC 0.776083 · ROC-AUC 0.801099 · 6 s
+2026-11-26 19:54:56 | experimentos_semana11_prueba | INFO | E1_nblr: diferencias de PR-AUC por fold [-0.026562] · cumple la regla: None
+2026-11-26 19:54:56 | experimentos_semana11_prueba | INFO | E2_fusion_tardia: diferencias de PR-AUC por fold [-0.02373] · cumple la regla: None
+2026-11-26 19:54:56 | experimentos_semana11_prueba | INFO | DECISIÓN: ningún experimento cumple la regla; se mantiene la referencia
+2026-11-26 19:54:56 | experimentos_semana11_prueba | INFO | listo en 0.4 min → data\interim\prueba_semana11
